@@ -5,7 +5,7 @@ import { Parallax } from "react-scroll-parallax";
 
 export default function GlowBg() {
   return (
-    <>
+    <div className="hidden lg:block">
       <div className="absolute inset-0 z-0 flex items-center justify-center opacity-40">
         <Parallax speed={-60}>
           <Image
@@ -39,6 +39,6 @@ export default function GlowBg() {
           />
         </Parallax>
       </div>
-    </>
+    </div>
   );
 }
