@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { lato } from "../lib/fonts";
+import { openSans } from "../lib/fonts";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "@/components/providers";
 
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${lato.className} antialiased p-0 text-text-50!`}>
+        <body className={`${openSans.className} antialiased p-0 text-text-50!`}>
           <Providers>{children}</Providers>
         </body>
       </html>

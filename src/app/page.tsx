@@ -9,6 +9,7 @@ import {
 } from "@clerk/nextjs";
 import Image from "next/image";
 import GlowBg from "@/components/ui/backgrounds/glow-bg";
+import Card from "@/components/ui/global/card";
 
 export default function Home() {
   return (
@@ -44,8 +45,12 @@ export default function Home() {
             </div>
           </header>
           <div className="relative z-30 flex flex-col items-center justify-center w-full h-full mb-20">
-            <h1 className="mb-2 text-3xl font-bold">ChipIn</h1>
-            <h1 className="text-2xl font-bold">Gambling without the risk</h1>
+            <h1 className="mb-2 font-bold text-7xl">ChipIn</h1>
+            <h1 className="text-4xl font-bold">Gambling without the risk</h1>
+            <div className="flex justify-center gap-3 mt-20">
+              <Card>Poker</Card>
+              <Card>Blackjack</Card>
+            </div>
           </div>
         </div>
 
