@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono, Lato, Roboto_Mono } from "next/font/google";
 
+// I have a few fonts here, though I'll most likely stick with Lato
+
 export const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
