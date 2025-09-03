@@ -3,6 +3,7 @@ import "./globals.css";
 import { openSans } from "../lib/fonts";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "@/components/providers";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Chip In",
@@ -25,6 +26,7 @@ export default function RootLayout({
           <Providers>{children}</Providers>
         </body>
       </html>
+      <Analytics />
     </ClerkProvider>
   );
 }

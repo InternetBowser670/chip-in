@@ -14,6 +14,7 @@ import { GiPokerHand, GiCardJackClubs, GiCoinflip, GiLandMine } from "react-icon
 import { RxColorWheel } from "react-icons/rx";
 import Marquee from "react-fast-marquee";
 import { PiJoystickLight } from "react-icons/pi";
+import ScrollDown from "@/components/ui/global/scroll-indicator";
 
 export default function Home() {
   return (
@@ -31,13 +32,13 @@ export default function Home() {
               />
               <p className="text-lg font-bold">ChipIn</p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 py-2">
               <SignedOut>
                 <SignInButton />
                 <SignUpButton>
                   <button
                     type="button"
-                    className="p-2 text-sm font-medium rounded-full cursor-pointer bg-primary-700 sm:text-base sm:px-5"
+                    className="p-2 m-2 text-sm font-medium transition-all border-2 rounded-full cursor-pointer bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800"
                   >
                     Sign Up
                   </button>
@@ -91,6 +92,7 @@ export default function Home() {
             </Marquee>
             <h1 className="px-4 mt-10 text-xl font-bold">All of these games and more, without ever having to spend a penny!</h1>
           </div>
+          <ScrollDown />
         </div>
 
         <div className="flex items-center justify-center w-full h-screen bg-background-800">
