@@ -23,7 +23,7 @@ export default function ScrollDown() {
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div className="border-2 p-2 backdrop-filter backdrop-blur-md border-[#121212] rounded-2xl dark:border-[#ededed] animate-bounce bg-black/20">
+      <div className="border-2 border-b-4 p-2 backdrop-filter backdrop-blur-md border-[#121212] rounded-2xl dark:border-[#ededed] animate-bounce bg-black/20">
         <div className="relative flex flex-col items-center justify-center top-1">
           <p className="mb-2">Scroll Down</p>
         </div>

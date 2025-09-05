@@ -4,23 +4,26 @@ import { clsx } from "clsx";
 import { MouseEventHandler } from "react";
 
 export interface ButtonProps {
-    onClick?: MouseEventHandler<HTMLButtonElement>,
-    Icon?: React.FC<React.SVGProps<SVGSVGElement>>,
-    text?: string,
-    className?: string
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  Icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+  text?: string;
+  className?: string;
 }
 
 export interface ChildrenButtonProps {
-    onClick?: MouseEventHandler<HTMLButtonElement>,
-    children?: React.ReactNode,
-    className?: string
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  children?: React.ReactNode;
+  className?: string;
 }
 
 export function PrimaryButton({ onClick, Icon, text, className }: ButtonProps) {
   return (
     <button
       type="button"
-      className={clsx("px-3! py-2! bg-black border-2 border-white rounded-2xl duration-300 hover:bg-gray-800 flex items-center justify-center gap-2", className)} 
+      className={clsx(
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3 ",
+        className
+      )}
       onClick={onClick}
     >
       {Icon && <Icon width={24} />} {text}
@@ -28,19 +31,38 @@ export function PrimaryButton({ onClick, Icon, text, className }: ButtonProps) {
   );
 }
 
-export function PrimaryButtonChildren({ children, onClick, className }: ChildrenButtonProps) {
+export function PrimaryButtonChildren({
+  children,
+  onClick,
+  className,
+}: ChildrenButtonProps) {
   return (
-    <button className={clsx("px-3! py-2! bg-black border-2 border-white rounded-2xl duration-300 hover:bg-gray-800 flex items-center justify-center gap-2 ", className)} onClick={onClick}>
+    <button
+      type="button"
+      className={clsx(
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3 ",
+        className
+      )}
+      onClick={onClick}
+    >
       {children}
     </button>
   );
 }
 
-export function SecondaryButton({ onClick, Icon, text, className }: ButtonProps) {
+export function SecondaryButton({
+  onClick,
+  Icon,
+  text,
+  className,
+}: ButtonProps) {
   return (
     <button
       type="button"
-      className={clsx("px-3! py-2! bg-[#134080] border-2 border-white rounded-2xl duration-300 hover:bg-[#113a73] flex items-center justify-center gap-2", className)} 
+      className={clsx(
+        "px-3! py-2! bg-[#134080] border-2 border-white rounded-2xl duration-300 hover:bg-[#113a73] flex items-center justify-center gap-2",
+        className
+      )}
       onClick={onClick}
     >
       {Icon && <Icon width={24} />} {text}
@@ -48,9 +70,19 @@ export function SecondaryButton({ onClick, Icon, text, className }: ButtonProps)
   );
 }
 
-export function SecondaryButtonChildren({ children, onClick, className }: ChildrenButtonProps) {
+export function SecondaryButtonChildren({
+  children,
+  onClick,
+  className,
+}: ChildrenButtonProps) {
   return (
-    <button className={clsx("px-3! py-2! bg-[#134080] border-2 border-white rounded-2xl duration-300 hover:bg-[#113a73] flex items-center justify-center gap-2 ", className)} onClick={onClick}>
+    <button
+      className={clsx(
+        "px-3! py-2! bg-[#134080] border-2 border-white rounded-2xl duration-300 hover:bg-[#113a73] flex items-center justify-center gap-2 ",
+        className
+      )}
+      onClick={onClick}
+    >
       {children}
     </button>
   );

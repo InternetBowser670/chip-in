@@ -21,8 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${openSans.className} antialiased p-0 text-text-50!`}>
+      <html className="h-screen!" lang="en">
+        <body className={`${openSans.className} antialiased! h-full! min-h-screen! p-0 text-text-50! bg-background-900!`}>
           <Providers>{children}</Providers>
         </body>
       </html>

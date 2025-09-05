@@ -1,18 +1,23 @@
-import React from "react";
 import clsx from "clsx";
 
 type CardProps = React.HTMLAttributes<HTMLDivElement>;
+
+interface CustomCardProps extends CardProps {
+  chin?: boolean;
+}
 
 export default function Card({
   children,
   className = "",
   color = "green",
+  chin = false,
   ...rest
-}: CardProps) {
+}: CustomCardProps) {
   return (
     <div
       className={clsx(
-        `p-[20px]! rounded-[12px] border-2 backdrop-blur-md backdrop-filter backdrop-opacity-50 ${className}`,
+        `p-[20px]! rounded-2xl border-2 backdrop-blur-md backdrop-filter backdrop-opacity-50 transition-all ${className}`,
+        chin && "border-b-6 hover:border-b-3",
         color == "green"
           ? "border-primary-400 bg-primary-900"
           : color == "blue"

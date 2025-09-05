@@ -20,8 +20,12 @@ import { RxColorWheel } from "react-icons/rx";
 import Marquee from "react-fast-marquee";
 import { PiJoystickLight } from "react-icons/pi";
 import ScrollDown from "@/components/ui/global/scroll-indicator";
+import { useRouter } from "next/navigation";
+import { PrimaryButtonChildren } from "@/components/ui/global/buttons";
 
 export default function Home() {
+  const router = useRouter();
+  
   return (
     <main className="relative">
       <div className="relative z-10">
@@ -43,13 +47,18 @@ export default function Home() {
                 <SignUpButton>
                   <button
                     type="button"
-                    className="p-2 m-2 text-sm font-medium transition-all border-2 rounded-full cursor-pointer bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800"
+                    className="p-2 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800"
                   >
                     Sign Up
                   </button>
                 </SignUpButton>
               </SignedOut>
               <SignedIn>
+                <PrimaryButtonChildren
+                  onClick={() => router.push("/dashboard")}
+                >
+                  Dashboard
+                </PrimaryButtonChildren>
                 <UserButton />
               </SignedIn>
             </div>
@@ -66,73 +75,73 @@ export default function Home() {
               gradientColor="rgb(24, 25, 27)"
               className="flex justify-center mt-20"
             >
-              <Card color="red" className="mx-2">
+              <Card chin color="red" className="mx-2">
                 <h1 className="mb-2 text-3xl text-red-400">Poker</h1>
                 <div className="flex justify-center">
                   <GiPokerHand size="70" className="text-red-400" />
                 </div>
               </Card>
-              <Card color="orange" className="mx-2">
+              <Card chin color="orange" className="mx-2">
                 <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
                 <div className="flex justify-center">
                   <GiCardJackClubs size="70" className="text-orange-400" />
                 </div>
               </Card>
-              <Card color="yellow" className="mx-2">
+              <Card chin color="yellow" className="mx-2">
                 <h1 className="mb-2 text-3xl text-yellow-400">Coinflip</h1>
                 <div className="flex justify-center">
                   <GiCoinflip size="70" className="text-yellow-400" />
                 </div>
               </Card>
-              <Card className="mx-2">
+              <Card chin className="mx-2">
                 <h1 className="mb-2 text-3xl text-primary-400">Roulette</h1>
                 <div className="flex justify-center">
                   <RxColorWheel size="70" className="text-primary-400" />
                 </div>
               </Card>
-              <Card color="blue" className="mx-2">
+              <Card chin color="blue" className="mx-2">
                 <h1 className="mb-2 text-3xl text-blue-400">Mines</h1>
                 <div className="flex justify-center">
                   <GiLandMine size="70" className="text-blue-400" />
                 </div>
               </Card>
-              <Card color="purple" className="mx-2">
+              <Card chin color="purple" className="mx-2">
                 <h1 className="mb-2 text-3xl text-purple-400">Slots</h1>
                 <div className="flex justify-center">
                   <PiJoystickLight size="70" className="text-purple-400" />
                 </div>
               </Card>
-              <Card color="red" className="mx-2">
+              <Card chin color="red" className="mx-2">
                 <h1 className="mb-2 text-3xl text-red-400">Poker</h1>
                 <div className="flex justify-center">
                   <GiPokerHand size="70" className="text-red-400" />
                 </div>
               </Card>
-              <Card color="orange" className="mx-2">
+              <Card chin color="orange" className="mx-2">
                 <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
                 <div className="flex justify-center">
                   <GiCardJackClubs size="70" className="text-orange-400" />
                 </div>
               </Card>
-              <Card color="yellow" className="mx-2">
+              <Card chin color="yellow" className="mx-2">
                 <h1 className="mb-2 text-3xl text-yellow-400">Coinflip</h1>
                 <div className="flex justify-center">
                   <GiCoinflip size="70" className="text-yellow-400" />
                 </div>
               </Card>
-              <Card className="mx-2">
+              <Card chin className="mx-2">
                 <h1 className="mb-2 text-3xl text-primary-400">Roulette</h1>
                 <div className="flex justify-center">
                   <RxColorWheel size="70" className="text-primary-400" />
                 </div>
               </Card>
-              <Card color="blue" className="mx-2">
+              <Card chin color="blue" className="mx-2">
                 <h1 className="mb-2 text-3xl text-blue-400">Mines</h1>
                 <div className="flex justify-center">
                   <GiLandMine size="70" className="text-blue-400" />
                 </div>
               </Card>
-              <Card color="purple" className="mx-2">
+              <Card chin color="purple" className="mx-2">
                 <h1 className="mb-2 text-3xl text-purple-400">Slots</h1>
                 <div className="flex justify-center">
                   <PiJoystickLight size="70" className="text-purple-400" />
