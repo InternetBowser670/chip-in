@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import ClaimChips from "@/components/ui/global/claim-chips";
+import ChipCount from "@/components/ui/global/chip-count";
 
 export default function SidebarLayout({
   children,
@@ -9,8 +11,8 @@ export default function SidebarLayout({
   return (
     <>
       <div className="flex h-screen!">
-        <div className="w-40 h-full! bg-background-700">
-          <div className="flex justify-center">
+        <div className="w-50 h-full! bg-background-700">
+          <div className="flex flex-col items-center mt-2">
             <Link href={'/'} className="flex justify-center">
               <Image
                 src={"/chip-in-logo.png"}
@@ -20,6 +22,8 @@ export default function SidebarLayout({
               />
               <p className="flex items-center text-lg!">ChipIn</p>
             </Link>
+            <ClaimChips />
+            <ChipCount />
           </div>
         </div>
         <div className="w-full h-full rounded-2xl">{children}</div>

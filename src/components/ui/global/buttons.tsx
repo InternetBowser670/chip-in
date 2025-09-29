@@ -14,6 +14,7 @@ export interface ChildrenButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   children?: React.ReactNode;
   className?: string;
+  disabled?: boolean;
 }
 
 export function PrimaryButton({ onClick, Icon, text, className }: ButtonProps) {
@@ -35,10 +36,12 @@ export function PrimaryButtonChildren({
   children,
   onClick,
   className,
+  disabled,
 }: ChildrenButtonProps) {
   return (
     <button
       type="button"
+      disabled={disabled}
       className={clsx(
         "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3 ",
         className

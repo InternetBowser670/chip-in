@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ClerkLoading,
   SignInButton,
   SignUpButton,
   SignedIn,
@@ -25,7 +26,7 @@ import { PrimaryButtonChildren } from "@/components/ui/global/buttons";
 
 export default function Home() {
   const router = useRouter();
-  
+
   return (
     <main className="relative">
       <div className="relative z-10">
@@ -42,12 +43,15 @@ export default function Home() {
               <p className="text-lg font-bold">ChipIn</p>
             </div>
             <div className="flex items-center gap-4 py-2">
+              <ClerkLoading>
+                Loading user...
+              </ClerkLoading>
               <SignedOut>
                 <SignInButton />
                 <SignUpButton>
                   <button
                     type="button"
-                    className="p-2 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800"
+                    className="px-2 py-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800"
                   >
                     Sign Up
                   </button>
