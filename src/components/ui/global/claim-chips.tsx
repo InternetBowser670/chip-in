@@ -17,7 +17,7 @@ export default function ClaimChips() {
   const [loading, setLoading] = useState(false);
   const [claimed, setClaimed] = useState(false);
 
-  const { chips, setChips } = useChips();
+  const { setChips } = useChips();
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -38,7 +38,9 @@ export default function ClaimChips() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/chips/claim", { method: "POST" });
+      const res = await fetch("/api/chips/claim", {
+        method: "POST",
+      });
       if (res.ok) {
         const claimData = await res.json();
         setClaimed(true);
@@ -75,22 +77,15 @@ export default function ClaimChips() {
   })();
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <PrimaryButtonChildren
-        className="w-[90%]"
-        onClick={handleClaim}
-        disabled={!status?.canClaim || loading || claimed}
-      >
-        <span className="flex items-center gap-1">
-          {buttonText}
-          {status?.canClaim && <PiPokerChip size={30} />}
-        </span>
-      </PrimaryButtonChildren>
-
-      <div className="flex items-center gap-1 font-semibold text-white">
-        <PiPokerChip size={22} />
-        {chips.toLocaleString()}
-      </div>
-    </div>
+    <PrimaryButtonChildren
+      className="w-[90%]"
+      onClick={handleClaim}
+      disabled={!status?.canClaim || loading || claimed}
+    >
+      <span className="flex items-center gap-1">
+        {buttonText}
+        {status?.canClaim && <PiPokerChip size={30} />}
+      </span>
+    </PrimaryButtonChildren>
   );
 }
