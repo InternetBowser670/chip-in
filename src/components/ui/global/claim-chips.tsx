@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { PrimaryButtonChildren } from "./buttons";
 import { PiPokerChip } from "react-icons/pi";
+import { useChips } from "@/components/providers";
 
 type StatusResponse = {
   canClaim: boolean;
   amount: number | null;
   nextAvailable: string | null;
+  total?: number;
 };
 
 export default function ClaimChips() {
@@ -15,30 +17,41 @@ export default function ClaimChips() {
   const [loading, setLoading] = useState(false);
   const [claimed, setClaimed] = useState(false);
 
+  const { chips, setChips } = useChips();
+
   useEffect(() => {
     const fetchStatus = async () => {
       const res = await fetch("/api/chips/status");
       if (res.ok) {
         const data: StatusResponse = await res.json();
         setStatus(data);
+        if (data.total !== undefined) {
+          setChips(data.total);
+        }
       }
     };
     fetchStatus();
-  }, []);
+  }, [setChips]);
 
   const handleClaim = async () => {
     if (!status?.canClaim || loading) return;
 
     setLoading(true);
     try {
-      const res = await fetch("/api/chips/claim", {
-        method: "POST",
-      });
+      const res = await fetch("/api/chips/claim", { method: "POST" });
       if (res.ok) {
+        const claimData = await res.json();
         setClaimed(true);
+        if (claimData.total !== undefined) {
+          setChips(claimData.total);
+        }
+
         const newStatusRes = await fetch("/api/chips/status");
         const newStatus: StatusResponse = await newStatusRes.json();
         setStatus(newStatus);
+        if (newStatus.total !== undefined) {
+          setChips(newStatus.total);
+        }
       }
     } finally {
       setLoading(false);
@@ -62,15 +75,22 @@ export default function ClaimChips() {
   })();
 
   return (
-    <PrimaryButtonChildren
-      className="w-[90%]"
-      onClick={handleClaim}
-      disabled={!status?.canClaim || loading || claimed}
-    >
-      <span className="flex items-center gap-1">
-        {buttonText}
-        {status?.canClaim && <PiPokerChip size={30} />}
-      </span>
-    </PrimaryButtonChildren>
+    <div className="flex flex-col items-center gap-2">
+      <PrimaryButtonChildren
+        className="w-[90%]"
+        onClick={handleClaim}
+        disabled={!status?.canClaim || loading || claimed}
+      >
+        <span className="flex items-center gap-1">
+          {buttonText}
+          {status?.canClaim && <PiPokerChip size={30} />}
+        </span>
+      </PrimaryButtonChildren>
+
+      <div className="flex items-center gap-1 font-semibold text-white">
+        <PiPokerChip size={22} />
+        {chips.toLocaleString()}
+      </div>
+    </div>
   );
 }

@@ -3,6 +3,34 @@ import { currentUser } from "@clerk/nextjs/server";
 import { connectToDatabases } from "@/lib/mongodb";
 import { DateTime } from "luxon";
 
+function calculateStreak(
+  claims: Record<string, number>,
+  timezone: string
+): number {
+  const claimDates = Object.keys(claims).sort();
+  if (claimDates.length === 0) return 0;
+
+  let streak = 1;
+  let currentDate = DateTime.fromFormat(
+    claimDates[claimDates.length - 1],
+    "yyyy-MM-dd",
+    { zone: timezone }
+  );
+
+  for (let i = claimDates.length - 2; i >= 0; i--) {
+    currentDate = currentDate.minus({ days: 1 });
+    const expectedDate = currentDate.toFormat("yyyy-MM-dd");
+
+    if (claimDates[i] === expectedDate) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
 export async function GET() {
   const clerkUser = await currentUser();
   if (!clerkUser) {
@@ -27,9 +55,7 @@ export async function GET() {
   const timezone = userDoc.timezone;
   const today = DateTime.now().setZone(timezone).toFormat("yyyy-MM-dd");
 
-  const chipClaims = userDoc.chipClaims || {};
-  let streak = userDoc.streak || 0;
-
+  const chipClaims: Record<string, number> = userDoc.chipClaims || {};
   const claimDates = Object.keys(chipClaims).sort();
   const lastClaimDateStr = claimDates[claimDates.length - 1];
 
@@ -43,7 +69,7 @@ export async function GET() {
       canClaim: false,
       amount: null,
       nextAvailable,
-      streak,
+      streak: calculateStreak(chipClaims, timezone),
       total: userDoc.totalChips || 0,
     });
   }
@@ -52,11 +78,14 @@ export async function GET() {
     .setZone(timezone)
     .minus({ days: 1 })
     .toFormat("yyyy-MM-dd");
+
+  let streak = calculateStreak(chipClaims, timezone);
   if (lastClaimDateStr !== yesterday) {
     streak = 0;
   }
 
   streak += 1;
+
   const chips = Math.floor(
     (Math.ceil(10 * Math.cbrt(streak) * Math.pow(streak, 1 / 10)) / 10) * 1000
   );
