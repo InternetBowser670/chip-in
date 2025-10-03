@@ -83,9 +83,7 @@ export async function GET() {
   if (lastClaimDateStr !== yesterday) {
     streak = 0;
   }
-
-  streak += 1;
-
+  
   const chips = Math.floor(
     (Math.ceil(10 * Math.cbrt(streak) * Math.pow(streak, 1 / 10)) / 10) * 1000
   );

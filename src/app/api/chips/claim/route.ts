@@ -7,7 +7,37 @@ export const dynamic = "force-dynamic";
 
 // chip formula: ceil(10 * cbrt(x) * pow(x, 1/10)) / 10 * 1000
 function calculateChips(day: number): number {
-  return (Math.ceil(10 * Math.cbrt(day) * Math.pow(day, 1 / 10)) / 10) * 1000;
+  return Math.floor(
+    (Math.ceil(10 * Math.cbrt(day) * Math.pow(day, 1 / 10)) / 10) * 1000
+  );
+}
+
+function calculateStreak(
+  claims: Record<string, number>,
+  timezone: string
+): number {
+  const claimDates = Object.keys(claims).sort();
+  if (claimDates.length === 0) return 0;
+
+  let streak = 1;
+  let currentDate = DateTime.fromFormat(
+    claimDates[claimDates.length - 1],
+    "yyyy-MM-dd",
+    { zone: timezone }
+  );
+
+  for (let i = claimDates.length - 2; i >= 0; i--) {
+    currentDate = currentDate.minus({ days: 1 });
+    const expectedDate = currentDate.toFormat("yyyy-MM-dd");
+
+    if (claimDates[i] === expectedDate) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
 }
 
 export async function POST() {
@@ -35,7 +65,10 @@ export async function POST() {
   const timezone = userDoc.timezone || "UTC";
   const today = DateTime.now().setZone(timezone).toFormat("yyyy-MM-dd");
 
-  const chipClaims = userDoc.chipClaims || {};
+  const chipClaims: Record<string, number> = userDoc.chipClaims || {};
+  const claimDates = Object.keys(chipClaims).sort();
+  const lastClaimDateStr = claimDates[claimDates.length - 1];
+
   const totalChips = userDoc.totalChips || 0;
 
   if (chipClaims[today]) {
@@ -45,8 +78,18 @@ export async function POST() {
     );
   }
 
-  const claimCount = Object.keys(chipClaims).length + 1;
-  const chips = calculateChips(claimCount);
+  const yesterday = DateTime.now()
+    .setZone(timezone)
+    .minus({ days: 1 })
+    .toFormat("yyyy-MM-dd");
+
+  let streak = calculateStreak(chipClaims, timezone);
+
+  if (lastClaimDateStr !== yesterday) {
+    streak = 0;
+  }
+
+  const chips = calculateChips(streak);
 
   await users.updateOne(
     { id: clerkUser.id },
