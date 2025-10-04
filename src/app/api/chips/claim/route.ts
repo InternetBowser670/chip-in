@@ -37,7 +37,7 @@ function calculateStreak(
     }
   }
 
-  return streak;
+  return streak + 1;
 }
 
 export async function POST() {
@@ -86,7 +86,7 @@ export async function POST() {
   let streak = calculateStreak(chipClaims, timezone);
 
   if (lastClaimDateStr !== yesterday) {
-    streak = 0;
+    streak = 1;
   }
 
   const chips = calculateChips(streak);

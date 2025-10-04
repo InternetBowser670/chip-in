@@ -28,7 +28,7 @@ function calculateStreak(
     }
   }
 
-  return streak;
+  return streak + 1;
 }
 
 export async function GET() {
@@ -81,9 +81,9 @@ export async function GET() {
 
   let streak = calculateStreak(chipClaims, timezone);
   if (lastClaimDateStr !== yesterday) {
-    streak = 0;
+    streak = 1;
   }
-  
+
   const chips = Math.floor(
     (Math.ceil(10 * Math.cbrt(streak) * Math.pow(streak, 1 / 10)) / 10) * 1000
   );
