@@ -1,4 +1,4 @@
-// from pzn - may not use
+// from pzn
 
 import { clsx } from "clsx";
 import { MouseEventHandler } from "react";
@@ -8,6 +8,7 @@ export interface ButtonProps {
   Icon?: React.FC<React.SVGProps<SVGSVGElement>>;
   text?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export interface ChildrenButtonProps {
@@ -17,12 +18,20 @@ export interface ChildrenButtonProps {
   disabled?: boolean;
 }
 
-export function PrimaryButton({ onClick, Icon, text, className }: ButtonProps) {
+export function PrimaryButton({
+  onClick,
+  Icon,
+  text,
+  className,
+  disabled,
+}: ButtonProps) {
   return (
     <button
       type="button"
+      disabled={disabled}
       className={clsx(
-        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3 ",
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3",
+        disabled && "opacity-50 cursor-not-allowed",
         className
       )}
       onClick={onClick}
@@ -43,7 +52,8 @@ export function PrimaryButtonChildren({
       type="button"
       disabled={disabled}
       className={clsx(
-        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3 ",
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3",
+        disabled && "opacity-50 cursor-not-allowed",
         className
       )}
       onClick={onClick}
@@ -58,12 +68,15 @@ export function SecondaryButton({
   Icon,
   text,
   className,
+  disabled,
 }: ButtonProps) {
   return (
     <button
       type="button"
+      disabled={disabled}
       className={clsx(
         "px-3! py-2! bg-[#134080] border-2 border-white rounded-2xl duration-300 hover:bg-[#113a73] flex items-center justify-center gap-2",
+        disabled && "opacity-50 cursor-not-allowed",
         className
       )}
       onClick={onClick}
@@ -77,11 +90,15 @@ export function SecondaryButtonChildren({
   children,
   onClick,
   className,
+  disabled,
 }: ChildrenButtonProps) {
   return (
     <button
+      type="button"
+      disabled={disabled}
       className={clsx(
-        "px-3! py-2! bg-[#134080] border-2 border-white rounded-2xl duration-300 hover:bg-[#113a73] flex items-center justify-center gap-2 ",
+        "px-3! py-2! bg-[#134080] border-2 border-white rounded-2xl duration-300 hover:bg-[#113a73] flex items-center justify-center gap-2",
+        disabled && "opacity-50 cursor-not-allowed",
         className
       )}
       onClick={onClick}
