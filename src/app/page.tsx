@@ -9,7 +9,6 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import Image from "next/image";
-import GlowBg from "@/components/ui/backgrounds/glow-bg";
 import Card from "@/components/ui/global/card";
 import {
   GiPokerHand,
@@ -31,7 +30,6 @@ export default function Home() {
     <main className="relative">
       <div className="relative z-10">
         <div className="relative w-full h-screen pb-2 overflow-hidden bg-background-900">
-          <GlowBg />
           <header className="relative w-full h-[50px] flex items-center bg-background-800 px-2 justify-between py-2 border-b border-b-background-700 z-20">
             <div className="flex items-center gap-2">
               <Image
@@ -43,9 +41,7 @@ export default function Home() {
               <p className="text-lg font-bold">ChipIn</p>
             </div>
             <div className="flex items-center gap-4 py-2">
-              <ClerkLoading>
-                Loading user...
-              </ClerkLoading>
+              <ClerkLoading>Loading user...</ClerkLoading>
               <SignedOut>
                 <SignInButton />
                 <SignUpButton>
@@ -153,7 +149,7 @@ export default function Home() {
               </Card>
             </Marquee>
             <h1 className="px-4 mt-10 text-xl font-bold">
-              All of these games and more, without ever having to spend a penny!
+              Roll the reels, deal the cards, and chase that jackpot thrill!
             </h1>
           </div>
           <ScrollDown />

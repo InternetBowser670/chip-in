@@ -30,7 +30,7 @@ export function PrimaryButton({
       type="button"
       disabled={disabled}
       className={clsx(
-        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3",
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400",
         disabled && "opacity-50 cursor-not-allowed",
         className
       )}
@@ -52,7 +52,7 @@ export function PrimaryButtonChildren({
       type="button"
       disabled={disabled}
       className={clsx(
-        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800 hover:border-b-3",
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800",
         disabled && "opacity-50 cursor-not-allowed",
         className
       )}
