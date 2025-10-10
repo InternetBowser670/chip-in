@@ -12,12 +12,12 @@ import Image from "next/image";
 import Card from "@/components/ui/global/card";
 import {
   GiPokerHand,
-  GiCardJackClubs,
+  GiCardJackSpades,
   GiCoinflip,
   GiLandMine,
+  GiPerspectiveDiceSixFacesSix,
 } from "react-icons/gi";
 import { RxColorWheel } from "react-icons/rx";
-import Marquee from "react-fast-marquee";
 import { PiJoystickLight } from "react-icons/pi";
 import ScrollDown from "@/components/ui/global/scroll-indicator";
 import { useRouter } from "next/navigation";
@@ -68,12 +68,8 @@ export default function Home() {
             <h1 className="px-4 text-4xl font-bold">
               Gambling without the risk
             </h1>
-            <Marquee
-              autoFill
-              pauseOnHover
-              gradient
-              gradientColor="rgb(24, 25, 27)"
-              className="flex justify-center mt-20"
+            <div
+              className="flex justify-center items-center mt-20"
             >
               <Card chin color="red" className="mx-2">
                 <h1 className="mb-2 text-3xl text-red-400">Poker</h1>
@@ -84,7 +80,7 @@ export default function Home() {
               <Card chin color="orange" className="mx-2">
                 <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
                 <div className="flex justify-center">
-                  <GiCardJackClubs size="70" className="text-orange-400" />
+                  <GiCardJackSpades size="70" className="text-orange-400" />
                 </div>
               </Card>
               <Card chin color="yellow" className="mx-2">
@@ -112,42 +108,12 @@ export default function Home() {
                 </div>
               </Card>
               <Card chin color="red" className="mx-2">
-                <h1 className="mb-2 text-3xl text-red-400">Poker</h1>
+                <h1 className="mb-2 text-3xl text-red-400">And More!</h1>
                 <div className="flex justify-center">
-                  <GiPokerHand size="70" className="text-red-400" />
+                  <GiPerspectiveDiceSixFacesSix size="70" className="text-red-400" />
                 </div>
-              </Card>
-              <Card chin color="orange" className="mx-2">
-                <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
-                <div className="flex justify-center">
-                  <GiCardJackClubs size="70" className="text-orange-400" />
-                </div>
-              </Card>
-              <Card chin color="yellow" className="mx-2">
-                <h1 className="mb-2 text-3xl text-yellow-400">Coinflip</h1>
-                <div className="flex justify-center">
-                  <GiCoinflip size="70" className="text-yellow-400" />
-                </div>
-              </Card>
-              <Card chin className="mx-2">
-                <h1 className="mb-2 text-3xl text-primary-400">Roulette</h1>
-                <div className="flex justify-center">
-                  <RxColorWheel size="70" className="text-primary-400" />
-                </div>
-              </Card>
-              <Card chin color="blue" className="mx-2">
-                <h1 className="mb-2 text-3xl text-blue-400">Mines</h1>
-                <div className="flex justify-center">
-                  <GiLandMine size="70" className="text-blue-400" />
-                </div>
-              </Card>
-              <Card chin color="purple" className="mx-2">
-                <h1 className="mb-2 text-3xl text-purple-400">Slots</h1>
-                <div className="flex justify-center">
-                  <PiJoystickLight size="70" className="text-purple-400" />
-                </div>
-              </Card>
-            </Marquee>
+              </Card> 
+            </div>
             <h1 className="px-4 mt-10 text-xl font-bold">
               Roll the reels, deal the cards, and chase that jackpot thrill!
             </h1>
