@@ -32,8 +32,23 @@ export default function SidebarLayout({
         </div>
       </SignedIn>
       <SignedOut>
-        <div className="flex items-center justify-center w-full h-screen">
-          Please sign in to access the dashboard.
+        <div className="flex h-screen!">
+          <div className="w-50 h-full! bg-background-700">
+            <div className="flex flex-col items-center mt-2">
+              <Link href={"/"} className="flex justify-center">
+                <Image
+                  src={"/chip-in-logo.png"}
+                  width={50}
+                  height={50}
+                  alt="Chip In logo"
+                />
+                <p className="flex items-center text-lg!">ChipIn</p>
+              </Link>
+            </div>
+          </div>
+          <div className="flex items-center justify-center w-full h-screen">
+            Please sign in to access the dashboard.
+          </div>
         </div>
       </SignedOut>
     </>
