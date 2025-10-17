@@ -19,12 +19,6 @@ export default function Page() {
       src: "https://lottie.host/5f9fe7cd-0b12-40e7-9693-5d674894d047/tjCkcZlb4e.lottie",
       autoplay: true,
       loop: false,
-      stateMachineConfig: {
-        openUrlPolicy: {
-          requireUserInteraction: true,
-          whitelist: ["https://trusted-site.com"],
-        },
-      },
     });
 
     dotLottieRef.current = dotLottie;
@@ -32,7 +26,6 @@ export default function Page() {
     dotLottie.addEventListener("load", () => {
       dotLottie.stateMachineLoad("StateMachine1");
       dotLottie.stateMachineStart();
-      console.log("State machine started:", dotLottie.stateMachineGetStatus());
     });
 
     return () => {
@@ -53,16 +46,16 @@ export default function Page() {
   }, [coinState]);
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="flex-col items-center p-4 bg-gray-700 rounded-2xl text-center">
-        <h1 className="text-3xl font-bold mb-2">I&apos;m working on it!</h1>
-        <h1 className="text-xl text-gray-400 mb-2">Enjoy my animation for now</h1>
+    <div className="flex items-center justify-center h-screen">
+      <div className="flex-col items-center p-4 text-center bg-gray-700 rounded-2xl">
+        <h1 className="mb-2 text-3xl font-bold">I&apos;m working on it!</h1>
+        <h1 className="mb-2 text-xl text-gray-400">Enjoy my animation for now</h1>
 
         <div className="flex justify-center">
           <canvas ref={canvasRef} width="300" height="300" />
         </div>
 
-        <div className="mt-4 flex gap-2 justify-center">
+        <div className="flex justify-center gap-2 mt-4">
           <PrimaryButtonChildren onClick={() => setCoinState("flipping")}>
             Flip 🔁
           </PrimaryButtonChildren>
