@@ -91,15 +91,22 @@ export async function POST() {
 
   const chips = calculateChips(streak);
 
-  await users.updateOne(
-    { id: clerkUser.id },
-    {
-      $set: {
-        [`chipClaims.${today}`]: chips,
-        totalChips: totalChips + chips,
+  await users.updateOne({ id: clerkUser.id }, {
+    $set: {
+      [`chipClaims.${today}`]: chips,
+      totalChips: totalChips + chips,
+    },
+    $push: {
+      history: {
+        type: "daily-claim",
+        change: chips,
+        startCount: userDoc.totalChips || 0,
+        endCount: totalChips + chips,
+        date: Date.now(),
       },
-    }
-  );
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
 
   return NextResponse.json(
     {
