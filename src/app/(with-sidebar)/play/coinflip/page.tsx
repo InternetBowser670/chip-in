@@ -61,7 +61,7 @@ export default function Page() {
     if (coinState === "flipping") return;
     
     setCoinState("flipping");
-    setMessage("flipping");
+    setMessage("Flipping...");
 
     const res = await fetch("/api/games/coinflip", {
       method: "POST",
