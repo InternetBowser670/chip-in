@@ -3,7 +3,6 @@ import Link from "next/link";
 import ClaimChips from "@/components/ui/global/claim-chips";
 import ChipCount from "@/components/ui/global/chip-count";
 import {
-  ClerkLoading,
   SignedIn,
   SignedOut,
   SignInButton,
