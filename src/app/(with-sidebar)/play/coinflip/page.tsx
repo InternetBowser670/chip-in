@@ -7,6 +7,7 @@ import { useChips } from "@/components/providers";
 import Card from "@/components/ui/global/card";
 import { sleep } from "@/lib/sleep";
 import clsx from "clsx";
+import confetti from "canvas-confetti";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -59,7 +60,7 @@ export default function Page() {
     }
 
     if (coinState === "flipping") return;
-    
+
     setCoinState("flipping");
     setMessage("Flipping...");
 
@@ -91,6 +92,29 @@ export default function Page() {
       return;
     } else if (face == outcome) {
       setMessage("You win!");
+
+      const duration = 5 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+      const randomInRange = (min: number, max: number) =>
+        Math.random() * (max - min) + min;
+      const interval = window.setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        });
+      }, 250);
     } else {
       setMessage("You lose!");
     }
