@@ -163,7 +163,7 @@ export default function Page() {
               <Card
                 chin
                 color="red"
-                className={clsx(coinState === "flipping" && "grayscale")}
+                className={clsx(coinState === "flipping" ? "grayscale cursor-not-allowed" : "cursor-pointer")}
                 onClick={() => handleFlip("heads")}
               >
                 Start Heads
@@ -171,7 +171,7 @@ export default function Page() {
               <Card
                 chin
                 color="blue"
-                className={clsx(coinState === "flipping" && "grayscale")}
+                className={clsx(coinState === "flipping" ? "grayscale cursor-not-allowed" : "cursor-pointer")}
                 onClick={() => handleFlip("tails")}
               >
                 Start Tails
