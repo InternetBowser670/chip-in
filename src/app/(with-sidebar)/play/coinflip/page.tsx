@@ -139,21 +139,21 @@ export default function Page() {
               <PiPokerChip className="inline ml-2!" size={24} />
               <button
                 type="button"
-                className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center"
+                className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center border-l-white border-l-2"
                 onClick={() => setBetAmt(betAmt * 2)}
               >
                 x2
               </button>
               <button
                 type="button"
-                className="h-full! bg-background-600 px-2 border-l-white border-l-2"
+                className="h-full! bg-background-600 px-2 border-x-white border-x-2"
                 onClick={() => setBetAmt(betAmt / 2)}
               >
                 /2
               </button>
               <button
                 type="button"
-                className="h-full! bg-background-600 px-2 border-l-white border-l-2"
+                className="h-full! bg-background-600 px-2"
                 onClick={() => setBetAmt(chips)}
               >
                 All In
