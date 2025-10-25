@@ -24,7 +24,7 @@ export default async function SidebarLayout({
         <div className="flex h-screen!">
           <div className="w-50 h-full! bg-background-700">
             <div className="flex flex-col items-center justify-between h-full">
-              <div className="flex flex-col items-center mt-2">
+              <div className="flex flex-col items-center mx-2 mt-2">
                 <Link href={"/"} className="flex justify-center">
                   <Image
                     src={"/chip-in-logo.png"}

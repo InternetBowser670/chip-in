@@ -66,19 +66,14 @@ export default function ClaimChips() {
     if (status.canClaim && status.amount)
       return `Claim ${status.amount.toLocaleString()} `;
     if (!status.canClaim && status.nextAvailable) {
-      const next = new Date(status.nextAvailable).toLocaleString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-      return `Come back at ${next}`;
+      return `Come back tommorrow.`;
     }
     return "Unavailable";
   })();
 
   return (
     <PrimaryButtonChildren
-      className="w-[90%]"
+      className="w-full"
       onClick={handleClaim}
       disabled={!status?.canClaim || loading || claimed}
     >
