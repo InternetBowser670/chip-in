@@ -20,6 +20,13 @@ export default function Page() {
   >("tails");
   const [betAmt, setBetAmt] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
+  const [pastFlips, setPastFlips] = useState<
+    Array<{
+      betFace: "heads" | "tails";
+      outcome: "heads" | "tails" | "err";
+      betAmt: number;
+    }>
+  >([]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -87,6 +94,8 @@ export default function Page() {
       setChips(json.updatedChips);
     }
 
+    setPastFlips([{ betFace: face, outcome, betAmt }, ...pastFlips]);
+
     if (outcome === "err") {
       alert("An error occurred during the coin flip: " + (json.message || ""));
       return;
@@ -122,7 +131,7 @@ export default function Page() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] max-w-[80%]">
+      <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] max-w-[80%]! max-w-[80%]">
         <div className="h-full! p-4 bg-background-700 rounded-r-2xl">
           <div>
             <h1 className="text-5xl font-bold">Coinflip</h1>
@@ -163,7 +172,11 @@ export default function Page() {
               <Card
                 chin
                 color="red"
-                className={clsx(coinState === "flipping" ? "grayscale cursor-not-allowed" : "cursor-pointer")}
+                className={clsx(
+                  coinState === "flipping"
+                    ? "grayscale cursor-not-allowed"
+                    : "cursor-pointer"
+                )}
                 onClick={() => handleFlip("heads")}
               >
                 Start Heads
@@ -171,7 +184,11 @@ export default function Page() {
               <Card
                 chin
                 color="blue"
-                className={clsx(coinState === "flipping" ? "grayscale cursor-not-allowed" : "cursor-pointer")}
+                className={clsx(
+                  coinState === "flipping"
+                    ? "grayscale cursor-not-allowed"
+                    : "cursor-pointer"
+                )}
                 onClick={() => handleFlip("tails")}
               >
                 Start Tails
@@ -182,8 +199,30 @@ export default function Page() {
             <h2 className="text-2xl font-bold text-center">{message}</h2>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center gap-4 p-4">
-          <canvas ref={canvasRef} width="300" height="300" />
+        <div className="p-4">
+          <div
+            className={clsx(
+              "flex gap-2 opacity-0 transition-all duration-300 overflow-hidden max-w-full",
+              pastFlips.length > 0 && "opacity-100"
+            )}
+          >
+            {pastFlips.map((flip, i) => (
+              <Card
+                color={flip.betFace == flip.outcome ? "green" : "red"}
+                className={clsx(
+                  "h-4 flex justify-center items-center transition-all duration-300 w-30",
+                  flip.betFace == flip.outcome ? "bg-green-500" : "bg-red-500",
+                  "animate-[flipIn_.35s_ease-out]"
+                )}
+                key={i}
+              >
+                {flip.betFace[0].toLocaleUpperCase()} - {flip.betAmt}
+              </Card>
+            ))}
+          </div>
+          <div className="flex items-center justify-center w-full h-full">
+            <canvas ref={canvasRef} width="300" height="300" />
+          </div>
         </div>
       </div>
     </div>

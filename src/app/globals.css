@@ -158,3 +158,18 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+@keyframes flipIn {
+  0% {
+    transform: scale(0.2) rotateX(90deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05) rotateX(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotateX(0deg);
+    opacity: 1;
+  }
+}
