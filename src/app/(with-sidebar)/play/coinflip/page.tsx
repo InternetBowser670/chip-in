@@ -131,7 +131,7 @@ export default function Page() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] max-w-[80%]! max-w-[80%]">
+      <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] w-[80%]!">
         <div className="h-full! p-4 bg-background-700 rounded-r-2xl">
           <div>
             <h1 className="text-5xl font-bold">Coinflip</h1>
@@ -199,7 +199,7 @@ export default function Page() {
             <h2 className="text-2xl font-bold text-center">{message}</h2>
           </div>
         </div>
-        <div className="p-4">
+        <div className="w-full p-4">
           <div
             className={clsx(
               "flex gap-2 opacity-0 transition-all duration-300 overflow-hidden max-w-full",
