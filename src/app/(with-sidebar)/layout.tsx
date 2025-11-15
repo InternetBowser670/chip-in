@@ -21,7 +21,7 @@ export default async function SidebarLayout({
   return (
     <>
       <SignedIn>
-        <div className="flex h-screen!">
+        <div className="flex h-screen! w-full">
           <div className="w-50 h-full! bg-background-700">
             <div className="flex flex-col items-center justify-between h-full">
               <div className="flex flex-col items-center mx-2 mt-2">
@@ -47,7 +47,7 @@ export default async function SidebarLayout({
               </div>
             </div>
           </div>
-          <div className="w-full h-full rounded-2xl">{children}</div>
+          <div className="h-full rounded-2xl w-[calc(100%-12.5rem)]">{children}</div>
         </div>
       </SignedIn>
       <SignedOut>

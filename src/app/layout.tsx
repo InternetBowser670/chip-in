@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html className="h-screen!" lang="en">
+      <html className="h-screen! w-screen!" lang="en">
         <head>
           {/* Google Analytics */}
           <Script
@@ -41,7 +41,7 @@ export default function RootLayout({
           </Script>
         </head>
         <body
-          className={`${openSans.className} antialiased! h-full! min-h-screen! p-0 text-text-50! bg-background-900!`}
+          className={`${openSans.className} antialiased! h-full! w-full min-h-screen! p-0 text-text-50! bg-background-900!`}
         >
           <Providers>
             <TimezoneSetter />

@@ -130,7 +130,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center w-full h-screen">
       <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] w-[80%]!">
         <div className="h-full! p-4 bg-background-700 rounded-r-2xl">
           <div>
@@ -199,10 +199,10 @@ export default function Page() {
             <h2 className="text-2xl font-bold text-center">{message}</h2>
           </div>
         </div>
-        <div className="w-full p-4">
+        <div className="py-4 pl-4 overflow-hidden grow-1">
           <div
             className={clsx(
-              "flex gap-2 opacity-0 transition-all duration-300 overflow-hidden max-w-full",
+              "flex gap-2 opacity-0 transition-all duration-300 overflow-hidden w-fit h-12 items-center",
               pastFlips.length > 0 && "opacity-100"
             )}
           >
@@ -220,8 +220,8 @@ export default function Page() {
               </Card>
             ))}
           </div>
-          <div className="flex items-center justify-center w-full h-full">
-            <canvas ref={canvasRef} width="300" height="300" />
+          <div className="flex h-[calc(100%-64px)] w-full justify-center items-center pt-2">
+            <canvas ref={canvasRef} width="400" height="400" />
           </div>
         </div>
       </div>
