@@ -28,7 +28,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <main className="relative">
+    <main className="relative w-screen h-screen overflow-x-hidden">
       <div className="relative z-10">
         <div className="relative w-full h-screen pb-2 overflow-hidden bg-background-900">
           <header className="relative w-full h-[50px] flex items-center bg-background-800 px-2 justify-between py-2 border-b border-b-background-700 z-20">
