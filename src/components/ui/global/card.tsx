@@ -30,6 +30,8 @@ export default function Card({
           ? "border-orange-400 bg-orange-900 hover:bg-orange-800"
           : color == "yellow"
           ? "border-yellow-400 bg-yellow-900 hover:bg-yellow-800"
+          : color == "grayscale"
+          ? "border-gray-400 bg-gray-900 hover:bg-gray-800"
           : "border-primary-400 bg-primary-900 hover:bg-primary-800"
       )}
       {...rest}

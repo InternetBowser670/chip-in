@@ -70,13 +70,13 @@ export default function Home() {
               Gambling without the risk
             </h1>
             <div className="flex items-center justify-center mt-20">
-              <Card chin color="red" className="mx-2 grayscale">
+              <Card chin color="grayscale" className="mx-2 grayscale">
                 <h1 className="mb-2 text-3xl text-red-400">Poker</h1>
                 <div className="flex justify-center">
                   <GiPokerHand size="70" className="text-red-400" />
                 </div>
               </Card>
-              <Card chin color="orange" className="mx-2 grayscale">
+              <Card chin color="grayscale" className="mx-2 grayscale">
                 <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
                 <div className="flex justify-center">
                   <GiCardJackSpades size="70" className="text-orange-400" />
@@ -90,25 +90,25 @@ export default function Home() {
                   </div>
                 </Card>
               </Link>
-              <Card chin className="mx-2 grayscale">
+              <Card chin color="grayscale" className="mx-2 grayscale">
                 <h1 className="mb-2 text-3xl text-primary-400">Roulette</h1>
                 <div className="flex justify-center">
                   <RxColorWheel size="70" className="text-primary-400" />
                 </div>
               </Card>
-              <Card chin color="blue" className="mx-2 grayscale">
+              <Card chin color="grayscale" className="mx-2 grayscale">
                 <h1 className="mb-2 text-3xl text-blue-400">Mines</h1>
                 <div className="flex justify-center">
                   <GiLandMine size="70" className="text-blue-400" />
                 </div>
               </Card>
-              <Card chin color="purple" className="mx-2 grayscale">
+              <Card chin color="grayscale" className="mx-2 grayscale">
                 <h1 className="mb-2 text-3xl text-purple-400">Slots</h1>
                 <div className="flex justify-center">
                   <PiJoystickLight size="70" className="text-purple-400" />
                 </div>
               </Card>
-              <Card chin color="red" className="mx-2 grayscale">
+              <Card chin color="grayscale" className="mx-2 grayscale">
                 <h1 className="mb-2 text-3xl text-red-400">And More!</h1>
                 <div className="flex justify-center">
                   <GiPerspectiveDiceSixFacesSix
