@@ -53,7 +53,7 @@ export default async function SidebarLayout({
       <SignedOut>
         <div className="flex h-screen!">
           <div className="w-50 h-full! bg-background-700">
-            <div className="flex flex-col items-center justify-between h-full mt-2">
+            <div className="flex flex-col items-center justify-between h-full pt-2">
               <Link href={"/"} className="flex justify-center">
                 <Image
                   src={"/chip-in-logo.png"}
@@ -76,8 +76,8 @@ export default async function SidebarLayout({
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-center w-full h-screen">
-            Please sign in to access the dashboard.
+          <div className="flex items-center justify-center w-[calc(100%-200px)] h-screen">
+            Please sign in to access this page.
           </div>
         </div>
       </SignedOut>
