@@ -210,7 +210,7 @@ export default function Page() {
               <Card
                 color={flip.betFace == flip.outcome ? "green" : "red"}
                 className={clsx(
-                  "h-4 flex justify-center items-center transition-all duration-300 w-30",
+                  "h-4 flex justify-center items-center transition-all duration-300 min-w-30",
                   flip.betFace == flip.outcome ? "bg-green-500" : "bg-red-500",
                   "animate-[flipIn_.35s_ease-out]"
                 )}
