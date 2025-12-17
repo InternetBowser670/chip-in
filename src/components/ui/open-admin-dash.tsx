@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Card from "./global/card";
+import Link from "next/link";
 
 export default function OpenAdminDash() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -19,9 +20,11 @@ export default function OpenAdminDash() {
   }
 
   return (
-    <Card chin color="red" className="w-full">
-      <h1 className="mb-2 text-3xl text-red-400">Open Admin Dashboard</h1>
-      <div className="flex justify-center"></div>
-    </Card>
+    <Link href={"/dashboard/admin"}>
+      <Card chin color="red" className="w-full">
+        <h1 className="mb-2 text-3xl text-red-400">Open Admin Dashboard</h1>
+        <div className="flex justify-center"></div>
+      </Card>
+    </Link>
   );
 }
