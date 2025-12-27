@@ -1,6 +1,5 @@
 "use client";
 
-import Card from "@/components/ui/global/card";
 import { useState } from "react";
 
 export default function AdminPage() {
@@ -40,11 +39,8 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <Card noHover color="blue" className="">
-        <h1 className="mb-2 text-3xl">Admin options are a work in progress.</h1>
-        <div className="flex justify-center"></div>
-      </Card>
+    <div className="h-full p-4">
+      <h1 className="mb-2 text-5xl font-bold">Admin Options:</h1>
     </div>
   );
 }
