@@ -1,3 +1,3 @@
-export default function POST() {
+export function POST() {
     return new Response('Not Implemented', { status: 501 });
 }
