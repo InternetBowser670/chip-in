@@ -18,7 +18,7 @@ export async function connectToDatabases(
   const client = new MongoClient(uri);
   await client.connect();
 
-  const mainDb = useProdDB ? client.db("chip-in-dev") : client.db(process.env.MONGODB_DB_NAME || "chip-in-dev");
+  const mainDb = useProdDB ? client.db("chip-in-prod") : client.db(process.env.MONGODB_DB_NAME || "chip-in-dev");
 
   // Cache the connections
   cachedClient = client;
