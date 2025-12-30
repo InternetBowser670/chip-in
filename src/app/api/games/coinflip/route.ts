@@ -80,6 +80,8 @@ export async function POST(req: Request) {
           endCount: updatedChips,
           change: betFace === outcome ? betAmt : -betAmt,
           date: Date.now(),
+          actor: "user",
+          version: "history_v2"
         },
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

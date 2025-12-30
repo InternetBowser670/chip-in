@@ -103,6 +103,8 @@ export async function POST() {
         startCount: userDoc.totalChips || 0,
         endCount: totalChips + chips,
         date: Date.now(),
+        actor: "user",
+        version: "history_v2",
       },
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
