@@ -108,6 +108,11 @@ export default function AdminPage() {
     }
 
     function badgeGridRenderer({ value }: { value: Badge[] }) {
+
+      if (!value || value.length === 0) {
+        return <div className="mx-[15px] h-full">None</div>;
+      }
+
       return (
         <div className="px-[15px] h-full">
           {value.map((badge, index) => (
