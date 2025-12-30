@@ -10,6 +10,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { PrimaryButton, SecondaryButton } from "@/components/ui/global/buttons";
 
 export default async function SidebarLayout({
   children,
@@ -36,6 +37,12 @@ export default async function SidebarLayout({
                 </Link>
                 <ClaimChips />
                 <ChipCount />
+                <Link href="/dashboard" className="mt-4">
+                  <SecondaryButton text="Dashboard" />
+                </Link>
+                <Link href="/play/coinflip">
+                  <PrimaryButton text="Coinflip" />
+                </Link>
               </div>
               <div className="flex flex-col items-center mb-4 overflow-x-hidden">
                 <div className="flex justify-end gap-4 overflow-hidden">
@@ -47,7 +54,9 @@ export default async function SidebarLayout({
               </div>
             </div>
           </div>
-          <div className="h-full rounded-2xl w-[calc(100%-12.5rem)]">{children}</div>
+          <div className="h-full rounded-2xl w-[calc(100%-12.5rem)]">
+            {children}
+          </div>
         </div>
       </SignedIn>
       <SignedOut>

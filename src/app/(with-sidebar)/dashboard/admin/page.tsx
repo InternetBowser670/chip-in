@@ -60,7 +60,7 @@ export default function AdminPage() {
     const json = await res.json();
 
     if (res.ok) {
-      if ((json.userId = user.user?.id)) {
+      if ((json.userId == user.user?.id)) {
         setChips(amt);
       }
       alert(`Successfully updated chips for user "${username}"`);
