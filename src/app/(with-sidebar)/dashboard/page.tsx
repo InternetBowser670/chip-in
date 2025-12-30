@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Card from "@/components/ui/global/card";
 import { GiCoinflip } from "react-icons/gi";
-import OpenAdminDash from "@/components/ui/open-admin-dash";
+import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
 
 export default function Page() {
   const router = useRouter();

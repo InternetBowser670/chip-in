@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Card from "./global/card";
+import Card from "../global/card";
 import Link from "next/link";
 
 export default function OpenAdminDash() {

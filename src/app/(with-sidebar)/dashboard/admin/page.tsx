@@ -10,6 +10,8 @@ import { useUser } from "@clerk/nextjs";
 import { useChips } from "@/components/providers";
 import { Badge } from "@/lib/types";
 import { v4 } from "uuid";
+import { IoReload } from "react-icons/io5";
+import { PrimaryButtonChildren } from "@/components/ui/global/buttons";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -60,7 +62,7 @@ export default function AdminPage() {
     const json = await res.json();
 
     if (res.ok) {
-      if ((json.userId == user.user?.id)) {
+      if (json.userId == user.user?.id) {
         setChips(amt);
       }
       alert(`Successfully updated chips for user "${username}"`);
@@ -108,7 +110,6 @@ export default function AdminPage() {
     }
 
     function badgeGridRenderer({ value }: { value: Badge[] }) {
-
       if (!value || value.length === 0) {
         return <div className="mx-[15px] h-full">None</div>;
       }
@@ -116,8 +117,13 @@ export default function AdminPage() {
       return (
         <div className="px-[15px] h-full">
           {value.map((badge, index) => (
-            <p key={badge.name + v4()} className="w-8 h-8 text-center rounded-full">
-              {badge.name.split("")[0].toUpperCase() + badge.name.split(" ")[0].slice(1)} {index < value.length - 1 ? "," : ""}
+            <p
+              key={badge.name + v4()}
+              className="w-8 h-8 text-center rounded-full"
+            >
+              {badge.name.split("")[0].toUpperCase() +
+                badge.name.split(" ")[0].slice(1)}{" "}
+              {index < value.length - 1 ? "," : ""}
             </p>
           ))}
         </div>
@@ -167,7 +173,13 @@ export default function AdminPage() {
     return (
       <>
         <Card noHover className="mx-20 mt-8">
-          <h1 className="mb-6 text-3xl">Manage Users</h1>
+          <div className="flex items-center justify-between w-full mb-6">
+            <h1 className="text-3xl">Manage Users</h1>
+            <PrimaryButtonChildren onClick={async () => {await fetchUserData()}}>
+              <IoReload />
+            </PrimaryButtonChildren>
+          </div>
+
           <div className="h-[500px]">
             <AgGridReact
               rowData={userData}
