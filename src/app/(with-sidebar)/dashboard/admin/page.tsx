@@ -111,7 +111,7 @@ export default function AdminPage() {
       { field: "id" },
       { field: "username" },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      { field: "totalChips", editable: true, valueFormatter: (params: any) => { return params.value.toLocaleString(); }
+      { field: "totalChips", editable: true, valueFormatter: (params: any) => { return (params.value ?? 0).toLocaleString(); }
  },
     ];
 
