@@ -7,7 +7,7 @@ export async function POST() {
     const usersCollection = await mainDb.collection("users");
 
     const users = await usersCollection
-      .find({}, { projection: { id: 1, username: 1, image_url: 1, has_image: 1, totalChips: 1 } })
+      .find({}, { projection: { id: 1, username: 1, image_url: 1, has_image: 1, totalChips: 1, created_at: 1, badges: 1, last_active_at: 1 } })
       .toArray();
 
   return new Response(JSON.stringify({ users }), { status: 200 });

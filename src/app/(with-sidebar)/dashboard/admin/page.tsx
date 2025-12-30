@@ -5,9 +5,11 @@ import Card from "@/components/ui/global/card";
 import { useEffect, useState } from "react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { gridDarkTheme } from "@/components/grid"
+import { gridDarkTheme } from "@/components/grid";
 import { useUser } from "@clerk/nextjs";
 import { useChips } from "@/components/providers";
+import { Badge } from "@/lib/types";
+import { v4 } from "uuid";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -58,12 +60,16 @@ export default function AdminPage() {
     const json = await res.json();
 
     if (res.ok) {
-      if (json.userId = user.user?.id) {
+      if ((json.userId = user.user?.id)) {
         setChips(amt);
       }
       alert(`Successfully updated chips for user "${username}"`);
     } else {
-      alert(`Failed to update chips for user "${username}" with error ${res.status} ${json.message && `and message: ${json.message}`}`);
+      alert(
+        `Failed to update chips for user "${username}" with error ${
+          res.status
+        } ${json.message && `and message: ${json.message}`}`
+      );
     }
   }
 
@@ -95,8 +101,20 @@ export default function AdminPage() {
   function UserGrid() {
     function userLogoIconRenderer({ value }: { value: string }) {
       return (
-        <div className="flex items-center justify-center w-full h-10">
+        <div className="flex items-center justify-center h-full">
           <img src={value} alt="User Logo" className="w-8 h-8 rounded-full" />
+        </div>
+      );
+    }
+
+    function badgeGridRenderer({ value }: { value: Badge[] }) {
+      return (
+        <div className="px-[15px] h-full">
+          {value.map((badge, index) => (
+            <p key={badge.name + v4()} className="w-8 h-8 text-center rounded-full">
+              {badge.name.split("")[0].toUpperCase() + badge.name.split(" ")[0].slice(1)} {index < value.length - 1 ? "," : ""}
+            </p>
+          ))}
         </div>
       );
     }
@@ -108,16 +126,42 @@ export default function AdminPage() {
         cellRenderer: userLogoIconRenderer,
         headerName: "Profile Picture",
       },
-      { field: "id" },
+      { field: "id", headerName: "User ID" },
       { field: "username" },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      { field: "totalChips", editable: true, valueFormatter: (params: any) => { return (params.value ?? 0).toLocaleString(); }
- },
+      {
+        field: "totalChips",
+        editable: true,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        valueFormatter: (params: any) => {
+          return (params.value ?? 0).toLocaleString();
+        },
+      },
+      {
+        field: "created_at",
+        headerName: "Account Created At",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        valueFormatter: (params: any) => {
+          return new Date(params.value).toLocaleString();
+        },
+      },
+      {
+        field: "badges",
+        headerName: "Badges",
+        cellRenderer: badgeGridRenderer,
+      },
+      {
+        field: "last_active_at",
+        headerName: "Last Active At",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        valueFormatter: (params: any) => {
+          return new Date(params.value).toLocaleString();
+        },
+      },
     ];
 
     return (
       <>
-        <Card noHover className="mx-20">
+        <Card noHover className="mx-20 mt-8">
           <h1 className="mb-6 text-3xl">Manage Users</h1>
           <div className="h-[500px]">
             <AgGridReact
