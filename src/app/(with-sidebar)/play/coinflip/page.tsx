@@ -17,7 +17,7 @@ export default function Page() {
 
   const [coinState, setCoinState] = useState<
     "flipping" | "tails" | "heads" | "err"
-  >("tails");
+  >("heads");
   const [betAmt, setBetAmt] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
   const [pastFlips, setPastFlips] = useState<
@@ -47,6 +47,7 @@ export default function Page() {
 
     return () => {
       dotLottie.destroy();
+      setCoinState("heads");
     };
   }, []);
 
