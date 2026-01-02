@@ -19,7 +19,7 @@ export default function Page() {
   const [coinState, setCoinState] = useState<
     "flipping" | "tails" | "heads" | "err"
   >("heads");
-  const [betAmt, setBetAmt] = useState<number>(100);
+  const [betAmt, setBetAmt] = useState<number | null>(null);
   const [message, setMessage] = useState<string>("Loading Animations...");
   const [pastFlips, setPastFlips] = useState<
     Array<{
@@ -68,7 +68,7 @@ export default function Page() {
   }, [coinState]);
 
   async function handleFlip(face: "heads" | "tails") {
-    if (betAmt <= 0 || !Number.isInteger(betAmt)) {
+    if (betAmt == null ||betAmt <= 0 || !Number.isInteger(betAmt)) {
       return alert("Invalid bet amount");
     }
 
@@ -150,12 +150,12 @@ export default function Page() {
             <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
             <div className="flex justify-center">
-              <div className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden ${betAmt > chips ? "bg-red-600" : "bg-black"}`}>
+              <div className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden ${betAmt && betAmt > chips ? "bg-red-600" : "bg-black"}`}>
                 <input
                   className={`flex-1 focus:outline-0 text-white h-full pl-2 ${betAmt == 0 && "text-red-600!"}`}
                   title="bet"
-                  value={betAmt}
-                  onChange={(e) => setBetAmt(parseInt(e.target.value) || 0)}
+                  value={betAmt || ""}
+                  onChange={(e) => setBetAmt(parseInt(e.target.value) || null)}
                   placeholder="Bet Amount"
                   type="text"
                 />
@@ -165,14 +165,14 @@ export default function Page() {
                   <button
                     type="button"
                     className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center border-l-white border-l-2"
-                    onClick={() => setBetAmt(betAmt * 2)}
+                    onClick={() => setBetAmt(betAmt && betAmt * 2)}
                   >
                     x2
                   </button>
                   <button
                     type="button"
                     className="h-full! bg-background-600 px-2 border-x-white border-x-2"
-                    onClick={() => setBetAmt(betAmt / 2)}
+                    onClick={() => setBetAmt(betAmt && betAmt / 2)}
                   >
                     /2
                   </button>
