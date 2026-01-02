@@ -1,3 +1,7 @@
+"use client";
+
+import PlayingCard from "@/components/ui/games/any/card";
+
 export default function BlackjackPage() {
   return (
     <div className="flex items-center justify-center h-full">
@@ -7,8 +11,15 @@ export default function BlackjackPage() {
             <h1 className="mx-2 text-5xl font-bold">Blackjack</h1>
           </div>
         </div>
-        <div className="flex items-center justify-center flex-1 h-full">
-            <h1 className="text-3xl font-bold text-center">Coming Soon!</h1>
+        <div className="flex items-center justify-center flex-1 h-full over">
+          <div className="relative flex flex-1 h-full overflow-hidden">
+            <div className="relative flex items-center justify-center w-full h-full">
+              <div className="flex flex-col items-center">
+                <PlayingCard suit="hearts" rank="A" width={56} />
+                <p className="mt-2 text-4xl font-bold">Coming Soon!</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
