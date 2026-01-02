@@ -8,6 +8,7 @@ import Card from "@/components/ui/global/card";
 import { sleep } from "@/lib/sleep";
 import clsx from "clsx";
 import confetti from "canvas-confetti";
+import { motion } from "motion/react";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -19,7 +20,7 @@ export default function Page() {
     "flipping" | "tails" | "heads" | "err"
   >("heads");
   const [betAmt, setBetAmt] = useState<number>(0);
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>("Loading Animations...");
   const [pastFlips, setPastFlips] = useState<
     Array<{
       betFace: "heads" | "tails";
@@ -27,6 +28,8 @@ export default function Page() {
       betAmt: number;
     }>
   >([]);
+  const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
+  const [animReady, setAnimReady] = useState<boolean>(false);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -43,6 +46,8 @@ export default function Page() {
     dotLottie.addEventListener("load", () => {
       dotLottie.stateMachineLoad("StateMachine1");
       dotLottie.stateMachineStart();
+      setAnimReady(true);
+      setMessage("Place your bet!");
     });
 
     return () => {
@@ -68,6 +73,8 @@ export default function Page() {
     }
 
     if (coinState === "flipping") return;
+
+    setExtendSidebar(false);
 
     setCoinState("flipping");
     setMessage("Flipping...");
@@ -133,52 +140,66 @@ export default function Page() {
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] w-[80%]!">
-        <div className="h-full! p-4 bg-background-700 rounded-r-2xl">
+        <motion.div
+          layout
+          className={`h-full! ${
+            extendSidebar && "w-full"
+          } p-4 bg-background-700 rounded-r-2xl`}
+        >
           <div>
-            <h1 className="text-5xl font-bold">Coinflip</h1>
+            <motion.h1 layout className="text-5xl font-bold">
+              Coinflip
+            </motion.h1>
             <br />
-            <div className="pl-2 bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 flex items-center overflow-hidden">
-              <input
-                className="focus:outline-0 "
-                title="bet"
-                value={betAmt}
-                onChange={(e) => setBetAmt(parseInt(e.target.value) || 0)}
-                placeholder="Bet Amount"
-                type="text"
-              />
-              <PiPokerChip className="inline ml-2!" size={24} />
-              <button
-                type="button"
-                className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center border-l-white border-l-2"
-                onClick={() => setBetAmt(betAmt * 2)}
-              >
-                x2
-              </button>
-              <button
-                type="button"
-                className="h-full! bg-background-600 px-2 border-x-white border-x-2"
-                onClick={() => setBetAmt(betAmt / 2)}
-              >
-                /2
-              </button>
-              <button
-                type="button"
-                className="h-full! bg-background-600 px-2"
-                onClick={() => setBetAmt(chips)}
-              >
-                All In
-              </button>
+            <div className="flex justify-center">
+              <div className="pl-2 bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden">
+                <input
+                  className="flex-1 focus:outline-0"
+                  title="bet"
+                  value={betAmt}
+                  onChange={(e) => setBetAmt(parseInt(e.target.value) || 0)}
+                  placeholder="Bet Amount"
+                  type="text"
+                />
+                <div className="flex items-center h-full p-0 m-0">
+                  <PiPokerChip className="inline ml-2!" size={24} />
+                  <button
+                    type="button"
+                    className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center border-l-white border-l-2"
+                    onClick={() => setBetAmt(betAmt * 2)}
+                  >
+                    x2
+                  </button>
+                  <button
+                    type="button"
+                    className="h-full! bg-background-600 px-2 border-x-white border-x-2"
+                    onClick={() => setBetAmt(betAmt / 2)}
+                  >
+                    /2
+                  </button>
+                  <button
+                    type="button"
+                    className="h-full! bg-background-600 px-2"
+                    onClick={() => setBetAmt(chips)}
+                  >
+                    All In
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center justify-between gap-2 mt-4">
+            <div className="flex items-center justify-center mt-4 gap-15">
               <Card
                 chin
                 color="red"
                 className={clsx(
-                  coinState === "flipping"
+                  coinState === "flipping" || animReady === false
                     ? "grayscale cursor-not-allowed"
                     : "cursor-pointer"
                 )}
-                onClick={() => handleFlip("heads")}
+                onClick={() =>
+                  !(coinState === "flipping" || animReady === false) &&
+                  handleFlip("heads")
+                }
               >
                 Start Heads
               </Card>
@@ -186,11 +207,14 @@ export default function Page() {
                 chin
                 color="blue"
                 className={clsx(
-                  coinState === "flipping"
+                  coinState === "flipping" || animReady === false
                     ? "grayscale cursor-not-allowed"
                     : "cursor-pointer"
                 )}
-                onClick={() => handleFlip("tails")}
+                onClick={() =>
+                  !(coinState === "flipping" || animReady === false) &&
+                  handleFlip("tails")
+                }
               >
                 Start Tails
               </Card>
@@ -199,8 +223,13 @@ export default function Page() {
             <br />
             <h2 className="text-2xl font-bold text-center">{message}</h2>
           </div>
-        </div>
-        <div className="py-4 pl-4 overflow-hidden grow-1">
+        </motion.div>
+        <motion.div
+          layout
+          className={`${
+            extendSidebar ? "w-0" : "pl-4"
+          } py-4 overflow-hidden grow`}
+        >
           <div
             className={clsx(
               "flex gap-2 opacity-0 transition-all duration-300 overflow-hidden w-fit h-12 items-center",
@@ -224,7 +253,7 @@ export default function Page() {
           <div className="flex h-[calc(100%-64px)] w-full justify-center items-center pt-2">
             <canvas ref={canvasRef} width="400" height="400" />
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
