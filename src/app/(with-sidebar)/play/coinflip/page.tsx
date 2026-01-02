@@ -141,15 +141,13 @@ export default function Page() {
     <div className="flex items-center justify-center h-screen">
       <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] w-[80%]!">
         <motion.div
-          layout
-          className={`h-full! ${
-            extendSidebar && "w-full"
-          } p-4 bg-background-700 rounded-r-2xl`}
+          initial={{ width: "100%" }}
+          animate={{ width: !extendSidebar ? "30%" : "100%" }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className="h-full p-4 bg-background-700 rounded-r-2xl"
         >
           <div>
-            <motion.h1 layout className="text-5xl font-bold">
-              Coinflip
-            </motion.h1>
+            <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
             <div className="flex justify-center">
               <div className="pl-2 bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden">
@@ -225,10 +223,10 @@ export default function Page() {
           </div>
         </motion.div>
         <motion.div
-          layout
-          className={`${
-            extendSidebar ? "w-0" : "pl-4"
-          } py-4 overflow-hidden grow`}
+          initial={{ width: "0%" }}
+          animate={{ width: extendSidebar ? 0 : "40%" }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className="flex-1 py-4 overflow-hidden"
         >
           <div
             className={clsx(
