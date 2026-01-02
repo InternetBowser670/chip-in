@@ -19,7 +19,7 @@ export default function Page() {
   const [coinState, setCoinState] = useState<
     "flipping" | "tails" | "heads" | "err"
   >("heads");
-  const [betAmt, setBetAmt] = useState<number>(0);
+  const [betAmt, setBetAmt] = useState<number>(100);
   const [message, setMessage] = useState<string>("Loading Animations...");
   const [pastFlips, setPastFlips] = useState<
     Array<{
@@ -142,7 +142,7 @@ export default function Page() {
       <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] w-[80%]!">
         <motion.div
           initial={{ width: "100%" }}
-          animate={{ width: !extendSidebar ? "30%" : "100%" }}
+          animate={{ width: !extendSidebar ? "40%" : "100%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
           className="h-full p-4 bg-background-700 rounded-r-2xl"
         >
@@ -150,9 +150,9 @@ export default function Page() {
             <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
             <div className="flex justify-center">
-              <div className="pl-2 bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden">
+              <div className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden ${betAmt > chips ? "bg-red-600" : "bg-black"}`}>
                 <input
-                  className="flex-1 focus:outline-0"
+                  className={`flex-1 focus:outline-0 text-white h-full pl-2 ${betAmt == 0 && "text-red-600!"}`}
                   title="bet"
                   value={betAmt}
                   onChange={(e) => setBetAmt(parseInt(e.target.value) || 0)}
@@ -160,6 +160,7 @@ export default function Page() {
                   type="text"
                 />
                 <div className="flex items-center h-full p-0 m-0">
+                  /{chips}
                   <PiPokerChip className="inline ml-2!" size={24} />
                   <button
                     type="button"
@@ -226,7 +227,7 @@ export default function Page() {
           initial={{ width: "0%" }}
           animate={{ width: extendSidebar ? 0 : "40%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
-          className="flex-1 py-4 overflow-hidden"
+          className={`flex-1 py-4 overflow-hidden ${!extendSidebar && "p-4"}`}
         >
           <div
             className={clsx(
