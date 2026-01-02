@@ -14,7 +14,7 @@ export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dotLottieRef = useRef<DotLottie | null>(null);
 
-  const { chips, setChips } = useChips();
+  const { chips, setChips, chipsFetched } = useChips();
 
   const [coinState, setCoinState] = useState<
     "flipping" | "tails" | "heads" | "err"
@@ -150,7 +150,7 @@ export default function Page() {
             <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
             <div className="flex justify-center">
-              <div className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden ${betAmt && betAmt > chips ? "bg-red-600" : "bg-black"}`}>
+              <div className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden ${betAmt && chipsFetched && betAmt > chips ? "bg-red-600" : "bg-black"}`}>
                 <input
                   className={`flex-1 focus:outline-0 text-white h-full pl-2 ${betAmt == 0 && "text-red-600!"}`}
                   title="bet"

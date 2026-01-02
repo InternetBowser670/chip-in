@@ -19,7 +19,7 @@ export default function ScrollDown() {
 
   return (
     <div
-      className={`fixed flex justify-center left-0 z-[999] items-center content-center bottom-10 w-full transition-opacity duration-500 ${
+      className={`fixed flex justify-center left-0 z-999 items-center content-center bottom-10 w-full transition-opacity duration-500 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
