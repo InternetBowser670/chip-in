@@ -111,11 +111,11 @@ export default function AdminPage() {
 
     function badgeGridRenderer({ value }: { value: Badge[] }) {
       if (!value || value.length === 0) {
-        return <div className="mx-[15px] h-full">None</div>;
+        return <div className="mx-3.75 h-full">None</div>;
       }
 
       return (
-        <div className="px-[15px] h-full">
+        <div className="px-3.75 h-full">
           {value.map((badge, index) => (
             <p
               key={badge.name + v4()}
@@ -179,8 +179,7 @@ export default function AdminPage() {
               <IoReload />
             </PrimaryButtonChildren>
           </div>
-
-          <div className="h-[500px]">
+          <div className="h-125">
             <AgGridReact
               rowData={userData}
               columnDefs={colDefs}
