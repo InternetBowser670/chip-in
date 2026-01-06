@@ -9,16 +9,14 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/global/buttons";
+import OpenProfile from "@/components/ui/profile/open-profile";
 
 export default async function SidebarLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await currentUser();
-
   return (
     <>
       <SignedIn>
@@ -48,7 +46,7 @@ export default async function SidebarLayout({
                 <div className="flex justify-end gap-4 overflow-hidden">
                   <UserButton />
                   <div className="overflow-hidden">
-                    <p className="inline overflow-hidden">{user?.username}</p>
+                    <OpenProfile />
                   </div>
                 </div>
               </div>
