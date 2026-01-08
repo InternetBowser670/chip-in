@@ -32,7 +32,7 @@ export default function PlayingCard({
       }`}
     >
       <div className="flex flex-col items-start w-full pl-2">
-        <p style={{ fontSize: width / 56 * 60 }} className="font-bold">{rank}</p>
+        <p style={{ fontSize: width / 56 * 60 }} className="font-bold leading-tight">{rank}</p>
         <SuitIcon size={width / 56 * 48} />
       </div>
 
@@ -41,7 +41,7 @@ export default function PlayingCard({
       </div>
 
       <div className="flex flex-col items-start w-full pl-2 rotate-180">
-        <p style={{ fontSize: width / 56 * 60 }} className="font-bold">{rank}</p>
+        <p style={{ fontSize: width / 56 * 60 }} className="font-bold leading-tight">{rank}</p>
         <SuitIcon size={width / 56 * 48} />
       </div>
     </div>

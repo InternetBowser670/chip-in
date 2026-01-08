@@ -18,7 +18,7 @@ export default function Card({
   return (
     <div
       className={clsx(
-        `p-[20px]! rounded-2xl border-2 backdrop-blur-md backdrop-filter backdrop-opacity-50 transition-all ${className}`,
+        `p-5! rounded-2xl border-2 backdrop-blur-md backdrop-filter backdrop-opacity-50 transition-all ${className}`,
         chin && "border-b-6 cursor-pointer",
         color == "green"
           ? `border-primary-400 bg-primary-900 ${
