@@ -146,7 +146,7 @@ export default function Page() {
           transition={{ duration: 0.35, ease: "easeInOut" }}
           className="h-full p-4 bg-background-700 rounded-r-2xl"
         >
-          <div>
+          <div> 
             <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
             <div className="flex justify-center">
@@ -225,7 +225,7 @@ export default function Page() {
         </motion.div>
         <motion.div
           initial={{ width: "0%" }}
-          animate={{ width: extendSidebar ? 0 : "40%" }}
+          animate={{ width: extendSidebar ? 0 : "60%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
           className={`flex-1 py-4 overflow-hidden ${!extendSidebar && "p-4"}`}
         >
