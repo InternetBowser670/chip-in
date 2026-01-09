@@ -1,6 +1,8 @@
 import { User } from "@clerk/nextjs/server";
 import { ObjectId } from "mongodb";
 
+export type CoinFlipFace = "heads" | "tails";
+
 export interface SeeMoreProps {
     text: string;
     maxLength: number;
@@ -9,21 +11,29 @@ export interface SeeMoreProps {
 
 export interface UserHistory {
   type: string;
+  betAmt: number;
   startCount: number;
   endCount: number;
   change: number;
   date: number;
   actor: string;
   version: string | "history_v1";
+  coinFlipData?: {
+    betFace: CoinFlipFace;
+    outcome: CoinFlipFace;
+  }
 }
 
 export interface CoinFlip {
     betAmt: number;
-    betFace: "heads" | "tails";
-    outcome: "heads" | "tails";
+    betFace: CoinFlipFace;
+    outcome: CoinFlipFace;
     startCount: number;
     endCount: number;
     date: number;
+    version: string | "coinflip_v1";
+    serverSeedHash?: string;
+    serverSeed?: string;
 }
 export interface Badge {
     name: string;
@@ -36,7 +46,7 @@ export interface ChipInUser extends User {
 
   totalChips: number;
   chipClaims: Record<string, number>;
-
+  timezone: string;
   history: UserHistory[];
   coinFlips: CoinFlip[];
   badges: Badge[];
