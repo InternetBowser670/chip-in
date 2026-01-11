@@ -60,13 +60,52 @@ export default function ClaimChips() {
     }
   };
 
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const res = await fetch("/api/chips/status");
+      if (res.ok) {
+        const data: StatusResponse = await res.json();
+        setStatus(data);
+        if (data.total !== undefined) {
+          setChips(data.total);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", fetchStatus);
+
+    return () => {
+      document.removeEventListener("visibilitychange", fetchStatus);
+    };
+  }, [setChips]);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const res = await fetch("/api/chips/status");
+      if (res.ok) {
+        const data: StatusResponse = await res.json();
+        setStatus(data);
+        if (data.total !== undefined) {
+          setChips(data.total);
+        }
+      }
+    };
+
+    fetchStatus();
+
+    // intentionally 6 mins instead of every hour
+    const intervalId = setInterval(fetchStatus, 360000);
+
+    return () => clearInterval(intervalId);
+  }, [setChips]);
+
   const buttonText = (() => {
     if (!status) return "Loading...";
     if (claimed) return "Claimed!";
     if (status.canClaim && status.amount)
       return `Claim ${status.amount.toLocaleString()} `;
     if (!status.canClaim && status.nextAvailable) {
-      return `Come back tommorrow.`;
+      return `Come back tomorrow.`;
     }
     return "Unavailable";
   })();

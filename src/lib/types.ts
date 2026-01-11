@@ -48,7 +48,7 @@ export interface Badge {
 }
 export interface ChipInUser extends User {
   _id: ObjectId;
-
+  activeBlackjack?: BlackjackGame;
   totalChips: number;
   chipClaims: Record<string, number>;
   timezone: string;
@@ -77,52 +77,53 @@ export type Rank =
   | "10"
   | "J"
   | "Q"
-  | "K";
+  | "K"
+  | "a"
+  | "j"
+  | "q"
+  | "k";
 
 export interface Card {
   suit: Suit;
   rank: Rank;
 }
 
+interface BlackjackHand {
+  cards: Card[];
+  finished: boolean;
+  doubled?: boolean;
+}
+
 export interface BlackjackGame {
   gameId: string;
   betAmt: number;
-
-  playerHand: Card[];
   dealerHand: Card[];
-
+  hands: BlackjackHand[];
   deck: Card[];
   finished: boolean;
   outcome?: "win" | "lose" | "push" | "blackjack";
-
   startCount: number;
   endCount?: number;
-
   createdAt: number;
   completedAt?: number;
-
   serverSeedHash: string;
   serverSeed?: string;
-
+  activeHandIndex: number;
   version: "blackjack_v1";
 }
 
-export interface Blackjack {
+export interface BlackjackHistory {
   gameId: string;
   betAmt: number;
-
   outcome: "win" | "lose" | "push" | "blackjack";
-
   startCount: number;
   endCount: number;
   change: number;
-
-  playerHand: Card[];
+  playerHands: Card[][];
   dealerHand: Card[];
-
   date: number;
   version: "blackjack_v1";
-
-  serverSeedHash?: string;
-  serverSeed?: string;
+  userId: string;
+  serverSeedHash: string;
+  serverSeed: string;
 }
