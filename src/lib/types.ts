@@ -22,6 +22,11 @@ export interface UserHistory {
     betFace: CoinFlipFace;
     outcome: CoinFlipFace;
   }
+
+  blackjackData?: {
+    gameId: string;
+    outcome: "win" | "lose" | "push" | "blackjack";
+  };
 }
 
 export interface CoinFlip {
@@ -56,4 +61,68 @@ export interface PlayingCardProps {
   suit: "hearts" | "diamonds" | "clubs" | "spades";
   rank: "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K" | "A";
   width?: number;
+}
+
+export type Suit = "hearts" | "diamonds" | "clubs" | "spades";
+export type Rank =
+  | "A"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "6"
+  | "7"
+  | "8"
+  | "9"
+  | "10"
+  | "J"
+  | "Q"
+  | "K";
+
+export interface Card {
+  suit: Suit;
+  rank: Rank;
+}
+
+export interface BlackjackGame {
+  gameId: string;
+  betAmt: number;
+
+  playerHand: Card[];
+  dealerHand: Card[];
+
+  deck: Card[];
+  finished: boolean;
+  outcome?: "win" | "lose" | "push" | "blackjack";
+
+  startCount: number;
+  endCount?: number;
+
+  createdAt: number;
+  completedAt?: number;
+
+  serverSeedHash: string;
+  serverSeed?: string;
+
+  version: "blackjack_v1";
+}
+
+export interface Blackjack {
+  gameId: string;
+  betAmt: number;
+
+  outcome: "win" | "lose" | "push" | "blackjack";
+
+  startCount: number;
+  endCount: number;
+  change: number;
+
+  playerHand: Card[];
+  dealerHand: Card[];
+
+  date: number;
+  version: "blackjack_v1";
+
+  serverSeedHash?: string;
+  serverSeed?: string;
 }
