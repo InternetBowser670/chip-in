@@ -72,7 +72,6 @@ export default function BlackjackPage() {
 
     if (json.message) {
       setMessage(json.message);
-      setGameActive(false);
       return "failed";
     }
 
@@ -85,8 +84,16 @@ export default function BlackjackPage() {
     if (json.finalHands) {
       setHands(json.finalHands);
       setGameActive(false);
-      setMessage(json.outcome == "win" ? "You win!" : json.outcome == "lose" ? "You lose!" : "Push!");
-      setChips(json.endCount);
+      setMessage(
+        json.outcome == "win"
+          ? "You win!"
+          : json.outcome == "lose"
+          ? "You lose!"
+          : "Push!"
+      );
+      if (json.updatedChips !== undefined || json.updatedChips != null) {
+        setChips(json.updatedChips);
+      }
     }
   }
 
@@ -175,7 +182,7 @@ export default function BlackjackPage() {
 
             <div className="mt-6">
               <PrimaryButton
-                text="Start Game"
+                text={sidebarExpanded ? "Start Game" : "Restart Game"}
                 disabled={gameActive || loading}
                 onClick={startGame}
               />
@@ -190,7 +197,7 @@ export default function BlackjackPage() {
           initial={{ width: "0%" }}
           animate={{ width: !sidebarExpanded ? "70%" : "0%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
-          className="flex items-center justify-center flex-1 h-full overflow-hidden"
+          className="flex items-center justify-center flex-1 h-full overflow-hidden relative"
         >
           {/* the only reason why im using inline styles is to cs tailwind doesnt allow w-[{}px] for optimization reasons */}
           {/* trust its the only way */}
@@ -203,40 +210,82 @@ export default function BlackjackPage() {
             }}
           >
             <div className="relative flex flex-1 h-full flex-col justify-between overflow-hidden">
-              <div className="flex justify-center gap-2">
+              <div className="flex justify-center gap-2 -translate-y-1/2 -space-x-50">
                 {dealerHand.map((c, i) => (
-                  <PlayingCard key={i} suit={c.suit} rank={c.rank} width={48} />
+                  <div
+                    className={`p-0 m-0`}
+                    style={{
+                      transform: `rotate(${
+                        180 + (i - (dealerHand.length - 1) / 2) * -25
+                      }deg)`,
+                      zIndex: -i + 100,
+                    }}
+                    key={i}
+                  >
+                    <PlayingCard
+                      key={i}
+                      suit={c.suit}
+                      rank={c.rank}
+                      width={56}
+                    />
+                  </div>
                 ))}
               </div>
 
-              <div className="flex flex-col gap-6 items-center">
+              <motion.div
+                initial={{ translateY: 100 }}
+                animate={{
+                  translateY: gameActive ? -68 : 0,
+                  transition: { ease: ["easeIn", "easeOut"] },
+                  transitionDuration: 0.6,
+                }}
+                className="flex gap-6 justify-around translate-y-1/2"
+              >
                 {hands.map((hand, i) => (
                   <div
                     key={i}
                     className={clsx(
-                      "flex gap-2 p-2 rounded-xl transition",
-                      i === activeHand && "bg-  white/10"
+                      "flex -space-x-50 p-2 rounded-xl transition",
+                      i === activeHand && "bg-white/10"
                     )}
                   >
                     {hand.map((c, j) => (
-                      <PlayingCard
+                      <div
+                        className={`p-0 m-0`}
+                        style={{
+                          transform: `rotate(${
+                            (j - (hand.length - 1) / 2) * 25
+                          }deg)`,
+                        }}
                         key={j}
-                        suit={c.suit}
-                        rank={c.rank}
-                        width={56}
-                      />
+                      >
+                        <PlayingCard
+                          key={j}
+                          suit={c.suit}
+                          rank={c.rank}
+                          width={56}
+                        />
+                      </div>
                     ))}
                   </div>
                 ))}
-              </div>
-              {gameActive && (
-                <div className="flex justify-center gap-6">
+              </motion.div>
+              <motion.div
+                initial={{ translateY: 100 }}
+                animate={{
+                  translateY: gameActive ? 0 : 100,
+                  transition: { ease: ["easeIn", "easeOut"] },
+                  transitionDuration: 0.6,
+                }}
+                className="flex justify-center gap-6 bg-background-700 rounded-t-2xl mx-2 w-[calc(100%-16px)] absolute bottom-0"
+              >
+                <div>
                   <PrimaryButton text="Hit" onClick={() => send("hit")} />
                   <PrimaryButton text="Stand" onClick={() => send("stand")} />
                   <PrimaryButton text="Double" onClick={() => send("double")} />
                   <PrimaryButton text="Split" onClick={() => send("split")} />
                 </div>
-              )}
+              </motion.div>
             </div>
           </div>
         </motion.div>

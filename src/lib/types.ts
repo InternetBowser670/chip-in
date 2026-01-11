@@ -88,9 +88,10 @@ export interface Card {
   rank: Rank;
 }
 
-interface BlackjackHand {
+export interface BlackjackHand {
   cards: Card[];
   finished: boolean;
+  bet: number;
   doubled?: boolean;
 }
 
