@@ -65,6 +65,24 @@ export async function POST(req: Request) {
   const user = await users.findOne({ id: clerkUser.id });
   if (!user) return NextResponse.json({}, { status: 404 });
 
+  if (action === "resume") {
+    if (!user.activeBlackjack || user.activeBlackjack.finished) {
+      return NextResponse.json({ active: false });
+    }
+
+    const g = user.activeBlackjack;
+
+    return NextResponse.json({
+      active: true,
+      gameId: g.gameId,
+      betAmt: g.betAmt,
+      hands: g.hands.map(h => h.cards),
+      dealerHand: g.dealerHand,
+      activeHand: g.activeHandIndex,
+      serverSeedHash: g.serverSeedHash,
+    });
+  }
+
   if (action === "start") {
     if (user.activeBlackjack || user.totalChips < betAmt)
       return NextResponse.json({ message: "Invalid bet amount or game already active" }, { status: 400 });
@@ -84,6 +102,7 @@ export async function POST(req: Request) {
       startCount: user.totalChips,
       finished: false,
       serverSeedHash,
+      serverSeed,
       createdAt: Date.now(),
       version: "blackjack_v1",
     };
@@ -174,12 +193,10 @@ export async function POST(req: Request) {
         date: Date.now(),
         version: "blackjack_v1",
         serverSeedHash: game.serverSeedHash,
-        serverSeed: game.serverSeed!,
+        serverSeed: game.serverSeed,
       };
 
-      await blackjack.insertOne({
-        ...history,
-      });
+      await blackjack.insertOne(history);
 
       await users.updateOne(
         { id: clerkUser.id },
@@ -196,6 +213,7 @@ export async function POST(req: Request) {
         updatedChips: endCount,
         serverSeedHash: history.serverSeedHash,
         serverSeed: history.serverSeed,
+        endCount
       });
     }
   }

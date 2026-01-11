@@ -59,7 +59,7 @@ export interface ChipInUser extends User {
 
 export interface PlayingCardProps {
   suit: "hearts" | "diamonds" | "clubs" | "spades";
-  rank: "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K" | "A";
+  rank: Rank;
   width?: number;
 }
 
@@ -107,7 +107,7 @@ export interface BlackjackGame {
   createdAt: number;
   completedAt?: number;
   serverSeedHash: string;
-  serverSeed?: string;
+  serverSeed: string;
   activeHandIndex: number;
   version: "blackjack_v1";
 }
