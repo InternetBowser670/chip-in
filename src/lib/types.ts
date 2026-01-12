@@ -61,6 +61,8 @@ export interface PlayingCardProps {
   suit: "hearts" | "diamonds" | "clubs" | "spades";
   rank: Rank;
   width?: number;
+  className?: string;
+  faceDown?: boolean;
 }
 
 export type Suit = "hearts" | "diamonds" | "clubs" | "spades";
@@ -86,6 +88,7 @@ export type Rank =
 export interface Card {
   suit: Suit;
   rank: Rank;
+  faceDown?: true;
 }
 
 export interface BlackjackHand {

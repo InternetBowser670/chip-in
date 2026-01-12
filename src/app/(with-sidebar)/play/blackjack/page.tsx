@@ -5,7 +5,7 @@ import PlayingCard from "@/components/ui/games/any/card";
 import { PrimaryButton } from "@/components/ui/global/buttons";
 import { BlackjackFinalHand, Card } from "@/lib/types";
 import clsx from "clsx";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
 import { PiPokerChip } from "react-icons/pi";
 
@@ -77,7 +77,7 @@ export default function BlackjackPage() {
     }
 
     if (json.hands) setHands(json.hands);
-    if (json.dealerUpCard) setDealerHand([json.dealerUpCard]);
+    if (json.dealerUpCard) setDealerHand([json.dealerUpCard, { suit: "clubs", rank: "A", faceDown: true}]);
     if (json.dealerHand) setDealerHand(json.dealerHand);
     if (json.playerHand) setHands([json.playerHand]);
     if (json.activeHand !== undefined) setActiveHand(json.activeHand);
@@ -105,6 +105,10 @@ export default function BlackjackPage() {
 
     setMessage("Starting game...");
 
+    setHands([]);
+    setDealerHand([]);
+    setActiveHand(0);
+
     const result = await send("start");
 
     if (result === "failed") return;
@@ -129,9 +133,9 @@ export default function BlackjackPage() {
             sidebarExpanded ? "w-full" : "w-16"
           }`}
         >
-          <div className="flex flex-col h-full items-center">
+          <div className="flex flex-col items-center h-full">
             <h1 className="mx-2 text-5xl font-bold">Blackjack</h1>
-            <div className="mt-6 w-full flex justify-center">
+            <div className="flex justify-center w-full mt-6">
               <div
                 className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 xl:h-8 max-w-125 flex flex-col xl:flex-row items-center justify-between overflow-hidden ${
                   betAmt && chipsFetched && betAmt > chips
@@ -139,7 +143,7 @@ export default function BlackjackPage() {
                     : "bg-black"
                 }`}
               >
-                <div className="flex w-full xl:w-auto pr-2 xl:pr-0">
+                <div className="flex w-full pr-2 xl:w-auto xl:pr-0">
                   <input
                     className={`focus:outline-0 text-white h-full pl-2 shrink min-w-0 ${
                       betAmt == 0 && "text-red-600!"
@@ -155,7 +159,7 @@ export default function BlackjackPage() {
                   /{chips}
                 </div>
 
-                <div className="flex items-center h-full p-0 m-0 justify-end w-full xl:w-auto border-t-2 xl:border-t-0 border-white">
+                <div className="flex items-center justify-end w-full h-full p-0 m-0 border-t-2 border-white xl:w-auto xl:border-t-0">
                   <PiPokerChip className="inline ml-2!" size={24} />
                   <button
                     type="button"
@@ -190,7 +194,7 @@ export default function BlackjackPage() {
               />
             </div>
 
-            <div className="flex-1 flex items-center">
+            <div className="flex items-center flex-1">
               <h2 className="text-2xl font-bold">{message}</h2>
             </div>
           </div>
@@ -199,7 +203,7 @@ export default function BlackjackPage() {
           initial={{ width: "0%" }}
           animate={{ width: !sidebarExpanded ? "70%" : "0%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
-          className="flex items-center justify-center flex-1 h-full overflow-hidden relative"
+          className="relative flex items-center justify-center flex-1 h-full overflow-hidden"
         >
           {/* the only reason why im using inline styles is to cs tailwind doesnt allow w-[{}px] for optimization reasons */}
           {/* trust its the only way */}
@@ -211,26 +215,28 @@ export default function BlackjackPage() {
               minWidth: (containerWidth * 7) / 10,
             }}
           >
-            <div className="relative flex flex-1 h-full flex-col justify-between overflow-hidden">
+            <div className="relative flex flex-col justify-between flex-1 h-full overflow-hidden">
               <div className="flex justify-center gap-2 -translate-y-1/2 -space-x-50">
                 {dealerHand.map((c, i) => (
-                  <div
+                  <motion.div
                     className={`p-0 m-0`}
-                    style={{
+                    animate={{
                       transform: `rotate(${
-                        180 + (i - (dealerHand.length - 1) / 2) * -25
+                        (i - (dealerHand.length - 1) / 2) * -25
                       }deg)`,
-                      zIndex: -i + 100,
                     }}
+                    style={{ zIndex: -i + 100 }}
                     key={i}
                   >
                     <PlayingCard
+                      className="rotate-180"
                       key={i}
                       suit={c.suit}
                       rank={c.rank}
                       width={56}
+                      faceDown={c.faceDown}
                     />
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
@@ -241,45 +247,59 @@ export default function BlackjackPage() {
                   transition: { ease: ["easeIn", "easeOut"] },
                   transitionDuration: 0.6,
                 }}
-                className="flex gap-6 justify-around translate-y-1/2"
+                className="flex justify-around gap-6 translate-y-1/2"
               >
-                {hands.map((hand, i) => (
-                  <div
-                    key={i}
-                    className={clsx(
-                      "flex -space-x-50 p-2 rounded-xl transition",
-                      i === activeHand && gameActive && "bg-white/10",
-                      resolvedHands[i] &&
-                        !gameActive &&
-                        (resolvedHands[i].outcome === "win" ||
-                        resolvedHands[i].outcome === "blackjack"
-                          ? "bg-green-600/80"
-                          : resolvedHands[i].outcome === "lose" ||
-                            resolvedHands[i].outcome === "bust"
-                          ? "bg-red-600/70"
-                          : "bg-yellow-600/70")
-                    )}
-                  >
-                    {hand.map((c, j) => (
-                      <div
-                        className={`p-0 m-0`}
-                        style={{
-                          transform: `rotate(${
-                            (j - (hand.length - 1) / 2) * 25
-                          }deg)`,
-                        }}
-                        key={j}
-                      >
-                        <PlayingCard
-                          key={j}
-                          suit={c.suit}
-                          rank={c.rank}
-                          width={56}
-                        />
+                <AnimatePresence>
+                  {hands.map((hand, i) => (
+                    <motion.div
+                      key={i}
+                      layout
+                      initial={{ y: "200%" }}
+                      animate={{ y: 0 }}
+                      exit={{ y: "200%" }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      style={{ width: "400px" }}
+                      className={clsx(
+                        "flex p-2 rounded-xl relative",
+                        i === activeHand && gameActive && "bg-white/10",
+                        resolvedHands[i] &&
+                          !gameActive &&
+                          (resolvedHands[i].outcome === "win" ||
+                          resolvedHands[i].outcome === "blackjack"
+                            ? "bg-green-600/80"
+                            : resolvedHands[i].outcome === "lose" ||
+                              resolvedHands[i].outcome === "bust"
+                            ? "bg-red-600/70"
+                            : "bg-yellow-600/70")
+                      )}
+                    >
+                      <div className="flex" style={{ translate: ((224*hand.length) - 400) / -2}}>
+                        {hand.map((c, j) => {
+                          const fanX = (j - (hand.length - 1) / 2) * -200;
+                          const fanRotate = (j - (hand.length - 1) / 2) * 25;
+
+                          return (
+                            <motion.div
+                              key={c.suit + c.rank}
+                              layout
+                              style={{ x: fanX, rotate: fanRotate }}
+                              transition={{ duration: 0.25, ease: "easeOut" }}
+                              className="relative"
+                              animate={{ y: 0 }}
+                              initial={{ y: "100%" }}
+                            >
+                              <PlayingCard
+                                suit={c.suit}
+                                rank={c.rank}
+                                width={56}
+                              />
+                            </motion.div>
+                          );
+                        })}
                       </div>
-                    ))}
-                  </div>
-                ))}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </motion.div>
               <motion.div
                 initial={{ translateY: 100 }}
@@ -298,7 +318,17 @@ export default function BlackjackPage() {
                     text="Double"
                     onClick={() => send("double")}
                   />
-                  <PrimaryButton text="Split" onClick={() => send("split")} />
+                  <PrimaryButton
+                    disabled={
+                      !(
+                        hands[activeHand]?.length === 2 &&
+                        hands[activeHand]?.[0].rank ===
+                          hands[activeHand]?.[1].rank
+                      )
+                    }
+                    text="Split"
+                    onClick={() => send("split")}
+                  />
                 </div>
               </motion.div>
             </div>
