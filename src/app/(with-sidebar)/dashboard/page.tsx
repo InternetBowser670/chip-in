@@ -28,7 +28,7 @@ export default function Page() {
             <Card
               chin
               color="orange"
-              className="mr-2 cursor-pointer w-fit grayscale"
+              className="mr-2 cursor-pointer w-fit"
               onClick={() => router.push("/play/blackjack")}
             >
               <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>

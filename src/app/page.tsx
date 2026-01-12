@@ -76,12 +76,15 @@ export default function Home() {
                   <GiPokerHand size="70" className="text-red-400" />
                 </div>
               </Card>
-              <Card chin color="grayscale" className="mx-2 grayscale">
-                <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
-                <div className="flex justify-center">
-                  <GiCardJackSpades size="70" className="text-orange-400" />
-                </div>
-              </Card>
+              <Link href="/play/blackjack">
+                <Card chin color="orange" className="mx-2">
+                  <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
+                  <div className="flex justify-center">
+                    <GiCardJackSpades size="70" className="text-orange-400" />
+                  </div>
+                </Card>
+              </Link>
+
               <Link href="/play/coinflip">
                 <Card chin color="yellow" className="mx-2">
                   <h1 className="mb-2 text-3xl text-yellow-400">Coinflip</h1>
