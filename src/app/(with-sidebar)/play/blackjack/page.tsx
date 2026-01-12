@@ -3,7 +3,7 @@
 import { useChips } from "@/components/providers";
 import PlayingCard from "@/components/ui/games/any/card";
 import { PrimaryButton } from "@/components/ui/global/buttons";
-import { Card } from "@/lib/types";
+import { BlackjackFinalHand, Card } from "@/lib/types";
 import clsx from "clsx";
 import { motion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
@@ -20,6 +20,7 @@ export default function BlackjackPage() {
   const [dealerHand, setDealerHand] = useState<Card[]>([]);
   const [activeHand, setActiveHand] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [resolvedHands, setResolvedHands] = useState<BlackjackFinalHand[]>([]);
 
   const { chips, setChips, chipsFetched } = useChips();
 
@@ -82,15 +83,10 @@ export default function BlackjackPage() {
     if (json.activeHand !== undefined) setActiveHand(json.activeHand);
 
     if (json.finalHands) {
-      setHands(json.finalHands);
+      setHands(json.finalHands.map((h: BlackjackFinalHand) => h.cards));
+      setResolvedHands(json.finalHands);
       setGameActive(false);
-      setMessage(
-        json.outcome == "win"
-          ? "You win!"
-          : json.outcome == "lose"
-          ? "You lose!"
-          : "Push!"
-      );
+      setMessage("Game over, play again?");
       if (json.updatedChips !== undefined || json.updatedChips != null) {
         setChips(json.updatedChips);
       }
@@ -113,6 +109,7 @@ export default function BlackjackPage() {
 
     if (result === "failed") return;
 
+    setResolvedHands([]);
     setSidebarExpanded(false);
     setGameActive(true);
     setMessage("Your move");
@@ -246,7 +243,14 @@ export default function BlackjackPage() {
                     key={i}
                     className={clsx(
                       "flex -space-x-50 p-2 rounded-xl transition",
-                      i === activeHand && "bg-white/10"
+                      i === activeHand && gameActive && "bg-white/10",
+                      resolvedHands[i] && !gameActive && (
+                        resolvedHands[i].outcome === "win" || resolvedHands[i].outcome === "blackjack"
+                          ? "bg-green-600/80"
+                          : resolvedHands[i].outcome === "lose" || resolvedHands[i].outcome === "bust"
+                          ? "bg-red-600/70"
+                          : "bg-yellow-600/70"
+                      )
                     )}
                   >
                     {hand.map((c, j) => (
@@ -282,7 +286,7 @@ export default function BlackjackPage() {
                 <div>
                   <PrimaryButton text="Hit" onClick={() => send("hit")} />
                   <PrimaryButton text="Stand" onClick={() => send("stand")} />
-                  <PrimaryButton text="Double" onClick={() => send("double")} />
+                  <PrimaryButton disabled={!(hands[activeHand]?.length === 2)} text="Double" onClick={() => send("double")} />
                   <PrimaryButton text="Split" onClick={() => send("split")} />
                 </div>
               </motion.div>

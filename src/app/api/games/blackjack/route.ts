@@ -8,6 +8,8 @@ import {
   BlackjackGame,
   BlackjackHistory,
   ChipInUser,
+  ResolvedHand,
+  BlackjackHandOutcome,
 } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -18,8 +20,22 @@ function sha256(v: string) {
 
 function generateDeck(): Card[] {
   const suits = ["hearts", "diamonds", "clubs", "spades"] as const;
-  const ranks = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"] as const;
-  return suits.flatMap(s => ranks.map(r => ({ suit: s, rank: r })));
+  const ranks = [
+    "A",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "J",
+    "Q",
+    "K",
+  ] as const;
+  return suits.flatMap((s) => ranks.map((r) => ({ suit: s, rank: r })));
 }
 
 function shuffle(deck: Card[], seed: string): Card[] {
@@ -75,7 +91,7 @@ export async function POST(req: Request) {
       active: true,
       gameId: g.gameId,
       betAmt: g.betAmt,
-      hands: g.hands.map(h => h.cards),
+      hands: g.hands.map((h) => h.cards),
       dealerHand: g.dealerHand,
       activeHand: g.activeHandIndex,
       serverSeedHash: g.serverSeedHash,
@@ -84,10 +100,16 @@ export async function POST(req: Request) {
 
   if (action === "start") {
     if (!betAmt || betAmt <= 0 || user.totalChips < betAmt)
-      return NextResponse.json({ message: "Invalid bet amount" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid bet amount" },
+        { status: 400 }
+      );
 
     if (user.activeBlackjack)
-      return NextResponse.json({ message: "Game already active" }, { status: 409 });
+      return NextResponse.json(
+        { message: "Game already active" },
+        { status: 409 }
+      );
 
     const serverSeed = crypto.randomBytes(32).toString("hex");
     const serverSeedHash = sha256(serverSeed);
@@ -97,11 +119,13 @@ export async function POST(req: Request) {
     const game: BlackjackGame = {
       gameId: crypto.randomUUID(),
       betAmt,
-      hands: [{
-        cards: [deck.pop()!, deck.pop()!],
-        finished: false,
-        bet: betAmt,
-      }],
+      hands: [
+        {
+          cards: [deck.pop()!, deck.pop()!],
+          finished: false,
+          bet: betAmt,
+        },
+      ],
       dealerHand: [deck.pop()!, deck.pop()!],
       activeHandIndex: 0,
       deck,
@@ -110,7 +134,7 @@ export async function POST(req: Request) {
       serverSeedHash,
       serverSeed,
       createdAt: Date.now(),
-      version: "blackjack_v1",
+      version: "blackjack_v2",
     };
 
     await users.updateOne(
@@ -139,10 +163,22 @@ export async function POST(req: Request) {
 
   if (action === "double") {
     if (hand.cards.length !== 2)
-      return NextResponse.json({ message: "Double only allowed on first move" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Double only allowed on first move" },
+        { status: 400 }
+      );
 
     if (user.totalChips < hand.bet * 2)
-      return NextResponse.json({ message: "Insufficient chips to double" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Insufficient chips to double" },
+        { status: 400 }
+      );
+
+    if (game.hands.length > 1)
+      return NextResponse.json(
+        { message: "Cannot double after splitting" },
+        { status: 400 }
+      );
 
     hand.bet *= 2;
     hand.cards.push(game.deck.pop()!);
@@ -151,13 +187,22 @@ export async function POST(req: Request) {
 
   if (action === "split") {
     if (hand.cards.length !== 2)
-      return NextResponse.json({ message: "Split requires two cards" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Split requires two cards" },
+        { status: 400 }
+      );
 
     if (hand.cards[0].rank !== hand.cards[1].rank)
-      return NextResponse.json({ message: "Cards must match to split" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Cards must match to split" },
+        { status: 400 }
+      );
 
     if (user.totalChips < hand.bet * 2)
-      return NextResponse.json({ message: "Insufficient chips to split" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Insufficient chips to split" },
+        { status: 400 }
+      );
 
     const [c1, c2] = hand.cards;
 
@@ -179,28 +224,51 @@ export async function POST(req: Request) {
         game.dealerHand.push(game.deck.pop()!);
       }
 
+      const dealerTotal = handValue(game.dealerHand);
+      const resolvedHands: ResolvedHand[] = [];
+
       let netChange = 0;
 
       for (const h of game.hands) {
-        const p = handValue(h.cards);
-        const d = handValue(game.dealerHand);
+        const playerTotal = handValue(h.cards);
+        const isBlackjack =
+          h.cards.length === 2 && playerTotal === 21 && !h.doubled;
 
-        if (p > 21) netChange -= h.bet;
-        else if (d > 21 || p > d) netChange += h.bet;
-        else if (p < d) netChange -= h.bet;
+        let outcome: BlackjackHandOutcome;
+
+        if (playerTotal > 21) {
+          outcome = "bust";
+          netChange -= h.bet;
+        } else if (isBlackjack && dealerTotal !== 21) {
+          outcome = "blackjack";
+          netChange += Math.floor(h.bet * 1.5);
+        } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
+          outcome = "win";
+          netChange += h.bet;
+        } else if (playerTotal < dealerTotal) {
+          outcome = "lose";
+          netChange -= h.bet;
+        } else {
+          outcome = "push";
+        }
+
+        resolvedHands.push({
+          cards: h.cards,
+          outcome,
+          betAmt: h.bet,
+          doubled: !!h.doubled,
+        });
       }
-
-      const endCount = game.startCount + netChange;
+      const endCount = Math.max(0, game.startCount + netChange);
 
       const history: BlackjackHistory = {
         userId: clerkUser.id,
         gameId: game.gameId,
         betAmt: game.betAmt,
-        outcome: netChange > 0 ? "win" : netChange < 0 ? "lose" : "push",
         startCount: game.startCount,
         endCount,
         change: netChange,
-        playerHands: game.hands.map(h => h.cards),
+        playerHands: resolvedHands.map((h) => h.cards),
         dealerHand: game.dealerHand,
         date: Date.now(),
         version: "blackjack_v1",
@@ -219,9 +287,8 @@ export async function POST(req: Request) {
       );
 
       return NextResponse.json({
-        outcome: history.outcome,
         dealerHand: game.dealerHand,
-        finalHands: history.playerHands,
+        finalHands: resolvedHands,
         updatedChips: endCount,
         serverSeedHash: history.serverSeedHash,
         serverSeed: history.serverSeed,
@@ -236,6 +303,6 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     activeHand: game.activeHandIndex,
-    hands: game.hands.map(h => h.cards),
+    hands: game.hands.map((h) => h.cards),
   });
 }

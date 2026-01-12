@@ -102,7 +102,6 @@ export interface BlackjackGame {
   hands: BlackjackHand[];
   deck: Card[];
   finished: boolean;
-  outcome?: "win" | "lose" | "push" | "blackjack";
   startCount: number;
   endCount?: number;
   createdAt: number;
@@ -110,21 +109,41 @@ export interface BlackjackGame {
   serverSeedHash: string;
   serverSeed: string;
   activeHandIndex: number;
-  version: "blackjack_v1";
+  version: "blackjack_v1" | string;
 }
 
 export interface BlackjackHistory {
   gameId: string;
   betAmt: number;
-  outcome: "win" | "lose" | "push" | "blackjack";
   startCount: number;
   endCount: number;
   change: number;
   playerHands: Card[][];
   dealerHand: Card[];
   date: number;
-  version: "blackjack_v1";
+  version: "blackjack_v1" | string;
   userId: string;
   serverSeedHash: string;
   serverSeed: string;
+}
+
+export type BlackjackHandOutcome =
+  | "win"
+  | "lose"
+  | "push"
+  | "blackjack"
+  | "bust";
+
+  export interface BlackjackFinalHand {
+  cards: Card[];
+  outcome: BlackjackHandOutcome;
+  betAmt: number;
+  doubled: boolean;
+}
+
+export interface ResolvedHand {
+  cards: Card[];
+  outcome: BlackjackHandOutcome;
+  betAmt: number;
+  doubled: boolean;
 }
