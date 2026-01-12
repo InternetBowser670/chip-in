@@ -133,24 +133,29 @@ export default function BlackjackPage() {
             <h1 className="mx-2 text-5xl font-bold">Blackjack</h1>
             <div className="mt-6 w-full flex justify-center">
               <div
-                className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden ${
+                className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 xl:h-8 max-w-125 flex flex-col xl:flex-row items-center justify-between overflow-hidden ${
                   betAmt && chipsFetched && betAmt > chips
                     ? "bg-red-600"
                     : "bg-black"
                 }`}
               >
-                <input
-                  className={`flex-1 focus:outline-0 text-white h-full pl-2 ${
-                    betAmt == 0 && "text-red-600!"
-                  }`}
-                  title="bet"
-                  value={betAmt || ""}
-                  onChange={(e) => setBetAmt(parseInt(e.target.value) || null)}
-                  placeholder="Bet Amount"
-                  type="text"
-                />
-                <div className="flex items-center h-full p-0 m-0">
+                <div className="flex w-full xl:w-auto pr-2 xl:pr-0">
+                  <input
+                    className={`focus:outline-0 text-white h-full pl-2 shrink min-w-0 ${
+                      betAmt == 0 && "text-red-600!"
+                    }`}
+                    title="bet"
+                    value={betAmt || ""}
+                    onChange={(e) =>
+                      setBetAmt(parseInt(e.target.value) || null)
+                    }
+                    placeholder="Bet Amount"
+                    type="text"
+                  />
                   /{chips}
+                </div>
+
+                <div className="flex items-center h-full p-0 m-0 justify-end w-full xl:w-auto border-t-2 xl:border-t-0 border-white">
                   <PiPokerChip className="inline ml-2!" size={24} />
                   <button
                     type="button"
@@ -171,7 +176,7 @@ export default function BlackjackPage() {
                     className="h-full! bg-background-600 px-2"
                     onClick={() => setBetAmt(chips)}
                   >
-                    All In
+                    All
                   </button>
                 </div>
               </div>
@@ -244,13 +249,15 @@ export default function BlackjackPage() {
                     className={clsx(
                       "flex -space-x-50 p-2 rounded-xl transition",
                       i === activeHand && gameActive && "bg-white/10",
-                      resolvedHands[i] && !gameActive && (
-                        resolvedHands[i].outcome === "win" || resolvedHands[i].outcome === "blackjack"
+                      resolvedHands[i] &&
+                        !gameActive &&
+                        (resolvedHands[i].outcome === "win" ||
+                        resolvedHands[i].outcome === "blackjack"
                           ? "bg-green-600/80"
-                          : resolvedHands[i].outcome === "lose" || resolvedHands[i].outcome === "bust"
+                          : resolvedHands[i].outcome === "lose" ||
+                            resolvedHands[i].outcome === "bust"
                           ? "bg-red-600/70"
-                          : "bg-yellow-600/70"
-                      )
+                          : "bg-yellow-600/70")
                     )}
                   >
                     {hand.map((c, j) => (
@@ -286,7 +293,11 @@ export default function BlackjackPage() {
                 <div>
                   <PrimaryButton text="Hit" onClick={() => send("hit")} />
                   <PrimaryButton text="Stand" onClick={() => send("stand")} />
-                  <PrimaryButton disabled={!(hands[activeHand]?.length === 2)} text="Double" onClick={() => send("double")} />
+                  <PrimaryButton
+                    disabled={!(hands[activeHand]?.length === 2)}
+                    text="Double"
+                    onClick={() => send("double")}
+                  />
                   <PrimaryButton text="Split" onClick={() => send("split")} />
                 </div>
               </motion.div>
