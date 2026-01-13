@@ -40,7 +40,7 @@ export default function PlayingCard({
       {faceDown ? (
         <>
           {" "}
-          <div className="flex-1 w-[calc(100%-16px)] h-[calc(100%-16px)] max-w-full max-h-full m-4 border-16 border-background-800 flex justify-center items-center">
+          <div className="flex-1 w-[calc(100%-16px)] h-[calc(100%-16px)] max-w-full max-h-full m-4 border-16 text-background-800 border-background-800 flex justify-center items-center">
             <PiPokerChip size={(width / 56) * 130} />
           </div>
         </>

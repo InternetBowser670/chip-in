@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       gameId: g.gameId,
       betAmt: g.betAmt,
       hands: g.hands.map((h) => h.cards),
-      dealerHand: g.dealerHand,
+      dealerHand: [g.dealerHand[0]],
       activeHand: g.activeHandIndex,
       serverSeedHash: g.serverSeedHash,
     });

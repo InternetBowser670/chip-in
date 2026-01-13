@@ -50,7 +50,7 @@ export default function BlackjackPage() {
       if (json.active) {
         setBetAmt(json.betAmt);
         setHands(json.hands);
-        setDealerHand(json.dealerHand);
+        setDealerHand([...json.dealerHand, { suit: "clubs", rank: "A", faceDown: true }]);
         setActiveHand(json.activeHand);
         setSidebarExpanded(false);
         setGameActive(true);
@@ -77,8 +77,14 @@ export default function BlackjackPage() {
     }
 
     if (json.hands) setHands(json.hands);
-    if (json.dealerUpCard) setDealerHand([json.dealerUpCard, { suit: "clubs", rank: "A", faceDown: true}]);
-    if (json.dealerHand) setDealerHand(json.dealerHand);
+    if (json.dealerUpCard) {
+      setDealerHand([
+        json.dealerUpCard,
+        { suit: "clubs", rank: "A", faceDown: true },
+      ]);
+    }
+
+    if (json.dealerHand) setDealerHand(json.dealerHand.reverse());
     if (json.playerHand) setHands([json.playerHand]);
     if (json.activeHand !== undefined) setActiveHand(json.activeHand);
 
@@ -216,29 +222,31 @@ export default function BlackjackPage() {
             }}
           >
             <div className="relative flex flex-col justify-between flex-1 h-full overflow-hidden">
-              <div className="flex justify-center gap-2 -translate-y-1/2 -space-x-50">
-                {dealerHand.map((c, i) => (
-                  <motion.div
-                    className={`p-0 m-0`}
-                    animate={{
-                      transform: `rotate(${
-                        (i - (dealerHand.length - 1) / 2) * -25
-                      }deg)`,
-                    }}
-                    style={{ zIndex: -i + 100 }}
-                    key={i}
-                  >
-                    <PlayingCard
-                      className="rotate-180"
+              <motion.div className="flex justify-center gap-2 -translate-y-1/2 -space-x-50">
+                {dealerHand.map((c, i) => {
+                  return (
+                    <motion.div
+                      className={`p-0 m-0`}
+                      animate={{
+                        transform: `rotate(${
+                          (i - (dealerHand.length - 1) / 2) * -25
+                        }deg)`,
+                      }}
+                      style={{ zIndex: -i + 100 }}
                       key={i}
-                      suit={c.suit}
-                      rank={c.rank}
-                      width={56}
-                      faceDown={c.faceDown}
-                    />
-                  </motion.div>
-                ))}
-              </div>
+                    >
+                      <PlayingCard
+                        className="rotate-180"
+                        key={i}
+                        suit={c.suit}
+                        rank={c.rank}
+                        width={56}
+                        faceDown={c.faceDown}
+                      />
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
 
               <motion.div
                 initial={{ translateY: 100 }}
@@ -273,7 +281,10 @@ export default function BlackjackPage() {
                             : "bg-yellow-600/70")
                       )}
                     >
-                      <div className="flex" style={{ translate: ((224*hand.length) - 400) / -2}}>
+                      <div
+                        className="flex"
+                        style={{ translate: (224 * hand.length - 400) / -2 }}
+                      >
                         {hand.map((c, j) => {
                           const fanX = (j - (hand.length - 1) / 2) * -200;
                           const fanRotate = (j - (hand.length - 1) / 2) * 25;
