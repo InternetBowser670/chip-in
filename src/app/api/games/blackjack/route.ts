@@ -181,6 +181,7 @@ export async function POST(req: Request) {
       );
 
     hand.bet *= 2;
+    hand.doubled = true;
     hand.cards.push(game.deck.pop()!);
     hand.finished = true;
   }
