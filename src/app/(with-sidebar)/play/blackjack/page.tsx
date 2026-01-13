@@ -50,7 +50,10 @@ export default function BlackjackPage() {
       if (json.active) {
         setBetAmt(json.betAmt);
         setHands(json.hands);
-        setDealerHand([...json.dealerHand, { suit: "clubs", rank: "A", faceDown: true }]);
+        setDealerHand([
+          ...json.dealerHand,
+          { suit: "clubs", rank: "A", faceDown: true },
+        ]);
         setActiveHand(json.activeHand);
         setSidebarExpanded(false);
         setGameActive(true);
@@ -222,31 +225,45 @@ export default function BlackjackPage() {
             }}
           >
             <div className="relative flex flex-col justify-between flex-1 h-full overflow-hidden">
-              <motion.div className="flex justify-center gap-2 -translate-y-1/2 -space-x-50">
-                {dealerHand.map((c, i) => {
-                  return (
-                    <motion.div
-                      className={`p-0 m-0`}
-                      animate={{
-                        transform: `rotate(${
-                          (i - (dealerHand.length - 1) / 2) * -25
-                        }deg)`,
-                      }}
-                      style={{ zIndex: -i + 100 }}
-                      key={i}
-                    >
-                      <PlayingCard
-                        className="rotate-180"
-                        key={i}
-                        suit={c.suit}
-                        rank={c.rank}
-                        width={56}
-                        faceDown={c.faceDown}
-                      />
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
+              <AnimatePresence>
+                {dealerHand.length > 0 && (
+                  <motion.div
+                    key="dealer-hand"
+                    initial={{ y: "-200%" }}
+                    animate={{ y: "-50%" }}
+                    exit={{ y: "-200%" }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="flex justify-center gap-2 -space-x-50"
+                  >
+                    {dealerHand.map((c, i) => {
+                      return (
+                        <motion.div
+                          exit={{ y: "-200%" }}
+                          initial={{ y: "-200%" }}
+                          className={`p-0 m-0`}
+                          animate={{
+                            y: "-50%",
+                            transform: `rotate(${
+                              (i - (dealerHand.length - 1) / 2) * -25
+                            }deg)`,
+                          }}
+                          style={{ zIndex: -i + 100 }}
+                          key={i}
+                        >
+                          <PlayingCard
+                            className="rotate-180"
+                            key={i}
+                            suit={c.suit}
+                            rank={c.rank}
+                            width={56}
+                            faceDown={c.faceDown}
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <motion.div
                 initial={{ translateY: 100 }}
