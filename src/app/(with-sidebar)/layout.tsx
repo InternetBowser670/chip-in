@@ -43,7 +43,7 @@ export default async function SidebarLayout({
                   <PrimaryButton text="Coinflip" />
                 </Link>
                 <Link href="/play/blackjack">
-                  <PrimaryButton text="Coinflip" />
+                  <PrimaryButton text="Blackjack" />
                 </Link>
               </div>
               <div className="flex flex-col items-center mb-4 overflow-x-hidden">
