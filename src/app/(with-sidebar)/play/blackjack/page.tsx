@@ -269,6 +269,7 @@ export default function BlackjackPage() {
                 initial={{ translateY: 100 }}
                 animate={{
                   translateY: gameActive ? -68 : 0,
+                  translateX: !(hands.length > 2) ? 0 : -200 * activeHand,
                   transition: { ease: ["easeIn", "easeOut"] },
                   transitionDuration: 0.6,
                 }}
@@ -342,7 +343,7 @@ export default function BlackjackPage() {
                   <PrimaryButton text="Hit" onClick={() => send("hit")} />
                   <PrimaryButton text="Stand" onClick={() => send("stand")} />
                   <PrimaryButton
-                    disabled={!(hands[activeHand]?.length === 2)}
+                    disabled={!(hands[activeHand]?.length === 2) || hands.length > 1}
                     text="Double"
                     onClick={() => send("double")}
                   />
