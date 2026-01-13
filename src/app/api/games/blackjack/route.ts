@@ -56,7 +56,7 @@ function handValue(cards: Card[]): number {
     if (c.rank === "A") {
       aces++;
       total += 11;
-    } else if (["K", "Q", "J"].includes(c.rank)) {
+    } else if (["K", "Q", "J"].includes(c.rank.toLocaleUpperCase())) {
       total += 10;
     } else {
       total += Number(c.rank);

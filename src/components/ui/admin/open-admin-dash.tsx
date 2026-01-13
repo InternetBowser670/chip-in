@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Card from "../global/card";
 import Link from "next/link";
 import clsx from "clsx";
@@ -8,15 +8,17 @@ import clsx from "clsx";
 export default function OpenAdminDash({ small }: { small?: true }) {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  async function checkAdmin() {
-    const res = await fetch("/api/check-admin", {
-      method: "GET",
-    });
-    const data = await res.json();
-    setIsAdmin(await data.isAdmin);
-  }
+  useEffect(() => {
+    async function checkAdmin() {
+      const res = await fetch("/api/check-admin", {
+        method: "GET",
+      });
+      const data = await res.json();
+      setIsAdmin(await data.isAdmin);
+    }
 
-  checkAdmin();
+    checkAdmin();
+  }, []);
 
   if (!isAdmin) {
     return null;
@@ -29,7 +31,7 @@ export default function OpenAdminDash({ small }: { small?: true }) {
           className={clsx(
             "text-red-400 text-center",
             small
-              ? "flex justify-center items-center shrink w-16 max-h-3 text-sm"
+              ? "flex justify-center items-center shrink w-16 max-h-3 text-sm p-1"
               : "text-3xl"
           )}
         >
