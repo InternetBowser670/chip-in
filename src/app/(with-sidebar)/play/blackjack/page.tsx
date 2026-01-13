@@ -232,14 +232,12 @@ export default function BlackjackPage() {
                     initial={{ y: "-200%" }}
                     animate={{ y: "-50%" }}
                     exit={{ y: "-200%" }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
                     className="flex justify-center gap-2 -space-x-50"
                   >
                     {dealerHand.map((c, i) => {
                       return (
                         <motion.div
-                          exit={{ y: "-200%" }}
-                          initial={{ y: "-200%" }}
                           className={`p-0 m-0`}
                           animate={{
                             y: "-50%",
@@ -283,7 +281,7 @@ export default function BlackjackPage() {
                       initial={{ y: "200%" }}
                       animate={{ y: 0 }}
                       exit={{ y: "200%" }}
-                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
                       style={{ width: "400px" }}
                       className={clsx(
                         "flex p-2 rounded-xl relative",
