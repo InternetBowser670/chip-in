@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { connectToDatabases } from "@/lib/mongodb";
 import { DateTime } from "luxon";
+import { ChipInUser, UserHistory } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export async function POST() {
     );
   }
 
-  const users = mainDb.collection("users");
+  const users = mainDb.collection<ChipInUser>("users");
 
   const userDoc = await users.findOne({ id: clerkUser.id });
   if (!userDoc) {
@@ -104,8 +105,8 @@ export async function POST() {
         endCount: totalChips + chips,
         date: Date.now(),
         actor: "user",
-        version: "history_v2",
-      },
+        version: "history_v3",
+      } as UserHistory,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any);

@@ -9,7 +9,7 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Chip In",
-  description: "Gambilng without the risk",
+  description: "Gambling without the risk",
   icons: {
     icon: "/chip-in-logo.png",
     shortcut: "/chip-in-logo.png",

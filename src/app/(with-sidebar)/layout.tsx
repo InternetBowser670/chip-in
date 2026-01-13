@@ -11,6 +11,7 @@ import {
 } from "@clerk/nextjs";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/global/buttons";
 import OpenProfile from "@/components/ui/profile/open-profile";
+import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
 
 export default async function SidebarLayout({
   children,
@@ -41,8 +42,12 @@ export default async function SidebarLayout({
                 <Link href="/play/coinflip">
                   <PrimaryButton text="Coinflip" />
                 </Link>
+                <Link href="/play/blackjack">
+                  <PrimaryButton text="Blackjack" />
+                </Link>
               </div>
               <div className="flex flex-col items-center mb-4 overflow-x-hidden">
+                <OpenAdminDash small />
                 <div className="flex justify-end gap-4 overflow-hidden">
                   <UserButton />
                   <div className="overflow-hidden">
