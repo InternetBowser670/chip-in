@@ -4,11 +4,25 @@ export async function POST() {
   const useProdDB = false;
   const { mainDb } = await connectToDatabases(useProdDB);
 
-    const usersCollection = await mainDb.collection("users");
+  const usersCollection = await mainDb.collection("users");
 
-    const users = await usersCollection
-      .find({}, { projection: { id: 1, username: 1, image_url: 1, has_image: 1, totalChips: 1, created_at: 1, badges: 1, last_active_at: 1 } })
-      .toArray();
+  const users = await usersCollection
+    .find(
+      {},
+      {
+        projection: {
+          id: 1,
+          username: 1,
+          image_url: 1,
+          has_image: 1,
+          totalChips: 1,
+          created_at: 1,
+          badges: 1,
+          last_active_at: 1,
+        },
+      }
+    )
+    .toArray();
 
   return new Response(JSON.stringify({ users }), { status: 200 });
 }

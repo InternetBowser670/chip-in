@@ -4,9 +4,9 @@ import { ObjectId } from "mongodb";
 export type CoinFlipFace = "heads" | "tails";
 
 export interface SeeMoreProps {
-    text: string;
-    maxLength: number;
-    className: string;
+  text: string;
+  maxLength: number;
+  className: string;
 }
 
 export interface UserHistory {
@@ -21,7 +21,7 @@ export interface UserHistory {
   coinFlipData?: {
     betFace: CoinFlipFace;
     outcome: CoinFlipFace;
-  }
+  };
 
   blackjackData?: {
     gameId: string;
@@ -30,21 +30,21 @@ export interface UserHistory {
 }
 
 export interface CoinFlip {
-    betAmt: number;
-    betFace: CoinFlipFace;
-    outcome: CoinFlipFace;
-    startCount: number;
-    endCount: number;
-    date: number;
-    version: string | "coinflip_v1";
-    serverSeedHash?: string;
-    serverSeed?: string;
+  betAmt: number;
+  betFace: CoinFlipFace;
+  outcome: CoinFlipFace;
+  startCount: number;
+  endCount: number;
+  date: number;
+  version: string | "coinflip_v1";
+  serverSeedHash?: string;
+  serverSeed?: string;
 }
 export interface Badge {
-    name: string;
-    dateEarned: number;
-    description?: string;
-    iconUrl?: string;
+  name: string;
+  dateEarned: number;
+  description?: string;
+  iconUrl?: string;
 }
 export interface ChipInUser extends User {
   _id: ObjectId;
@@ -137,7 +137,7 @@ export type BlackjackHandOutcome =
   | "blackjack"
   | "bust";
 
-  export interface BlackjackFinalHand {
+export interface BlackjackFinalHand {
   cards: Card[];
   outcome: BlackjackHandOutcome;
   betAmt: number;
@@ -150,3 +150,23 @@ export interface ResolvedHand {
   betAmt: number;
   doubled: boolean;
 }
+
+export interface ProfileData {
+  id: string;
+  username: string;
+  image_url: string;
+  has_image: boolean;
+  totalChips: number;
+  created_at: number;
+  badges: Badge[];
+  last_active_at: number;
+  history: (UserHistory | BlackjackHistory)[]
+}
+
+export type Candle = {
+  time: string; // YYYY-MM-DD
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+};
