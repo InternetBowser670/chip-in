@@ -32,14 +32,17 @@ export default function ProfilePage() {
         wickDownColor: "#ef5350",
       });
 
+      const sorted = [...profile.history].sort((a, b) => a.date - b.date);
+
       const candles = Object.values(
-        profile.history.reduce<Record<string, Candle>>((acc, h) => {
+        sorted.reduce<Record<string, Candle>>((acc, h) => {
           if (!h?.date) return acc;
 
+          if (h.date < 1768392297000) return acc
+
           const d = new Date(h.date);
-          
+
           if (Number.isNaN(d.getTime())) {
-            console.warn("Invalid history date:", h);
             return acc;
           }
 
@@ -65,7 +68,8 @@ export default function ProfilePage() {
 
       const data = candles.sort((a, b) => a.time.localeCompare(b.time));
 
-      console.log(data);
+      console.log(data)
+
       newSeries.setData(data);
 
       historyChart.timeScale().fitContent();

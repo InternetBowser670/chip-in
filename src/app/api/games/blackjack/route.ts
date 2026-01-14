@@ -10,6 +10,7 @@ import {
   ChipInUser,
   ResolvedHand,
   BlackjackHandOutcome,
+  UserHistory,
 } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -262,6 +263,8 @@ export async function POST(req: Request) {
       }
       const endCount = Math.max(0, game.startCount + netChange);
 
+      const endTime = Date.now();
+
       const history: BlackjackHistory = {
         userId: clerkUser.id,
         gameId: game.gameId,
@@ -271,10 +274,21 @@ export async function POST(req: Request) {
         change: netChange,
         playerHands: resolvedHands.map((h) => h.cards),
         dealerHand: game.dealerHand,
-        date: Date.now(),
+        date: endTime,
         version: "blackjack_v1",
         serverSeedHash: game.serverSeedHash,
         serverSeed: game.serverSeed,
+      };
+
+      const UserHistory: UserHistory = {
+        type: "blackjack",
+        betAmt: game.betAmt,
+        startCount: game.startCount,
+        endCount,
+        change: netChange,
+        date: endTime,
+        actor: "user",
+        version: "blackjack_v1",
       };
 
       await blackjack.insertOne(history);
@@ -284,6 +298,10 @@ export async function POST(req: Request) {
         {
           $set: { totalChips: endCount },
           $unset: { activeBlackjack: "" },
+          $push: {
+            blackjackPlays: history as BlackjackHistory,
+            history: UserHistory as UserHistory,
+          },
         }
       );
 
