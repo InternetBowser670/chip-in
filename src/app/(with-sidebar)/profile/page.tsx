@@ -31,9 +31,19 @@ export default function ProfilePage() {
         wickUpColor: "#26a69a",
         wickDownColor: "#ef5350",
       });
+
       const candles = Object.values(
         profile.history.reduce<Record<string, Candle>>((acc, h) => {
-          const day = new Date(h.date).toISOString().split("T")[0];
+          if (!h?.date) return acc;
+
+          const d = new Date(h.date);
+          
+          if (Number.isNaN(d.getTime())) {
+            console.warn("Invalid history date:", h);
+            return acc;
+          }
+
+          const day = d.toISOString().split("T")[0];
 
           if (!acc[day]) {
             acc[day] = {
