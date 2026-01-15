@@ -12,6 +12,7 @@ export default function ProfilePage() {
   const chartContainerRef = useRef(null);
 
   useEffect(() => {
+    try {
     if (chartContainerRef.current && profile && profile.history != undefined) {
       const chartOptions = {
         layout: {
@@ -68,11 +69,11 @@ export default function ProfilePage() {
 
       const data = candles.sort((a, b) => a.time.localeCompare(b.time));
 
-      console.log(data)
-
       newSeries.setData(data);
 
       historyChart.timeScale().fitContent();
+    }} catch (e) {
+        console.warn(e);
     }
   }, [profile]);
 
@@ -109,7 +110,7 @@ export default function ProfilePage() {
               <div className="w-full h-75" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">
                 <p>User Id: {profile.id}</p> |
-                <p>Badges: {profile.badges.map((val) => val.name).join(",")}</p>
+                <p>Badges: {profile.badges.map((val) => val.name).join(",") || "None"}</p>
               </div>
             </div>
           </>
