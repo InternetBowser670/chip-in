@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html className="h-screen! w-screen!" lang="en">
+      <html className="h-screen! w-screen! subpixel-antialiased" lang="en">
         <head>
           {/* Google Analytics */}
           <Script

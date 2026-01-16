@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Lato, Roboto_Mono, Open_Sans } from "next/font/google";
+import { Geist, Geist_Mono, Lato, Roboto_Mono, Open_Sans, Inter } from "next/font/google";
 
 // I have a few fonts here, though I'll most likely stick with Lato
 
@@ -22,6 +22,4 @@ export const robotoMono = Roboto_Mono({
   subsets: ["latin"]
 });
 
-export const openSans = Open_Sans({
-  subsets: ["latin"]
-})
+export const openSans = Inter();

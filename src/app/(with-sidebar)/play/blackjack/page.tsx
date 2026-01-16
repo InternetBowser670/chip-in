@@ -152,7 +152,7 @@ export default function BlackjackPage() {
                     : "bg-black"
                 }`}
               >
-                <div className="flex w-full pr-2 xl:w-auto xl:pr-0">
+                <div className="flex items-center w-full pr-2 xl:w-auto xl:pr-0">
                   <input
                     className={`focus:outline-0 text-white h-full pl-2 shrink min-w-0 ${
                       betAmt == 0 && "text-red-600!"

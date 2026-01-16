@@ -81,8 +81,9 @@ export async function POST(req: Request) {
   const blackjack = mainDb.collection<BlackjackHistory>("blackjack");
 
   const user = await users.findOne({ id: clerkUser.id });
-  if (!user)
+  if (!user) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
+  }
 
   if (action === "resume") {
     const g = user.activeBlackjack;
