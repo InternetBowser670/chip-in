@@ -31,6 +31,7 @@ export default function ProfilePage() {
         borderVisible: false,
         wickUpColor: "#26a69a",
         wickDownColor: "#ef5350",
+        wickVisible: true,
       });
 
       const sorted = [...profile.history].sort((a, b) => a.date - b.date);
@@ -110,7 +111,7 @@ export default function ProfilePage() {
               <div className="w-full h-75" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">
                 <p>User Id: {profile.id}</p> |
-                <p>Badges: {profile.badges.map((val) => val.name).join(",") || "None"}</p>
+                <p>Badges: {profile.badges ? profile.badges.map((val) => val.name).join(",") : "None"}</p>
               </div>
             </div>
           </>
