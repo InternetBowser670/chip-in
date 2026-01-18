@@ -54,7 +54,7 @@ export interface ChipInUser extends User {
   timezone: string;
   history: UserHistory[];
   coinFlips: CoinFlip[];
-  badges: Badge[];
+  badges?: Badge[];
 }
 
 export interface PlayingCardProps {
