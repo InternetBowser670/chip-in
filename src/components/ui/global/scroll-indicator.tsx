@@ -1,33 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { MdKeyboardArrowDown } from "react-icons/md";
 
 export default function ScrollDown() {
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsVisible(window.scrollY < 100);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
-    <div
-      className={`fixed flex justify-center left-0 z-999 items-center content-center bottom-10 w-full transition-opacity duration-500 ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      <div className="border-2 border-b-4 p-2 backdrop-filter backdrop-blur-md border-[#121212] rounded-2xl dark:border-[#ededed] animate-bounce bg-black/20">
-        <div className="relative flex flex-col items-center justify-center top-1">
-          <p className="mb-2">Scroll Down</p>
-        </div>
+    <div className="flex items-center justify-center">
+      <div className="flex items-center">
+        <p className="text-center align-middle text-3xl">More Info</p>
+        <motion.div
+          animate={{ y: [-4, 6, -4] }}
+          className="flex justify-center items-center"
+          transition={{
+            repeat: Infinity,
+            ease: "easeInOut",
+            times: [0, 0.5, 1],
+            duration: 2,
+          }}
+        >
+          <MdKeyboardArrowDown size={50} />
+          <MdKeyboardArrowDown size={50} />
+          <MdKeyboardArrowDown size={50} />
+        </motion.div>
       </div>
     </div>
-  );
+  );  
 }

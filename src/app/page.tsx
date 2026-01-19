@@ -31,7 +31,7 @@ export default function Home() {
     <main className="relative w-screen h-screen overflow-x-hidden">
       <div className="relative z-10">
         <div className="relative w-full h-screen pb-2 overflow-hidden bg-background-900">
-          <header className="relative w-full h-12.5 flex items-center bg-background-800 px-2 justify-between py-2 border-b border-b-background-700 z-20">
+          <header className="fixed w-full h-12.5 flex items-center bg-background-800 px-2 justify-between py-2 border-b border-b-background-700 z-200">
             <div className="flex items-center gap-2">
               <Image
                 src={"/chip-in-logo.png"}
@@ -122,14 +122,16 @@ export default function Home() {
               </Card>
             </div>
             <h1 className="px-4 mt-10 text-xl font-bold">
-              Roll the reels, deal the cards, and chase that jackpot thrill!
+              No-stakes gambling with all the thrill!
             </h1>
+            <div className="mt-[5%]">
+              <ScrollDown />
+            </div>
           </div>
-          <ScrollDown />
         </div>
 
         <div className="flex items-center justify-center w-full h-screen bg-background-800">
-          <h1 className="text-3xl font-bold">Coming soon!</h1>
+          <h1 className="text-3xl font-bold">To start playing, create an account, claim your daily chips and navigate to a game.</h1>
         </div>
       </div>
     </main>
