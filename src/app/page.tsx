@@ -127,6 +127,7 @@ export default function Home() {
             <div className="mt-[5%]">
               <ScrollDown />
             </div>
+            <div className="bottom-2 right-2 absolute">Made by <Link className="underline" href={"https://internetbowser.com"}>InternetBowser</Link></div>
           </div>
         </div>
 

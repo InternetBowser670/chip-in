@@ -6,7 +6,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 export default function ScrollDown() {
   return (
     <div className="flex items-center justify-center">
-      <div className="flex items-center">
+      <div className="flex flex-col items-center">
         <p className="text-center align-middle text-3xl">More Info</p>
         <motion.div
           animate={{ y: [-4, 6, -4] }}
