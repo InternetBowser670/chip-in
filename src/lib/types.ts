@@ -22,10 +22,16 @@ export interface UserHistory {
     betFace: CoinFlipFace;
     outcome: CoinFlipFace;
   };
-
   blackjackData?: {
     gameId: string;
     outcome: "win" | "lose" | "push" | "blackjack";
+  };
+  minesData?: {
+    gameId?: string;
+    minesCount: number;
+    grid: MinesGrid;
+    tilesFlipped: number;
+    finalMultiplier: number;
   };
 }
 
@@ -160,7 +166,7 @@ export interface ProfileData {
   created_at: number;
   badges: Badge[];
   last_active_at: number;
-  history: (UserHistory | BlackjackHistory)[]
+  history: (UserHistory | BlackjackHistory)[];
 }
 
 export type Candle = {
@@ -170,3 +176,33 @@ export type Candle = {
   low: number;
   close: number;
 };
+
+export interface MinesTile {
+  value: "mine" | "safe";
+  revealed: boolean;
+}
+
+export type MinesRow = MinesTile[];
+
+export type MinesGrid = MinesRow[];
+
+export interface MinesGame {
+  gameId: string;
+  betAmt: number;
+  minesCount: number;
+  grid: MinesGrid;
+  finished: boolean;
+  startCount: number;
+  endCount?: number;
+  createdAt: number;
+  completedAt?: number;
+  serverSeedHash: string;
+  serverSeed: string;
+  tilesFlipped: number;
+  version: "mines_v1" | string;
+}
+export type MinesAction =
+  | { type: "start"; info: { betAmt: number; minesCount: number } }
+  | { type: "resume" }
+  | { type: "flip"; info: { tileIndex: number } }
+  | { type: "cashout" };

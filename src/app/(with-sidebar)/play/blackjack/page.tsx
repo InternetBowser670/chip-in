@@ -110,7 +110,7 @@ export default function BlackjackPage() {
       betAmt < 0 ||
       !Number.isInteger(betAmt)
     )
-      return;
+      return setMessage("Invalid bet amount");
 
     setMessage("Starting game...");
 

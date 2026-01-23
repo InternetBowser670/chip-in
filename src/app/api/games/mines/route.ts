@@ -1,0 +1,83 @@
+import { ChipInUser, MinesAction, MinesGrid, MinesRow } from "@/lib/types";
+import { connectToDatabases } from "@/lib/mongodb";
+import { currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
+
+export async function POST(req: Request) {
+  const body = await req.json();
+
+  const { action } = body as { action: MinesAction };
+
+  const clerkUser = await currentUser();
+  if (!clerkUser)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+  const { mainDb } = await connectToDatabases(false);
+
+  const users = mainDb.collection<ChipInUser>("users");
+
+  const user = await users.findOne({ id: clerkUser.id });
+  if (!user) {
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
+  }
+
+  function generateMinesGrid(minesCount: number): MinesGrid {
+    const tilesArray: MinesGrid = [];
+    const mineIndices = new Set<number>();
+
+    while (mineIndices.size < minesCount) {
+      mineIndices.add(Math.floor(Math.random() * 25));
+    }
+
+    for (let i = 0; i < 5; i++) {
+      const minesRow: MinesRow = [];
+      for (let j = 0; j < 5; j++) {
+        const currentIndex = i * 5 + j;
+        const type = mineIndices.has(currentIndex) ? "mine" : "safe";
+
+        minesRow.push({ value: type, revealed: false });
+      }
+      tilesArray.push(minesRow);
+    }
+    return tilesArray;
+  }
+
+  if (action.type === "start") {
+    const betAmt = action.info.betAmt;
+
+    if (
+      !betAmt ||
+      betAmt <= 0 ||
+      user.totalChips < betAmt ||
+      !Number.isInteger(betAmt)
+    ) {
+      return NextResponse.json(
+        { message: "Invalid bet amount" },
+        { status: 400 }
+      );
+    }
+
+    const minesCount = action.info.minesCount;
+
+    if (minesCount < 1 || minesCount > 24) {
+      return NextResponse.json(
+        { message: "Invalid mines count" },
+        { status: 400 }
+      );
+    }
+
+    const newGrid = generateMinesGrid(minesCount);
+
+    return NextResponse.json({
+      grid: newGrid,
+      message: "Game is a work in progress"
+    });
+
+  } else if (action.type === "flip") {
+  } else if (action.type === "cashout") {
+  } else if (action.type === "resume") {
+  }
+  return NextResponse.json({ message: "Not implemented" }, { status: 501 });
+}

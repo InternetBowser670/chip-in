@@ -101,7 +101,7 @@ export async function POST(req: Request) {
   }
 
   if (action === "start") {
-    if (!betAmt || betAmt <= 0 || user.totalChips < betAmt)
+    if (!betAmt || betAmt <= 0 || user.totalChips < betAmt || !Number.isInteger(betAmt))
       return NextResponse.json(
         { message: "Invalid bet amount" },
         { status: 400 }
