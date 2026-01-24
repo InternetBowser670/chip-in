@@ -178,7 +178,7 @@ export type Candle = {
 };
 
 export interface MinesTile {
-  value: "mine" | "safe";
+  value?: "mine" | "safe";
   revealed: boolean;
 }
 

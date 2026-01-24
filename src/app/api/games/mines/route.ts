@@ -2,6 +2,7 @@ import { ChipInUser, MinesAction, MinesGrid, MinesRow } from "@/lib/types";
 import { connectToDatabases } from "@/lib/mongodb";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { sanitizeMinesGrid } from "@/lib/games/mines";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +72,7 @@ export async function POST(req: Request) {
     const newGrid = generateMinesGrid(minesCount);
 
     return NextResponse.json({
-      grid: newGrid,
+      grid: sanitizeMinesGrid(newGrid),
       message: "Game is a work in progress"
     });
 
