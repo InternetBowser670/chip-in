@@ -1,15 +1,17 @@
 "use client";
 
-import { GiLandMine } from "react-icons/gi";
 import { PrimaryButton } from "@/components/ui/global/buttons";
 import { motion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
+import MinesTile from "@/components/ui/games/mines/tile";
 
 export default function MinesPage() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
 
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef(null);
+
+  const [mineState, setMineState] = useState<false | "safe" | "mine">(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -29,7 +31,7 @@ export default function MinesPage() {
     <div className="flex items-center justify-center h-full">
       <div
         ref={containerRef}
-        className="h-[80%] w-[90%] bg-gray-700 rounded-2xl text-center overflow-auto flex"
+        className="h-[80%] w-[90%] bg-gray-800 rounded-2xl text-center overflow-auto flex"
       >
         <motion.div
           initial={{ width: "100%" }}
@@ -65,7 +67,9 @@ export default function MinesPage() {
             <div className="relative flex flex-1 h-full overflow-hidden">
               <div className="relative flex items-center justify-center w-full h-full">
                 <div className="flex flex-col items-center">
-                  <GiLandMine size={56} />
+                  <button type="button" className="m-2" onClick={() => setMineState(mineState == "safe" ? "mine" : mineState == "mine" ? false : "safe")}>
+                    <MinesTile flipped={mineState == false ? false : true} value={mineState !== false ? mineState : undefined} />
+                  </button>
                   <p className="mt-2 text-4xl font-bold">Coming Soon!</p>
                 </div>
               </div>
