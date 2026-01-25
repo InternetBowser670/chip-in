@@ -160,7 +160,7 @@ export default function Page() {
                   type="text"
                 />
                 <div className="flex items-center h-full p-0 m-0">
-                  /{chips}
+                  /{chips.toFixed(2).toLocaleString()}
                   <PiPokerChip className="inline ml-2!" size={24} />
                   <button
                     type="button"

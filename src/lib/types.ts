@@ -31,7 +31,7 @@ export interface UserHistory {
     minesCount: number;
     grid: MinesGrid;
     tilesFlippedCount: number;
-    tilesFlipped: [number, number][];
+    tilesFlipped: { coordinates: [number, number]; value: "safe" | "mine" }[];
     finalMultiplier: number;
   };
 }

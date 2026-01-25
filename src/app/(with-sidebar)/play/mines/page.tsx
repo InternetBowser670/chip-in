@@ -24,10 +24,11 @@ export default function MinesPage() {
   >([]);
   const [multiplier, setMultiplier] = useState<number>(1);
   const [cashOutValue, setCashOutValue] = useState<number>(0);
+  const [canCashOut, setCanCashOut] = useState<boolean>(false);
 
   const containerRef = useRef(null);
 
-  const { chips, chipsFetched } = useChips();
+  const { chips, chipsFetched, setChips } = useChips();
 
   const gridNumsArr = Array.from({ length: 5 }).map(() => [0, 1, 2, 3, 4]);
 
@@ -73,6 +74,7 @@ export default function MinesPage() {
         setFlippedTiles(json.flippedTiles);
         setGameActive(true);
         setSidebarExpanded(false);
+        setFlippedTiles(json.flippedTiles);
         if (
           json.flippedTiles.some(
             (t: { value: "safe" | "mine" }) => t.value === "mine"
@@ -86,24 +88,26 @@ export default function MinesPage() {
             action.type == "start"
               ? json.betAmt * json.multiplier
               : json.betAmt *
-                  json.multiplier *
-                  (json.flippedTiles.length / (json.flippedTiles.length - 1))
+                  json.multiplier
           );
         }
+        setCanCashOut(true);
       } else if (action.type == "flip") {
         setFlippedTiles(json.flippedTiles);
         if (json.multiplier) {
           setMultiplier(json.multiplier);
-          setCashOutValue(
-            json.betAmt *
-              json.multiplier
-          );
+          setCashOutValue(json.betAmt * json.multiplier);
         }
 
         if (json.gameOver) {
           setGameActive(false);
           setCashOutValue(0);
+          setChips(json.endCount);
         }
+      } else if (action.type == "cashout") {
+        setGameActive(false);
+        setChips(json.endChips);
+        setFlippedTiles(json.flippedTiles);
       }
       if (json.message) {
         setMessage(json.message);
@@ -125,10 +129,15 @@ export default function MinesPage() {
 
   useEffect(() => {
     sendAction({ type: "resume" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleFlip(row: number, col: number) {
     sendAction({ type: "flip", info: { tileCoordinates: [row, col] } });
+  }
+
+  function cashOut() {
+    sendAction({ type: "cashout" });
   }
 
   return (
@@ -165,7 +174,7 @@ export default function MinesPage() {
                   placeholder="Bet Amount"
                   type="text"
                 />
-                /{chips}
+                /{chips.toFixed(2).toLocaleString()}
               </div>
 
               <div className="flex items-center justify-end w-full h-full p-0 m-0 border-t-2 border-white xl:w-auto xl:border-t-0">
@@ -217,7 +226,8 @@ export default function MinesPage() {
                     ? `Cash Out ${cashOutValue.toFixed(2)}`
                     : "Cash Out"
                 }
-                disabled={!gameActive || loading}
+                onClick={cashOut}
+                disabled={!gameActive || loading || !canCashOut}
               />
               <p className="text-left pl-4">
                 {multiplier && `Multiplier: ${multiplier.toFixed(5)}`}
@@ -266,8 +276,6 @@ export default function MinesPage() {
                       })}
                     </div>
                   ))}
-
-                  <p className="mt-2 text-4xl font-bold">Coming Soon!</p>
                 </div>
               </div>
             </div>

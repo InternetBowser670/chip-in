@@ -165,7 +165,7 @@ export default function BlackjackPage() {
                     placeholder="Bet Amount"
                     type="text"
                   />
-                  /{chips}
+                  /{chips.toFixed(2).toLocaleString()}
                 </div>
 
                 <div className="flex items-center justify-end w-full h-full p-0 m-0 border-t-2 border-white xl:w-auto xl:border-t-0">

@@ -4,6 +4,7 @@ import {
   MinesGame,
   MinesGrid,
   MinesRow,
+  UserHistory,
 } from "@/lib/types";
 import { connectToDatabases } from "@/lib/mongodb";
 import { currentUser } from "@clerk/nextjs/server";
@@ -119,9 +120,7 @@ export async function POST(req: Request) {
       betAmt,
       minesCount,
     });
-
   } else if (action.type === "flip") {
-
     if (!user.activeMinesGame || user.activeMinesGame.finished) {
       return NextResponse.json(
         { message: "No active game to flip tile in" },
@@ -182,6 +181,68 @@ export async function POST(req: Request) {
       { $set: { activeMinesGame: updatedGame } }
     );
 
+    if (isMine) {
+      await users.updateOne(
+        { id: clerkUser.id },
+        { $unset: { activeMinesGame: "" } }
+      );
+
+      const endTime = Date.now();
+      const endCount = user.totalChips - game.betAmt;
+      const netChange = endCount - updatedGame.startCount;
+
+      const history: UserHistory = {
+        betAmt: updatedGame.betAmt,
+        startCount: updatedGame.startCount,
+        endCount,
+        change: netChange,
+        date: endTime,
+        type: "mines_v1",
+        version: "mines_v1",
+        actor: "user",
+        minesData: {
+          gameId: updatedGame.gameId,
+          minesCount: updatedGame.minesCount,
+          grid: updatedGame.grid,
+          tilesFlippedCount: updatedGame.tilesFlippedCount,
+          tilesFlipped: updatedGame.tilesFlipped,
+          finalMultiplier: calculateMinesMultiplier(
+            calculateMinesProbability(
+              updatedGame.minesCount,
+              updatedGame.tilesFlippedCount
+            )
+          ),
+        },
+      };
+
+      await users.updateOne(
+        { id: clerkUser.id },
+        {
+          $set: { totalChips: endCount },
+          $push: {
+            minesPlays: history as UserHistory,
+            history: history as UserHistory,
+          },
+        }
+      );
+
+      return NextResponse.json({
+        flippedTiles,
+        gameOver: isMine,
+        betAmt: game.betAmt,
+        multiplier: isMine
+          ? null
+          : calculateMinesMultiplier(
+              calculateMinesProbability(
+                game.minesCount,
+                updatedGame.tilesFlippedCount
+              )
+            ),
+        message: isMine ? "Game over!" : undefined,
+        endCount: endCount,
+      });
+    }
+
     return NextResponse.json({
       flippedTiles,
       gameOver: isMine,
@@ -197,9 +258,79 @@ export async function POST(req: Request) {
       message: isMine ? "Game over!" : undefined,
     });
   } else if (action.type === "cashout") {
+    if (!user.activeMinesGame || user.activeMinesGame.finished) {
+      return NextResponse.json(
+        { message: "No active game to resume" },
+        { status: 400 }
+      );
+    }
 
+    const game = user.activeMinesGame;
+
+    const probability = calculateMinesProbability(
+      game.minesCount,
+      game.tilesFlippedCount
+    );
+    const multiplier = calculateMinesMultiplier(probability);
+    const winnings = game.betAmt * multiplier;
+
+    const flippedTiles: FlippedTile[] = game.grid.flatMap((r, rowIndex) =>
+      r.map(
+        (t, colIndex): FlippedTile => ({
+          coordinates: [rowIndex, colIndex],
+          value: t.value as TileValue,
+        })
+      )
+    );
+
+    const endTime = Date.now();
+    const endCount = user.totalChips + winnings;
+    const netChange = endCount - game.startCount;
+
+    const history: UserHistory = {
+      betAmt: game.betAmt,
+      startCount: game.startCount,
+      endCount,
+      change: netChange,
+      date: endTime,
+      type: "mines_v1",
+      version: "mines_v1",
+      actor: "user",
+      minesData: {
+        gameId: game.gameId,
+        minesCount: game.minesCount,
+        grid: game.grid,
+        tilesFlippedCount: game.tilesFlippedCount,
+        tilesFlipped: game.tilesFlipped,
+        finalMultiplier: calculateMinesMultiplier(
+          calculateMinesProbability(game.minesCount, game.tilesFlippedCount)
+        ),
+      },
+    };
+
+    await users.updateOne(
+      { id: clerkUser.id },
+      {
+        $set: { totalChips: user.totalChips + winnings },
+        $push: {
+          minesPlays: history as UserHistory,
+          history: history as UserHistory,
+        },
+      }
+    );
+
+    await users.updateOne(
+      { id: clerkUser.id },
+      { $unset: { activeMinesGame: "" } }
+    );
+
+    return NextResponse.json({
+      message: `You cashed out and won ${winnings.toFixed(2)} chips!`,
+      winnings,
+      flippedTiles,
+      endChips: user.totalChips + winnings,
+    });
   } else if (action.type === "resume") {
-
     if (!user.activeMinesGame || user.activeMinesGame.finished) {
       return NextResponse.json(
         { message: "No active game to resume" },
@@ -220,5 +351,5 @@ export async function POST(req: Request) {
       ),
     });
   }
-  return NextResponse.json({ message: "Not implemented" }, { status: 501 });
+  return NextResponse.json({ message: "Invalid action type" }, { status: 400 });
 }
