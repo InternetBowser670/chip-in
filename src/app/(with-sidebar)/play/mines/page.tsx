@@ -106,7 +106,7 @@ export default function MinesPage() {
         }
       } else if (action.type == "cashout") {
         setGameActive(false);
-        setChips(json.endChips);
+        setChips(json.endCount);
         setFlippedTiles(json.flippedTiles);
       }
       if (json.message) {

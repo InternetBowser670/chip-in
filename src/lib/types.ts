@@ -27,12 +27,17 @@ export interface UserHistory {
     outcome: "win" | "lose" | "push" | "blackjack";
   };
   minesData?: {
-    gameId?: string;
+    gameId: string;
     minesCount: number;
     grid: MinesGrid;
     tilesFlippedCount: number;
-    tilesFlipped: { coordinates: [number, number]; value: "safe" | "mine" }[];
+    tilesFlipped: FlippedTile[];
     finalMultiplier: number;
+    fairness: {
+      serverSeed: string;
+      clientSeed: string;
+      nonce: number;
+    };
   };
 }
 
@@ -188,24 +193,36 @@ export type MinesRow = MinesTileType[];
 
 export type MinesGrid = MinesRow[];
 
-export interface MinesGame {
+export type MinesGame = {
   gameId: string;
   betAmt: number;
   minesCount: number;
   grid: MinesGrid;
   finished: boolean;
   startCount: number;
-  endCount?: number;
   createdAt: number;
-  completedAt?: number;
-  serverSeedHash?: string;
-  serverSeed?: string;
   tilesFlippedCount: number;
-  tilesFlipped: { coordinates: [number, number]; value: "safe" | "mine" }[];
-  version?: "mines_v1" | string;
-}
+  tilesFlipped: {
+    coordinates: [number, number];
+    value: "mine" | "safe";
+  }[];
+  fairness: {
+    serverSeedHash: string;
+    serverSeed: string | null;
+    clientSeed: string;
+    nonce: number;
+  };
+};
+
 export type MinesAction =
-  | { type: "start"; info: { betAmt: number; minesCount: number } }
+  | {
+      type: "start";
+      info: {
+        betAmt: number;
+        minesCount: number;
+        clientSeed?: string;
+      };
+    }
   | { type: "resume" }
   | { type: "flip"; info: { tileCoordinates: [number, number] } }
   | { type: "cashout" };
