@@ -30,7 +30,8 @@ export interface UserHistory {
     gameId?: string;
     minesCount: number;
     grid: MinesGrid;
-    tilesFlipped: number;
+    tilesFlippedCount: number;
+    tilesFlipped: [number, number][];
     finalMultiplier: number;
   };
 }
@@ -199,7 +200,8 @@ export interface MinesGame {
   completedAt?: number;
   serverSeedHash?: string;
   serverSeed?: string;
-  tilesFlipped: number;
+  tilesFlippedCount: number;
+  tilesFlipped: [number, number][];
   version?: "mines_v1" | string;
 }
 export type MinesAction =

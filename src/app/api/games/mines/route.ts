@@ -95,7 +95,8 @@ export async function POST(req: Request) {
       finished: false,
       startCount: user.totalChips,
       createdAt: Date.now(),
-      tilesFlipped: 0,
+      tilesFlippedCount: 0,
+      tilesFlipped: [],
     };
 
     await users.updateOne(
