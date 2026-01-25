@@ -179,12 +179,12 @@ export type Candle = {
   close: number;
 };
 
-export interface MinesTile {
+export interface MinesTileType {
   value?: "mine" | "safe";
   revealed: boolean;
 }
 
-export type MinesRow = MinesTile[];
+export type MinesRow = MinesTileType[];
 
 export type MinesGrid = MinesRow[];
 
@@ -201,7 +201,7 @@ export interface MinesGame {
   serverSeedHash?: string;
   serverSeed?: string;
   tilesFlippedCount: number;
-  tilesFlipped: [number, number][];
+  tilesFlipped: { coordinates: [number, number], value: "safe" | "mine" }[];
   version?: "mines_v1" | string;
 }
 export type MinesAction =

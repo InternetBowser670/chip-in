@@ -43,7 +43,7 @@ export default function MinesTile({
             initial={{ scale: 0, rotate: -15 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0, rotate: 15 }}
-            transition={{ type: "spring", stiffness: 500, damping: 42, visualDuration: 0.8 }}
+            transition={{ type: "spring", stiffness: 500, damping: 42, visualDuration: 0. }}
             className="text-[#101828]"
           >
             <GiUnlitBomb size={40} />
@@ -56,7 +56,7 @@ export default function MinesTile({
             initial={{ scale: 0, rotate: 15 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0, rotate: -15 }}
-            transition={{ type: "spring", stiffness: 500, damping: 42, visualDuration: 0.8 }}
+            transition={{ type: "spring", stiffness: 500, damping: 42, visualDuration: 0. }}
             className="text-[#101828]"
           >
             <IoDiamond size={40} />
@@ -68,7 +68,7 @@ export default function MinesTile({
             initial={{ scale: 0, rotate: 15 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0, rotate: -15 }}
-            transition={{ type: "spring", stiffness: 500, damping: 42, visualDuration: 0.8 }}
+            transition={{ type: "spring", stiffness: 500, damping: 42, visualDuration: 0. }}
             className="text-white opacity-85"
           >
             <FaQuestion size={40} />

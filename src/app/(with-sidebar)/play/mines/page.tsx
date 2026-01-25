@@ -3,27 +3,30 @@
 import { PrimaryButton } from "@/components/ui/global/buttons";
 import { motion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
-import MinesTile from "@/components/ui/games/mines/tile";
 import { useChips } from "@/components/providers";
 import { PiPokerChip } from "react-icons/pi";
 import ElasticSlider from "@/components/ElasticSlider";
-import { MinesAction, MinesGrid } from "@/lib/types";
+import { MinesAction } from "@/lib/types";
 import React from "react";
+import ControlledTile from "@/components/ui/games/mines/controlled-tile";
 
 export default function MinesPage() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
-  const [mineState, setMineState] = useState<false | "safe" | "mine">(false);
   const [containerWidth, setContainerWidth] = useState(0);
   const [betAmt, setBetAmt] = useState<number | null>(null);
-  const [grid, setGrid] = useState<MinesGrid | null>(null);
   const [minesCount, setMinesCount] = useState<number>(3);
   const [gameActive, setGameActive] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Loading...");
   const [loading, setLoading] = useState<boolean>(true);
+  const [flippedTiles, setFlippedTiles] = useState<
+    { coordinates: [number, number]; value: "safe" | "mine" }[]
+  >([]);
 
   const containerRef = useRef(null);
 
   const { chips, chipsFetched } = useChips();
+
+  const gridNumsArr = Array.from({ length: 5 }).map(() => [0, 1, 2, 3, 4]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -56,7 +59,7 @@ export default function MinesPage() {
       setLoading(false);
       setMessage("");
       if (action.type == "start" || action.type == "resume") {
-        setGrid(json.grid);
+        setFlippedTiles(json.flippedTiles);
         setGameActive(true);
         setSidebarExpanded(false);
         if (json.message) {
@@ -81,6 +84,18 @@ export default function MinesPage() {
   useEffect(() => {
     sendAction({ type: "resume" });
   }, []);
+
+  function handleFlip(row: number, col: number) {
+    setFlippedTiles((prev) => {
+      if (
+        prev.some((t) => t.coordinates[0] === row && t.coordinates[1] === col)
+      ) {
+        return prev;
+      }
+
+      return [...prev, { coordinates: [row, col], value: "safe" }];
+    });
+  }
 
   return (
     <div className="flex items-center justify-center h-full">
@@ -160,7 +175,7 @@ export default function MinesPage() {
               text="Start Game"
             />
             <div className="flex justify-center items-center w-full flex-1">
-              {message}
+              <h2 className="text-2xl font-bold">{message}</h2>
             </div>
           </div>
         </motion.div>
@@ -180,35 +195,27 @@ export default function MinesPage() {
             <div className="relative flex flex-1 h-full overflow-hidden">
               <div className="relative flex items-center justify-center w-full h-full">
                 <div className="flex flex-col items-center">
-                  {grid?.map((row, rowIndex) => (
-                    <React.Fragment key={rowIndex}>
-                      <div className="flex">
-                        {row.map((tile, colIndex) => (
-                          <React.Fragment key={colIndex}>
-                            <button
-                              type="button"
-                              className="m-2"
-                              onClick={() =>
-                                setMineState(
-                                  mineState == "safe"
-                                    ? "mine"
-                                    : mineState == "mine"
-                                    ? false
-                                    : "safe"
-                                )
-                              }
-                            >
-                              <MinesTile
-                                flipped={mineState == false ? false : true}
-                                value={
-                                  mineState !== false ? mineState : undefined
-                                }
-                              />
-                            </button>
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </React.Fragment>
+                  {gridNumsArr.map((row, rowIndex) => (
+                    <div className="flex" key={rowIndex}>
+                      {row.map((colIndex) => {
+                        const flipped = flippedTiles.find(
+                          (t) =>
+                            t.coordinates[0] === rowIndex &&
+                            t.coordinates[1] === colIndex
+                        );
+
+                        return (
+                          <ControlledTile
+                            key={`${rowIndex}-${colIndex}`}
+                            rowIndex={rowIndex}
+                            colIndex={colIndex}
+                            revealed={!!flipped}
+                            value={flipped?.value}
+                            onFlip={handleFlip}
+                          />
+                        );
+                      })}
+                    </div>
                   ))}
 
                   <p className="mt-2 text-4xl font-bold">Coming Soon!</p>

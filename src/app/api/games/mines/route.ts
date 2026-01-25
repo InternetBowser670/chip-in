@@ -8,7 +8,6 @@ import {
 import { connectToDatabases } from "@/lib/mongodb";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { sanitizeMinesGrid } from "@/lib/games/mines";
 import { v4 } from "uuid";
 
 export const dynamic = "force-dynamic";
@@ -55,7 +54,7 @@ export async function POST(req: Request) {
   if (action.type === "start") {
     if (user.activeMinesGame && !user.activeMinesGame.finished) {
       return NextResponse.json({
-        grid: sanitizeMinesGrid(user.activeMinesGame.grid),
+        flippedTiles: user.activeMinesGame.tilesFlipped,
         message: "Game resumed",
         minesCount: user.activeMinesGame.minesCount,
         betAmt: user.activeMinesGame.betAmt,
@@ -105,9 +104,9 @@ export async function POST(req: Request) {
     );
 
     return NextResponse.json({
-      grid: sanitizeMinesGrid(grid),
+      flippedTiles: [],
       betAmt,
-      minesCount
+      minesCount,
     });
   } else if (action.type === "flip") {
   } else if (action.type === "cashout") {
@@ -120,7 +119,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      grid: sanitizeMinesGrid(user.activeMinesGame.grid),
+      flippedTiles: user.activeMinesGame.tilesFlipped,
       message: "Game resumed",
       minesCount: user.activeMinesGame.minesCount,
       betAmt: user.activeMinesGame.betAmt,
