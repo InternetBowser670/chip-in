@@ -110,7 +110,7 @@ export default function BlackjackPage() {
       betAmt < 0 ||
       !Number.isInteger(betAmt)
     )
-      return;
+      return setMessage("Invalid bet amount");
 
     setMessage("Starting game...");
 
@@ -132,7 +132,7 @@ export default function BlackjackPage() {
     <div className="flex items-center justify-center h-full">
       <div
         ref={containerRef}
-        className="h-[80%] w-[90%] bg-gray-700 rounded-2xl text-center overflow-auto flex"
+        className="h-[80%] w-[90%] bg-gray-800 rounded-2xl text-center overflow-auto flex"
       >
         <motion.div
           initial={{ width: "100%" }}
@@ -165,7 +165,6 @@ export default function BlackjackPage() {
                     placeholder="Bet Amount"
                     type="text"
                   />
-                  /{chips}
                 </div>
 
                 <div className="flex items-center justify-end w-full h-full p-0 m-0 border-t-2 border-white xl:w-auto xl:border-t-0">

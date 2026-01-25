@@ -22,10 +22,22 @@ export interface UserHistory {
     betFace: CoinFlipFace;
     outcome: CoinFlipFace;
   };
-
   blackjackData?: {
     gameId: string;
     outcome: "win" | "lose" | "push" | "blackjack";
+  };
+  minesData?: {
+    gameId: string;
+    minesCount: number;
+    grid: MinesGrid;
+    tilesFlippedCount: number;
+    tilesFlipped: FlippedTile[];
+    finalMultiplier: number;
+    fairness: {
+      serverSeed: string;
+      clientSeed: string;
+      nonce: number;
+    };
   };
 }
 
@@ -55,6 +67,7 @@ export interface ChipInUser extends User {
   history: UserHistory[];
   coinFlips: CoinFlip[];
   badges?: Badge[];
+  activeMinesGame?: MinesGame;
 }
 
 export interface PlayingCardProps {
@@ -160,7 +173,7 @@ export interface ProfileData {
   created_at: number;
   badges: Badge[];
   last_active_at: number;
-  history: (UserHistory | BlackjackHistory)[]
+  history: (UserHistory | BlackjackHistory)[];
 }
 
 export type Candle = {
@@ -169,4 +182,52 @@ export type Candle = {
   high: number;
   low: number;
   close: number;
+};
+
+export interface MinesTileType {
+  value?: "mine" | "safe";
+  revealed: boolean;
+}
+
+export type MinesRow = MinesTileType[];
+
+export type MinesGrid = MinesRow[];
+
+export type MinesGame = {
+  gameId: string;
+  betAmt: number;
+  minesCount: number;
+  grid: MinesGrid;
+  finished: boolean;
+  startCount: number;
+  createdAt: number;
+  tilesFlippedCount: number;
+  tilesFlipped: {
+    coordinates: [number, number];
+    value: "mine" | "safe";
+  }[];
+  fairness: {
+    serverSeedHash: string;
+    serverSeed: string | null;
+    clientSeed: string;
+    nonce: number;
+  };
+};
+
+export type MinesAction =
+  | {
+      type: "start";
+      info: {
+        betAmt: number;
+        minesCount: number;
+        clientSeed?: string;
+      };
+    }
+  | { type: "resume" }
+  | { type: "flip"; info: { tileCoordinates: [number, number] } }
+  | { type: "cashout" };
+
+export type FlippedTile = {
+  coordinates: [number, number];
+  value: "mine" | "safe";
 };

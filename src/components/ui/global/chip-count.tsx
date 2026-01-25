@@ -9,7 +9,7 @@ export default function ChipCount() {
   return (
     <div className="flex items-center gap-2 text-xl font-bold">
       <PiPokerChip size={24} />
-      <span>{chips.toLocaleString()}</span>
+      <span>{chips.toFixed(2).toLocaleString() }</span>
     </div>
   );
 }

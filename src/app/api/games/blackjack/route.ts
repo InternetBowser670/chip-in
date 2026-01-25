@@ -78,7 +78,7 @@ export async function POST(req: Request) {
   const { mainDb } = await connectToDatabases(false);
 
   const users = mainDb.collection<ChipInUser>("users");
-  const blackjack = mainDb.collection<BlackjackHistory>("blackjack");
+  const blackjackColl = mainDb.collection<BlackjackHistory>("blackjack");
 
   const user = await users.findOne({ id: clerkUser.id });
   if (!user) {
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
   }
 
   if (action === "start") {
-    if (!betAmt || betAmt <= 0 || user.totalChips < betAmt)
+    if (!betAmt || betAmt <= 0 || user.totalChips < betAmt || !Number.isInteger(betAmt))
       return NextResponse.json(
         { message: "Invalid bet amount" },
         { status: 400 }
@@ -292,7 +292,7 @@ export async function POST(req: Request) {
         version: "blackjack_v1",
       };
 
-      await blackjack.insertOne(history);
+      await blackjackColl.insertOne(history);
 
       await users.updateOne(
         { id: clerkUser.id },

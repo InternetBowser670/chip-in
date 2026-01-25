@@ -45,6 +45,9 @@ export default async function SidebarLayout({
                 <Link href="/play/blackjack">
                   <PrimaryButton text="Blackjack" />
                 </Link>
+                <Link href="/play/mines">
+                  <PrimaryButton text="Mines" />
+                </Link>
               </div>
               <div className="flex flex-col items-center mb-4 overflow-x-hidden">
                 <OpenAdminDash small />
