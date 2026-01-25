@@ -1,8 +1,9 @@
-import { ChipInUser, MinesAction, MinesGrid, MinesRow } from "@/lib/types";
+import { ChipInUser, MinesAction, MinesGame, MinesGrid, MinesRow } from "@/lib/types";
 import { connectToDatabases } from "@/lib/mongodb";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { sanitizeMinesGrid } from "@/lib/games/mines";
+import { v4 } from "uuid";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export async function POST(req: Request) {
   const body = await req.json();
 
   const { action } = body as { action: MinesAction };
-
+  
   const clerkUser = await currentUser();
   if (!clerkUser)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -62,18 +63,33 @@ export async function POST(req: Request) {
 
     const minesCount = action.info.minesCount;
 
-    if (minesCount < 1 || minesCount > 24) {
+    if (minesCount < 1 || minesCount > 24 || !Number.isInteger(minesCount)) {
       return NextResponse.json(
         { message: "Invalid mines count" },
         { status: 400 }
       );
     }
 
-    const newGrid = generateMinesGrid(minesCount);
+    const grid = generateMinesGrid(minesCount);
+
+    const game: MinesGame = {
+        gameId: v4(),
+        betAmt,
+        minesCount,
+        grid,
+        finished: false,
+        startCount: user.totalChips,
+        createdAt: Date.now(),
+        tilesFlipped: 0,
+    }
+
+    await users.updateOne(
+      { id: clerkUser.id },
+      { $set: { activeMinesGame: game } }
+    );
 
     return NextResponse.json({
-      grid: sanitizeMinesGrid(newGrid),
-      message: "Game is a work in progress"
+      grid: sanitizeMinesGrid(grid),
     });
 
   } else if (action.type === "flip") {

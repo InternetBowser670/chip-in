@@ -61,6 +61,7 @@ export interface ChipInUser extends User {
   history: UserHistory[];
   coinFlips: CoinFlip[];
   badges?: Badge[];
+  activeMinesGame?: MinesGame;
 }
 
 export interface PlayingCardProps {
@@ -196,10 +197,10 @@ export interface MinesGame {
   endCount?: number;
   createdAt: number;
   completedAt?: number;
-  serverSeedHash: string;
-  serverSeed: string;
+  serverSeedHash?: string;
+  serverSeed?: string;
   tilesFlipped: number;
-  version: "mines_v1" | string;
+  version?: "mines_v1" | string;
 }
 export type MinesAction =
   | { type: "start"; info: { betAmt: number; minesCount: number } }
