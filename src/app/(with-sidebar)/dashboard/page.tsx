@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Card from "@/components/ui/global/card";
-import { GiCardJackSpades, GiCoinflip } from "react-icons/gi";
+import { GiCardJackSpades, GiCoinflip, GiUnlitBomb } from "react-icons/gi";
 import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
 
 export default function Page() {
@@ -34,6 +34,17 @@ export default function Page() {
               <h1 className="mb-2 text-3xl text-orange-400">Blackjack</h1>
               <div className="flex justify-center">
                 <GiCardJackSpades size="70" className="text-orange-400" />
+              </div>
+            </Card>
+            <Card
+              chin
+              color="yellow"
+              className="mr-2 cursor-pointer w-fit"
+              onClick={() => router.push("/play/mines")}
+            >
+              <h1 className="mb-2 text-3xl text-yellow-400">Mines</h1>
+              <div className="flex justify-center">
+                <GiUnlitBomb size="70" className="text-yellow-400" />
               </div>
             </Card>
             <Card

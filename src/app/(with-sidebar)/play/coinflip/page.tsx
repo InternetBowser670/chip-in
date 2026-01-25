@@ -139,7 +139,7 @@ export default function Page() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="flex overflow-hidden text-center bg-gray-700 rounded-2xl h-[80vh] w-[80%]!">
+      <div className="flex overflow-hidden text-center bg-gray-800 rounded-2xl h-[80vh] w-[80%]!">
         <motion.div
           initial={{ width: "100%" }}
           animate={{ width: !extendSidebar ? "40%" : "100%" }}
@@ -160,7 +160,6 @@ export default function Page() {
                   type="text"
                 />
                 <div className="flex items-center h-full p-0 m-0">
-                  /{chips.toFixed(2).toLocaleString()}
                   <PiPokerChip className="inline ml-2!" size={24} />
                   <button
                     type="button"

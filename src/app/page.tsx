@@ -14,8 +14,8 @@ import {
   GiPokerHand,
   GiCardJackSpades,
   GiCoinflip,
-  GiLandMine,
   GiPerspectiveDiceSixFacesSix,
+  GiUnlitBomb,
 } from "react-icons/gi";
 import { RxColorWheel } from "react-icons/rx";
 import { PiJoystickLight } from "react-icons/pi";
@@ -99,12 +99,14 @@ export default function Home() {
                   <RxColorWheel size="70" className="text-primary-400" />
                 </div>
               </Card>
-              <Card chin color="grayscale" className="mx-2 grayscale">
-                <h1 className="mb-2 text-3xl text-blue-400">Mines</h1>
-                <div className="flex justify-center">
-                  <GiLandMine size="70" className="text-blue-400" />
-                </div>
-              </Card>
+              <Link href="/play/mines">
+                <Card chin color="blue" className="mx-2">
+                  <h1 className="mb-2 text-3xl text-blue-400">Mines</h1>
+                  <div className="flex justify-center">
+                    <GiUnlitBomb size="70" className="text-blue-400" />
+                  </div>
+                </Card>
+              </Link>
               <Card chin color="grayscale" className="mx-2 grayscale">
                 <h1 className="mb-2 text-3xl text-purple-400">Slots</h1>
                 <div className="flex justify-center">
@@ -127,12 +129,20 @@ export default function Home() {
             <div className="mt-[5%]">
               <ScrollDown />
             </div>
-            <div className="bottom-2 right-2 absolute">Made by <Link className="underline" href={"https://internetbowser.com"}>InternetBowser</Link></div>
+            <div className="bottom-2 right-2 absolute">
+              Made by{" "}
+              <Link className="underline" href={"https://internetbowser.com"}>
+                InternetBowser
+              </Link>
+            </div>
           </div>
         </div>
 
         <div className="flex items-center justify-center w-full h-screen bg-background-800">
-          <h1 className="text-3xl font-bold">To start playing, create an account, claim your daily chips and navigate to a game.</h1>
+          <h1 className="text-3xl font-bold">
+            To start playing, create an account, claim your daily chips and
+            navigate to a game.
+          </h1>
         </div>
       </div>
     </main>

@@ -7,7 +7,6 @@ import { useChips } from "@/components/providers";
 import { PiPokerChip } from "react-icons/pi";
 import ElasticSlider from "@/components/ElasticSlider";
 import { MinesAction } from "@/lib/types";
-import React from "react";
 import ControlledTile from "@/components/ui/games/mines/controlled-tile";
 import clsx from "clsx";
 
@@ -174,7 +173,6 @@ export default function MinesPage() {
                   placeholder="Bet Amount"
                   type="text"
                 />
-                /{chips.toFixed(2).toLocaleString()}
               </div>
 
               <div className="flex items-center justify-end w-full h-full p-0 m-0 border-t-2 border-white xl:w-auto xl:border-t-0">
