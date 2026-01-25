@@ -201,11 +201,16 @@ export interface MinesGame {
   serverSeedHash?: string;
   serverSeed?: string;
   tilesFlippedCount: number;
-  tilesFlipped: { coordinates: [number, number], value: "safe" | "mine" }[];
+  tilesFlipped: { coordinates: [number, number]; value: "safe" | "mine" }[];
   version?: "mines_v1" | string;
 }
 export type MinesAction =
   | { type: "start"; info: { betAmt: number; minesCount: number } }
   | { type: "resume" }
-  | { type: "flip"; info: { tileIndex: number } }
+  | { type: "flip"; info: { tileCoordinates: [number, number] } }
   | { type: "cashout" };
+
+export type FlippedTile = {
+  coordinates: [number, number];
+  value: "mine" | "safe";
+};

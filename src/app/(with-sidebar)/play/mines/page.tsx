@@ -1,6 +1,6 @@
 "use client";
 
-import { PrimaryButton } from "@/components/ui/global/buttons";
+import { PrimaryButton, SecondaryButton } from "@/components/ui/global/buttons";
 import { motion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
 import { useChips } from "@/components/providers";
@@ -9,6 +9,7 @@ import ElasticSlider from "@/components/ElasticSlider";
 import { MinesAction } from "@/lib/types";
 import React from "react";
 import ControlledTile from "@/components/ui/games/mines/controlled-tile";
+import clsx from "clsx";
 
 export default function MinesPage() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -21,6 +22,8 @@ export default function MinesPage() {
   const [flippedTiles, setFlippedTiles] = useState<
     { coordinates: [number, number]; value: "safe" | "mine" }[]
   >([]);
+  const [multiplier, setMultiplier] = useState<number>(1);
+  const [cashOutValue, setCashOutValue] = useState<number>(0);
 
   const containerRef = useRef(null);
 
@@ -51,6 +54,14 @@ export default function MinesPage() {
     const json = await res.json();
 
     if (!res.ok) {
+      if (
+        action.type == "resume" &&
+        json.message === "No active game to resume"
+      ) {
+        setMessage("Place your bet to start a new game!");
+        return setLoading(false);
+      }
+
       return setMessage(
         (json.message && "An error occurred: " + json.message) ||
           "An error occurred"
@@ -62,9 +73,40 @@ export default function MinesPage() {
         setFlippedTiles(json.flippedTiles);
         setGameActive(true);
         setSidebarExpanded(false);
-        if (json.message) {
-          setMessage(json.message);
+        if (
+          json.flippedTiles.some(
+            (t: { value: "safe" | "mine" }) => t.value === "mine"
+          )
+        ) {
+          setGameActive(false);
         }
+        if (json.multiplier) {
+          setMultiplier(json.multiplier);
+          setCashOutValue(
+            action.type == "start"
+              ? json.betAmt * json.multiplier
+              : json.betAmt *
+                  json.multiplier *
+                  (json.flippedTiles.length / (json.flippedTiles.length - 1))
+          );
+        }
+      } else if (action.type == "flip") {
+        setFlippedTiles(json.flippedTiles);
+        if (json.multiplier) {
+          setMultiplier(json.multiplier);
+          setCashOutValue(
+            json.betAmt *
+              json.multiplier
+          );
+        }
+
+        if (json.gameOver) {
+          setGameActive(false);
+          setCashOutValue(0);
+        }
+      }
+      if (json.message) {
+        setMessage(json.message);
       }
     }
   }
@@ -75,10 +117,10 @@ export default function MinesPage() {
     }
 
     if (minesCount < 1 || minesCount > 24 || !Number.isInteger(minesCount)) {
-      return alert("Invalid mines count");
+      return alert("Invalid mines count: " + minesCount);
     }
 
-    sendAction({ type: "start", info: { betAmt, minesCount: 3 } });
+    sendAction({ type: "start", info: { betAmt, minesCount } });
   }
 
   useEffect(() => {
@@ -86,15 +128,7 @@ export default function MinesPage() {
   }, []);
 
   function handleFlip(row: number, col: number) {
-    setFlippedTiles((prev) => {
-      if (
-        prev.some((t) => t.coordinates[0] === row && t.coordinates[1] === col)
-      ) {
-        return prev;
-      }
-
-      return [...prev, { coordinates: [row, col], value: "safe" }];
-    });
+    sendAction({ type: "flip", info: { tileCoordinates: [row, col] } });
   }
 
   return (
@@ -166,14 +200,29 @@ export default function MinesPage() {
                 value={minesCount}
                 startingValue={1}
                 maxValue={24}
-                onChange={setMinesCount}
+                onChange={(val) => setMinesCount(Math.round(val))}
               />
             </div>
-            <PrimaryButton
-              onClick={startGame}
-              disabled={gameActive || loading}
-              text="Start Game"
-            />
+            <motion.div className={clsx(!sidebarExpanded && "w-90%")}>
+              <PrimaryButton
+                onClick={startGame}
+                className={"w-full"}
+                disabled={gameActive || loading}
+                text="Start Game"
+              />
+              <SecondaryButton
+                className={"w-full"}
+                text={
+                  cashOutValue
+                    ? `Cash Out ${cashOutValue.toFixed(2)}`
+                    : "Cash Out"
+                }
+                disabled={!gameActive || loading}
+              />
+              <p className="text-left pl-4">
+                {multiplier && `Multiplier: ${multiplier.toFixed(5)}`}
+              </p>
+            </motion.div>
             <div className="flex justify-center items-center w-full flex-1">
               <h2 className="text-2xl font-bold">{message}</h2>
             </div>
