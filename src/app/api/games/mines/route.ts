@@ -1,4 +1,10 @@
-import { ChipInUser, MinesAction, MinesGame, MinesGrid, MinesRow } from "@/lib/types";
+import {
+  ChipInUser,
+  MinesAction,
+  MinesGame,
+  MinesGrid,
+  MinesRow,
+} from "@/lib/types";
 import { connectToDatabases } from "@/lib/mongodb";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -11,7 +17,7 @@ export async function POST(req: Request) {
   const body = await req.json();
 
   const { action } = body as { action: MinesAction };
-  
+
   const clerkUser = await currentUser();
   if (!clerkUser)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -47,6 +53,15 @@ export async function POST(req: Request) {
   }
 
   if (action.type === "start") {
+    if (user.activeMinesGame && !user.activeMinesGame.finished) {
+      return NextResponse.json({
+        grid: sanitizeMinesGrid(user.activeMinesGame.grid),
+        message: "Game resumed",
+        minesCount: user.activeMinesGame.minesCount,
+        betAmt: user.activeMinesGame.betAmt,
+      });
+    }
+
     const betAmt = action.info.betAmt;
 
     if (
@@ -73,15 +88,15 @@ export async function POST(req: Request) {
     const grid = generateMinesGrid(minesCount);
 
     const game: MinesGame = {
-        gameId: v4(),
-        betAmt,
-        minesCount,
-        grid,
-        finished: false,
-        startCount: user.totalChips,
-        createdAt: Date.now(),
-        tilesFlipped: 0,
-    }
+      gameId: v4(),
+      betAmt,
+      minesCount,
+      grid,
+      finished: false,
+      startCount: user.totalChips,
+      createdAt: Date.now(),
+      tilesFlipped: 0,
+    };
 
     await users.updateOne(
       { id: clerkUser.id },
@@ -90,11 +105,25 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       grid: sanitizeMinesGrid(grid),
+      betAmt,
+      minesCount
     });
-
   } else if (action.type === "flip") {
   } else if (action.type === "cashout") {
   } else if (action.type === "resume") {
+    if (!user.activeMinesGame || user.activeMinesGame.finished) {
+      return NextResponse.json(
+        { message: "No active game to resume" },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({
+      grid: sanitizeMinesGrid(user.activeMinesGame.grid),
+      message: "Game resumed",
+      minesCount: user.activeMinesGame.minesCount,
+      betAmt: user.activeMinesGame.betAmt,
+    });
   }
   return NextResponse.json({ message: "Not implemented" }, { status: 501 });
 }

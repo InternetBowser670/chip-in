@@ -18,6 +18,8 @@ export default function MinesPage() {
   const [grid, setGrid] = useState<MinesGrid | null>(null);
   const [minesCount, setMinesCount] = useState<number>(3);
   const [gameActive, setGameActive] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("Loading...");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const containerRef = useRef(null);
 
@@ -46,15 +48,20 @@ export default function MinesPage() {
     const json = await res.json();
 
     if (!res.ok) {
-      return alert(
-        (json.message && "An error occurred" + json.message) ||
+      return setMessage(
+        (json.message && "An error occurred: " + json.message) ||
           "An error occurred"
       );
     } else {
-      if (action.type == "start") {
+      setLoading(false);
+      setMessage("");
+      if (action.type == "start" || action.type == "resume") {
         setGrid(json.grid);
         setGameActive(true);
         setSidebarExpanded(false);
+        if (json.message) {
+          setMessage(json.message);
+        }
       }
     }
   }
@@ -70,6 +77,10 @@ export default function MinesPage() {
 
     sendAction({ type: "start", info: { betAmt, minesCount: 3 } });
   }
+
+  useEffect(() => {
+    sendAction({ type: "resume" });
+  }, []);
 
   return (
     <div className="flex items-center justify-center h-full">
@@ -145,9 +156,12 @@ export default function MinesPage() {
             </div>
             <PrimaryButton
               onClick={startGame}
-              disabled={gameActive}
+              disabled={gameActive || loading}
               text="Start Game"
             />
+            <div className="flex justify-center items-center w-full flex-1">
+              {message}
+            </div>
           </div>
         </motion.div>
         <motion.div
