@@ -20,8 +20,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://chip-in.internetbowser.com/chip-in-logo.png",
-        width: 800,
-        height: 600,
+        width: 400,
+        height: 400,
       },
     ],
   },
