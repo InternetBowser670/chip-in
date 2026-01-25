@@ -14,6 +14,17 @@ export const metadata: Metadata = {
     icon: "/chip-in-logo.png",
     shortcut: "/chip-in-logo.png",
   },
+  openGraph: {
+    title: "Chip In",
+    description: "Gambling without the risk",
+    images: [
+      {
+        url: "https://chip-in.internetbowser.com/chip-in-logo.png",
+        width: 800,
+        height: 600,
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
