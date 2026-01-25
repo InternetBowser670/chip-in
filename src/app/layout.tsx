@@ -8,7 +8,7 @@ import TimezoneSetter from "@/components/ui/timezone-setter";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Chip In",
+  title: "ChipIn",
   description: "Gambling without the risk",
   icons: {
     icon: "/chip-in-logo.png",
