@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { openSans } from "../lib/fonts";
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import { Providers } from "@/components/providers";
 import { Analytics } from "@vercel/analytics/next";
 import TimezoneSetter from "@/components/ui/timezone-setter";
@@ -33,7 +34,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        theme: dark,
+      }}
+    >
       <html className="h-screen! w-screen! subpixel-antialiased" lang="en">
         <head>
           {/* Google Analytics */}
