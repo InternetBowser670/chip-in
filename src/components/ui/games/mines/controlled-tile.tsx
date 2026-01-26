@@ -7,6 +7,7 @@ interface ControlledTileProps {
   revealed: boolean;
   value?: "mine" | "safe";
   onFlip: (row: number, col: number) => void;
+  queued?: boolean;
 }
 
 const ControlledTile = memo(function ControlledTile({
@@ -15,6 +16,7 @@ const ControlledTile = memo(function ControlledTile({
   revealed,
   value,
   onFlip,
+  queued
 }: ControlledTileProps) {
   const handleClick = useCallback(() => {
     if (revealed) return;
@@ -23,7 +25,7 @@ const ControlledTile = memo(function ControlledTile({
 
   return (
     <button type="button" className="m-2" onClick={handleClick}>
-      <MinesTile flipped={revealed} value={value} />
+      <MinesTile flipped={revealed} value={value} queued={queued} />
     </button>
   );
 });

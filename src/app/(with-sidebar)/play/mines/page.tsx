@@ -9,6 +9,7 @@ import ElasticSlider from "@/components/ElasticSlider";
 import { MinesAction } from "@/lib/types";
 import ControlledTile from "@/components/ui/games/mines/controlled-tile";
 import clsx from "clsx";
+import queue from "queue";
 
 export default function MinesPage() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -30,6 +31,22 @@ export default function MinesPage() {
   const { chips, chipsFetched, setChips } = useChips();
 
   const gridNumsArr = Array.from({ length: 5 }).map(() => [0, 1, 2, 3, 4]);
+
+  type QueuedFlip = {
+    id: string;
+    row: number;
+    col: number;
+  };
+
+  const queuedFlipsRef = useRef<QueuedFlip[]>([]);
+
+  const qRef = useRef<queue | null>(null);
+
+  if (!qRef.current) {
+    qRef.current = new queue({ concurrency: 1, autostart: true });
+  }
+
+  const q = qRef.current;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -64,7 +81,7 @@ export default function MinesPage() {
 
       return setMessage(
         (json.message && "An error occurred: " + json.message) ||
-          "An error occurred"
+          "An error occurred",
       );
     } else {
       setLoading(false);
@@ -76,7 +93,7 @@ export default function MinesPage() {
         setFlippedTiles(json.flippedTiles);
         if (
           json.flippedTiles.some(
-            (t: { value: "safe" | "mine" }) => t.value === "mine"
+            (t: { value: "safe" | "mine" }) => t.value === "mine",
           )
         ) {
           setGameActive(false);
@@ -86,19 +103,30 @@ export default function MinesPage() {
           setCashOutValue(
             action.type == "start"
               ? json.betAmt * json.multiplier
-              : json.betAmt *
-                  json.multiplier
+              : json.betAmt * json.multiplier,
           );
         }
         setCanCashOut(true);
       } else if (action.type == "flip") {
-        setFlippedTiles(json.flippedTiles);
+        setFlippedTiles((prev) => {
+          const map = new Map(
+            prev.map((t) => [`${t.coordinates[0]}-${t.coordinates[1]}`, t]),
+          );
+
+          for (const t of json.flippedTiles) {
+            map.set(`${t.coordinates[0]}-${t.coordinates[1]}`, t);
+          }
+
+          return Array.from(map.values());
+        });
         if (json.multiplier) {
           setMultiplier(json.multiplier);
           setCashOutValue(json.betAmt * json.multiplier);
         }
 
         if (json.gameOver) {
+          q.end();
+          queuedFlipsRef.current = [];
           setGameActive(false);
           setCashOutValue(0);
           setChips(json.endCount);
@@ -132,7 +160,31 @@ export default function MinesPage() {
   }, []);
 
   function handleFlip(row: number, col: number) {
-    sendAction({ type: "flip", info: { tileCoordinates: [row, col] } });
+    const alreadyQueued = queuedFlipsRef.current.some(
+      (f) => f.row === row && f.col === col,
+    );
+
+    if (alreadyQueued) return;
+    const flip: QueuedFlip = {
+      id: crypto.randomUUID(),
+      row,
+      col,
+    };
+
+    queuedFlipsRef.current.push(flip);
+
+    q.push(async () => {
+      try {
+        await sendAction({
+          type: "flip",
+          info: { tileCoordinates: [row, col] },
+        });
+      } finally {
+        queuedFlipsRef.current = queuedFlipsRef.current.filter(
+          (f) => f.id !== flip.id,
+        );
+      }
+    });
   }
 
   function cashOut() {
@@ -153,7 +205,7 @@ export default function MinesPage() {
             sidebarExpanded ? "w-full" : "w-16"
           }`}
         >
-          <div className="flex flex-col h-full items-center">
+          <div className="flex flex-col items-center h-full">
             <h1 className="mx-2 mb-10 text-5xl font-bold">Mines</h1>
             <div
               className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 xl:h-8 max-w-125 flex flex-col xl:flex-row items-center justify-between overflow-hidden ${
@@ -200,7 +252,7 @@ export default function MinesPage() {
                 </button>
               </div>
             </div>
-            <div className="flex flex-col mt-3 w-full justify-center items-center">
+            <div className="flex flex-col items-center justify-center w-full mt-3">
               Mine Count:{" "}
               <ElasticSlider
                 className="mt-3 text-gray-50"
@@ -227,11 +279,11 @@ export default function MinesPage() {
                 onClick={cashOut}
                 disabled={!gameActive || loading || !canCashOut}
               />
-              <p className="text-left pl-4">
+              <p className="pl-4 text-left">
                 {multiplier && `Multiplier: ${multiplier.toFixed(5)}`}
               </p>
             </motion.div>
-            <div className="flex justify-center items-center w-full flex-1">
+            <div className="flex items-center justify-center flex-1 w-full">
               <h2 className="text-2xl font-bold">{message}</h2>
             </div>
           </div>
@@ -258,11 +310,14 @@ export default function MinesPage() {
                         const flipped = flippedTiles.find(
                           (t) =>
                             t.coordinates[0] === rowIndex &&
-                            t.coordinates[1] === colIndex
+                            t.coordinates[1] === colIndex,
                         );
 
                         return (
                           <ControlledTile
+                            queued={queuedFlipsRef.current.some(
+                              (f) => f.row === rowIndex && f.col === colIndex,
+                            )}
                             key={`${rowIndex}-${colIndex}`}
                             rowIndex={rowIndex}
                             colIndex={colIndex}
