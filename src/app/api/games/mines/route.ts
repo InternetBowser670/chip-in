@@ -296,6 +296,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       flippedTiles,
       gameOver: false,
+      betAmt: game.betAmt,
       multiplier: calculateMinesMultiplier(
         calculateMinesProbability(
           game.minesCount,
