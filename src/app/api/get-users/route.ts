@@ -7,10 +7,9 @@ export async function POST() {
   const usersCollection = await mainDb.collection("users");
 
   const users = await usersCollection
-    .find(
-      {},
+    .aggregate([
       {
-        projection: {
+        $project: {
           id: 1,
           username: 1,
           image_url: 1,
@@ -19,9 +18,13 @@ export async function POST() {
           created_at: 1,
           badges: 1,
           last_active_at: 1,
+          minesPlays: { $size: { $ifNull: ["$minesPlays", []] } },
+          blackjackPlays: { $size: { $ifNull: ["$blackjackPlays", []] } },
+          coinFlips: { $size: { $ifNull: ["$coinFlips", []] } },
+          history: { $size: { $ifNull: ["$history", []] } },
         },
-      }
-    )
+      },
+    ])
     .toArray();
 
   return new Response(JSON.stringify({ users }), { status: 200 });

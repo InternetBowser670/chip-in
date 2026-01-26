@@ -168,6 +168,10 @@ export default function AdminPage() {
           return new Date(params.value).toLocaleString();
         },
       },
+      { field: "coinFlips" },
+      { field: "blackjackPlays" },
+      { field: "minesPlays" },
+      { field: "history" },
     ];
 
     return (
