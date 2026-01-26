@@ -49,7 +49,7 @@ export default function AdminPage() {
     userId: string,
     amt: number,
     mode: "set" | "increment",
-    username: string
+    username: string,
   ) {
     const res = await fetch("/api/admin/give-chips", {
       method: "POST",
@@ -70,7 +70,7 @@ export default function AdminPage() {
       alert(
         `Failed to update chips for user "${username}" with error ${
           res.status
-        } ${json.message && `and message: ${json.message}`}`
+        } ${json.message && `and message: ${json.message}`}`,
       );
     }
   }
@@ -168,7 +168,7 @@ export default function AdminPage() {
           return new Date(params.value).toLocaleString();
         },
       },
-      { field: "coinFlips" },
+      { field: "coinFlips", headerName: "Coinflips" },
       { field: "blackjackPlays" },
       { field: "minesPlays" },
       { field: "history" },
@@ -179,7 +179,11 @@ export default function AdminPage() {
         <Card noHover className="mx-20 mt-8">
           <div className="flex items-center justify-between w-full mb-6">
             <h1 className="text-3xl">Manage Users</h1>
-            <PrimaryButtonChildren onClick={async () => {await fetchUserData()}}>
+            <PrimaryButtonChildren
+              onClick={async () => {
+                await fetchUserData();
+              }}
+            >
               <IoReload />
             </PrimaryButtonChildren>
           </div>
@@ -196,7 +200,7 @@ export default function AdminPage() {
                     event.data.id,
                     Number(event.data.totalChips),
                     "set",
-                    event.data.username
+                    event.data.username,
                   );
                 }
               }}
