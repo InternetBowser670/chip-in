@@ -30,7 +30,7 @@ export function PrimaryButton({
       type="button"
       disabled={disabled}
       className={clsx(
-        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-500 text-gray-900 sm:text-base sm:px-5 border-accent-700 hover:bg-accent-600 hover:border-accent-800",
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-400 text-gray-950 sm:text-base sm:px-5 border-accent-600 hover:bg-accent-500 hover:border-accent-700",
         disabled && "opacity-50 cursor-not-allowed",
         className,
       )}
@@ -52,7 +52,7 @@ export function PrimaryButtonChildren({
       type="button"
       disabled={disabled}
       className={clsx(
-        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-500 text-gray-900 sm:text-base sm:px-5 border-accent-700 hover:bg-accent-600 hover:border-accent-800",
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-400 text-gray-950 sm:text-base sm:px-5 border-accent-600 hover:bg-accent-500 hover:border-accent-700",
         disabled && "opacity-50 cursor-not-allowed",
         className,
       )}
@@ -75,7 +75,7 @@ export function SecondaryButton({
       type="button"
       disabled={disabled}
       className={clsx(
-        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-secondary-500 text-gray-900 sm:text-base sm:px-5 border-secondary-700 hover:bg-secondary-600 hover:border-secondary-800",
+        "p-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-secondary-400 text-gray-950 sm:text-base sm:px-5 border-secondary-600 hover:bg-secondary-500 hover:border-secondary-700",
         disabled && "opacity-50 cursor-not-allowed",
         className,
       )}
@@ -97,7 +97,7 @@ export function SecondaryButtonChildren({
       type="button"
       disabled={disabled}
       className={clsx(
-        "px-3! py-2! border-2 rounded-2xl duration-300 flex items-center justify-center gap-2 bg-secondary-500 text-gray-900 sm:text-base sm:px-5 border-secondary-700 hover:bg-secondary-600 hover:border-secondary-800",
+        "px-3! py-2! border-2 rounded-2xl duration-300 flex items-center justify-center gap-2 bg-secondary-400 text-gray-950 sm:text-base sm:px-5 border-secondary-600 hover:bg-secondary-500 hover:border-secondary-700",
         disabled && "opacity-50 cursor-not-allowed",
         className,
       )}
