@@ -37,7 +37,7 @@ function generateProvablyFairGrid(
   minesCount: number,
   serverSeed: string,
   clientSeed: string,
-  nonce: number
+  nonce: number,
 ): MinesGrid {
   const seed = `${serverSeed}:${clientSeed}:${nonce}`;
   const rolls: { index: number; roll: number }[] = [];
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     if (!game || game.finished) {
       return NextResponse.json(
         { message: "No active game to resume" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       minesCount: game.minesCount,
       betAmt: game.betAmt,
       multiplier: calculateMinesMultiplier(
-        calculateMinesProbability(game.minesCount, game.tilesFlippedCount)
+        calculateMinesProbability(game.minesCount, game.tilesFlippedCount),
       ),
       fairness: {
         serverSeedHash: game.fairness.serverSeedHash,
@@ -130,14 +130,14 @@ export async function POST(req: Request) {
     ) {
       return NextResponse.json(
         { message: "Invalid bet amount" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (minesCount < 1 || minesCount > 24 || !Number.isInteger(minesCount)) {
       return NextResponse.json(
         { message: "Invalid mines count" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -151,7 +151,7 @@ export async function POST(req: Request) {
       minesCount,
       serverSeed,
       clientSeed,
-      0
+      0,
     );
 
     const game: MinesGame = {
@@ -172,15 +172,18 @@ export async function POST(req: Request) {
       },
     };
 
+    const reducedChips = user.totalChips - betAmt;
+
     await users.updateOne(
       { id: clerkUser.id },
-      { $set: { activeMinesGame: game } }
+      { $set: { activeMinesGame: game, totalChips: reducedChips } },
     );
 
     return NextResponse.json({
       flippedTiles: [],
       betAmt,
       minesCount,
+      reducedChips,
       fairness: {
         serverSeedHash,
         clientSeed,
@@ -200,14 +203,14 @@ export async function POST(req: Request) {
     if (tile.revealed) {
       return NextResponse.json(
         { message: "Tile already revealed" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const newGrid = game.grid.map((r, rIdx) =>
       r.map((t, cIdx) =>
-        rIdx === row && cIdx === col ? { ...t, revealed: true } : t
-      )
+        rIdx === row && cIdx === col ? { ...t, revealed: true } : t,
+      ),
     );
 
     const isMine = tile.value === "mine";
@@ -217,7 +220,7 @@ export async function POST(req: Request) {
           r.map((t, cIdx) => ({
             coordinates: [rIdx, cIdx],
             value: t.value as TileValue,
-          }))
+          })),
         )
       : [
           ...game.tilesFlipped,
@@ -241,7 +244,7 @@ export async function POST(req: Request) {
 
     if (isMine) {
       const endTime = Date.now();
-      const endCount = user.totalChips - game.betAmt;
+      const endCount = user.totalChips;
 
       const history: UserHistory = {
         betAmt: game.betAmt,
@@ -273,7 +276,7 @@ export async function POST(req: Request) {
           $set: { totalChips: endCount },
           $push: { history, minesPlays: history },
           $unset: { activeMinesGame: "" },
-        }
+        },
       );
 
       return NextResponse.json({
@@ -290,7 +293,7 @@ export async function POST(req: Request) {
 
     await users.updateOne(
       { id: clerkUser.id },
-      { $set: { activeMinesGame: updatedGame } }
+      { $set: { activeMinesGame: updatedGame } },
     );
 
     return NextResponse.json({
@@ -300,8 +303,8 @@ export async function POST(req: Request) {
       multiplier: calculateMinesMultiplier(
         calculateMinesProbability(
           game.minesCount,
-          updatedGame.tilesFlippedCount
-        )
+          updatedGame.tilesFlippedCount,
+        ),
       ),
     });
   }
@@ -311,13 +314,13 @@ export async function POST(req: Request) {
     if (!game || game.finished) {
       return NextResponse.json(
         { message: "No active game to cash out" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const probability = calculateMinesProbability(
       game.minesCount,
-      game.tilesFlippedCount
+      game.tilesFlippedCount,
     );
     const multiplier = calculateMinesMultiplier(probability);
     const winnings = game.betAmt * multiplier;
@@ -326,7 +329,7 @@ export async function POST(req: Request) {
       r.map((t, cIdx) => ({
         coordinates: [rIdx, cIdx],
         value: t.value as TileValue,
-      }))
+      })),
     );
 
     const endTime = Date.now();
@@ -362,7 +365,7 @@ export async function POST(req: Request) {
         $set: { totalChips: endCount },
         $push: { history, minesPlays: history },
         $unset: { activeMinesGame: "" },
-      }
+      },
     );
 
     return NextResponse.json({

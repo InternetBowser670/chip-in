@@ -106,6 +106,9 @@ export default function MinesPage() {
               : json.betAmt * json.multiplier,
           );
         }
+        if (json.reducedChips !== undefined) {
+          setChips(json.reducedChips);
+        }
         setCanCashOut(true);
       } else if (action.type == "flip") {
         setFlippedTiles((prev) => {
