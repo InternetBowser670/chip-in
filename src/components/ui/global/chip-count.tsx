@@ -14,7 +14,7 @@ export default function ChipCount() {
         gradientFrom="#484b51"
         fontSize={17}
         gradientHeight={2}
-        gap={1}
+        gap={0}
         value={+chips.toFixed(2)}
       />
     </div>
