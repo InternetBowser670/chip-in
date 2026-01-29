@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import {
@@ -25,10 +26,23 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ModeToggle from "@/components/ui/theme-switcher";
 import ColorBends from "@/components/ColorBends";
+import CardSwap, { Card as CardSwapCard } from "@/components/CardSwap";
+import SplitText from "@/components/SplitText";
+import clsx from "clsx";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 import GlassSurface from "@/components/GlassSurface";
 
 export default function Home() {
   const router = useRouter();
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const { resolvedTheme } = useTheme();
 
   return (
     <main className="relative w-screen h-screen overflow-x-hidden">
@@ -37,9 +51,7 @@ export default function Home() {
           <header className="fixed flex justify-center w-full top-2 z-100 h-fit!">
             <GlassSurface
               width={"90%"}
-              backgroundOpacity={0.1}
-              className="fixed z-50 flex items-center justify-between w-full px-2 py-2 border-b h-fit border-b-background-700"
-              height={"fit"}
+              className="fixed z-50 flex items-center justify-between w-[90%] px-2 py-2 border-b h-fit border-b-background-700"
             >
               <div className="flex items-center justify-between w-full h-fit">
                 <div className="flex items-center gap-2">
@@ -57,12 +69,7 @@ export default function Home() {
                   <SignedOut>
                     <SignInButton />
                     <SignUpButton>
-                      <button
-                        type="button"
-                        className="px-2 py-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800"
-                      >
-                        Sign Up
-                      </button>
+                      <Button>Sign Up</Button>
                     </SignUpButton>
                   </SignedOut>
                   <SignedIn>
@@ -78,9 +85,37 @@ export default function Home() {
               </div>
             </GlassSurface>
           </header>
-          <ColorBends className="absolute -z-1" />
+          <ColorBends
+            rotation={180}
+            speed={0.2}
+            scale={1}
+            frequency={1}
+            warpStrength={1}
+            mouseInfluence={2}
+            parallax={2}
+            noise={0.1}
+            transparent
+            autoRotate={2}
+            className={clsx(
+              "absolute -z-1",
+              mounted &&
+                (resolvedTheme == "light" ? "fadeBottom" : "fadeBottomDark"),
+            )}
+          />
           <div className="absolute top-0 z-30 flex flex-col items-center justify-center w-full h-full mb-20">
-            <h1 className="mb-8 font-bold text-7xl">ChipIn</h1>
+            <SplitText
+              text="ChipIn"
+              className="mb-8 font-bold text-center text-7xl"
+              delay={50}
+              duration={1.25}
+              ease="power3.out"
+              splitType="chars"
+              from={{ opacity: 0, y: 40 }}
+              to={{ opacity: 1, y: 0 }}
+              threshold={0.1}
+              rootMargin="-100px"
+              textAlign="center"
+            />
             <h1 className="px-4 text-4xl font-bold">
               Gambling without the risk
             </h1>
@@ -192,27 +227,91 @@ export default function Home() {
                 </CardFooter>
               </Card>
             </div>
-            <h1 className="px-4 mt-10 text-xl font-bold">
-              No-stakes gambling with all the thrill!
-            </h1>
             <div className="mt-[5%]">
               <ScrollDown />
             </div>
-            <Card className="absolute p-2 px-4 bottom-2 right-2">
+            <Card className="absolute p-2 px-4 bottom-4 right-4">
               <span>
                 <Link className="underline" href={"https://internetbowser.com"}>
                   InternetBowser
-                </Link>, 2025
+                </Link>
+                , 2026
               </span>
             </Card>
           </div>
         </div>
-
-        <div className="flex items-center justify-center w-full h-screen bg-zinc-100 dark:bg-zinc-900">
-          <h1 className="text-3xl font-bold">
-            To start playing, create an account, claim your daily chips and
-            navigate to a game.
-          </h1>
+        <div className="flex items-center justify-center w-full h-screen! overflow-hidden bg-zinc-100 dark:bg-zinc-900 relative">
+          <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-1/2 h-full p-2 text-left">
+            <div className="flex flex-col gap-4">
+              <h1 className="z-10 text-4xl font-bold leading-tight">
+                Play fair.
+                <br />
+                Win instantly.
+              </h1>
+              <p className="max-w-md text-lg text-muted-foreground">
+                Fast, provably fair games with real payouts and zero friction.
+              </p>
+              <SignUpButton>
+                <Button>Get started now</Button>
+              </SignUpButton>
+            </div>
+          </div>
+          <div className="absolute top-0 right-0 flex items-start w-1/2 h-full">
+            <div className="relative w-full h-3/4">
+              <CardSwap
+                cardDistance={60}
+                verticalDistance={70}
+                delay={5000}
+                pauseOnHover={false}
+              >
+                <CardSwapCard>
+                  <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
+                    <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
+                      Coinflip
+                    </h3>
+                    <hr className="border border-foreground" />
+                    <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
+                      <img
+                        alt="Coinflip image"
+                        className="w-full h-full"
+                        src={"/promos/coinflip-promo.png"}
+                      />
+                    </div>
+                  </div>
+                </CardSwapCard>
+                <CardSwapCard>
+                  <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
+                    <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
+                      Blackjack
+                    </h3>
+                    <hr className="border border-foreground" />
+                    <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
+                      <img
+                        alt="Blackjack image"
+                        className="w-full h-full"
+                        src={"/promos/blackjack-promo.png"}
+                      />
+                    </div>
+                  </div>
+                </CardSwapCard>
+                <CardSwapCard>
+                  <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
+                    <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
+                      Mines
+                    </h3>
+                    <hr className="border border-foreground" />
+                    <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
+                      <img
+                        alt="Mines image"
+                        className="w-full h-full"
+                        src={"/promos/mines-promo.png"}
+                      />
+                    </div>
+                  </div>
+                </CardSwapCard>
+              </CardSwap>
+            </div>
+          </div>
         </div>
       </div>
     </main>

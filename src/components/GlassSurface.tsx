@@ -316,7 +316,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
       style={getContainerStyles()}
     >
       <svg
-        className="absolute inset-0 w-full h-full opacity-0 pointer-events-none -z-10"
+        className="w-full h-full pointer-events-none absolute inset-0 opacity-0 -z-10"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
