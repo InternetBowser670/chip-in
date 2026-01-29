@@ -251,9 +251,19 @@ export default function Home() {
               <p className="max-w-md text-lg text-muted-foreground">
                 Fast, provably fair games with real payouts and zero friction.
               </p>
-              <SignUpButton>
-                <Button>Get started now</Button>
-              </SignUpButton>
+              <SignedOut>
+                <SignUpButton>
+                  <Button>Get started now</Button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <Button onClick={() => router.push("/dashboard")}>
+                  Start playing
+                </Button>
+              </SignedIn>
+              <ClerkLoading>
+                <Button disabled>Loading user...</Button>
+              </ClerkLoading>
             </div>
           </div>
           <div className="absolute top-0 right-0 flex items-start w-1/2 h-full">
