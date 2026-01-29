@@ -9,10 +9,11 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import { SecondaryButton } from "@/components/ui/global/buttons";
 import OpenProfile from "@/components/ui/profile/open-profile";
 import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
-import { GiCardJackSpades, GiCoinflip, GiUnlitBomb } from "react-icons/gi";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import ModeToggle from "@/components/ui/theme-switcher";
 
 export default async function SidebarLayout({
   children,
@@ -23,7 +24,7 @@ export default async function SidebarLayout({
     <>
       <SignedIn>
         <div className="flex h-screen! w-full">
-          <div className="w-50 h-full! bg-background-700">
+          <div className="w-50 h-full! bg-card border-r border-r-foreground/30">
             <div className="flex flex-col items-center justify-between h-full">
               <div className="flex flex-col items-center mx-2 mt-2">
                 <div className="flex flex-col items-center">
@@ -38,28 +39,29 @@ export default async function SidebarLayout({
                   </Link>
                   <ClaimChips />
                   <ChipCount />
-                  <Link href="/dashboard" className="my-2">
-                    <SecondaryButton text="Dashboard" />
+                  <Link href={"/dashboard"} className="py-4">
+                    <ButtonGroup>
+                      <Button variant={"outline"}>Dashboard</Button>
+                      <ModeToggle />
+                    </ButtonGroup>
                   </Link>
                 </div>
                 <hr className="w-full border" />
-                <div className="flex flex-col w-full mx-2 mt-2 text-xl text-left">
+                <div className="flex flex-col w-full gap-4 mx-2 mt-2 text-left">
+                  <p className="text-xl font-bold">Games:</p>
                   <Link
                     href="/play/coinflip"
                     className="flex items-center gap-2"
                   >
-                    <GiCoinflip size="25" />
                     <p className="hover:underline">Coinflip</p>
                   </Link>
                   <Link
                     href="/play/blackjack"
                     className="flex items-center gap-2"
                   >
-                    <GiCardJackSpades size="25" />
                     <p className="hover:underline">Blackjack</p>
                   </Link>
                   <Link href="/play/mines" className="flex items-center gap-2">
-                    <GiUnlitBomb size="25" />
                     <p className="hover:underline">Mines</p>
                   </Link>
                 </div>

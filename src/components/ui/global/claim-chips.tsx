@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PrimaryButtonChildren } from "./buttons";
+import { Button } from "../button";
 import { PiPokerChip } from "react-icons/pi";
 import { useChips } from "@/components/providers";
 
@@ -111,8 +111,8 @@ export default function ClaimChips() {
   })();
 
   return (
-    <PrimaryButtonChildren
-      className="w-full"
+    <Button
+      className="w-full my-4"
       onClick={handleClaim}
       disabled={!status?.canClaim || loading || claimed}
     >
@@ -120,6 +120,6 @@ export default function ClaimChips() {
         {buttonText}
         {status?.canClaim && <PiPokerChip size={30} />}
       </span>
-    </PrimaryButtonChildren>
+    </Button>
   );
 }
