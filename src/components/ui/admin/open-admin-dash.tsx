@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import clsx from "clsx";
 import { Button } from "../button";
 
 export default function OpenAdminDash({ small }: { small?: true }) {
@@ -27,17 +26,7 @@ export default function OpenAdminDash({ small }: { small?: true }) {
   return (
     <Link href={"/dashboard/admin"} className="mb-6">
       <Button variant="destructive" className="w-full">
-        <h1
-          className={clsx(
-            "text-center",
-            small
-              ? "flex justify-center items-center shrink w-16 max-h-3 text-sm p-1"
-              : "text-3xl",
-          )}
-        >
-          {small ? "Admin" : "Open Admin Dashboard"}
-        </h1>
-        <div className="flex justify-center"></div>
+        {small ? "Admin" : "Open Admin Dashboard"}
       </Button>
     </Link>
   );

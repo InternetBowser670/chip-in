@@ -252,8 +252,8 @@ export async function POST(req: Request) {
         endCount,
         change: endCount - game.startCount,
         date: endTime,
-        type: "mines_v1",
-        version: "mines_v1",
+        type: "mines",
+        version: "history_v3",
         actor: "user",
         minesData: {
           gameId: game.gameId,

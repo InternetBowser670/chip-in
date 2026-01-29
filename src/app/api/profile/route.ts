@@ -28,9 +28,12 @@ export async function GET() {
             created_at: 1,
             badges: 1,
             last_active_at: 1,
-            history: 1
+            history: 1,
+            minesCount: { $size: { $ifNull: ["$minesPlays", []] } },
+            blackjackCount: { $size: { $ifNull: ["$blackjackPlays", []] } },
+            coinFlipCount: { $size: { $ifNull: ["$coinFlips", []] } },
           },
-        }
+        },
       )
       .toArray()
   )[0];
