@@ -284,7 +284,7 @@ export default function Home() {
                       <img
                         alt="Coinflip image"
                         className="w-full h-full"
-                        src={"/promos/coinflip-promo.png"}
+                        src={resolvedTheme == "light" ? "/promos/coinflip-promo-light.png" : "/promos/coinflip-promo-dark.png"}
                       />
                     </div>
                   </div>

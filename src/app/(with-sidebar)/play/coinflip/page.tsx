@@ -16,10 +16,13 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { useTheme } from "next-themes";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dotLottieRef = useRef<DotLottie | null>(null);
+
+  const { resolvedTheme } = useTheme();
 
   const { chips, setChips, chipsFetched } = useChips();
 
@@ -257,7 +260,7 @@ export default function Page() {
               <div
                 className={clsx(
                   "h-4 flex justify-center items-center transition-all duration-300 min-w-30 p-4 py-6 rounded-2xl",
-                  flip.betFace == flip.outcome ? "bg-green-500" : "bg-red-500",
+                  resolvedTheme == "light" ? (flip.betFace == flip.outcome ? "bg-green-500/85" : "bg-red-500/85") : (flip.betFace == flip.outcome ? "bg-green-500" : "bg-red-500"),
                   "animate-[flipIn_.35s_ease-out]",
                 )}
                 key={i}
