@@ -1,28 +1,23 @@
 "use client";
 
 import { motion } from "motion/react";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { Card } from "../card";
 
 export default function ScrollDown() {
   return (
-    <div className="flex items-center justify-center">
-      <div className="flex flex-col items-center">
-        <p className="text-center align-middle text-3xl">More Info</p>
-        <motion.div
-          animate={{ y: [-4, 6, -4] }}
-          className="flex justify-center items-center"
-          transition={{
-            repeat: Infinity,
-            ease: "easeInOut",
-            times: [0, 0.5, 1],
-            duration: 2,
-          }}
-        >
-          <MdKeyboardArrowDown size={50} />
-          <MdKeyboardArrowDown size={50} />
-          <MdKeyboardArrowDown size={50} />
-        </motion.div>
-      </div>
-    </div>
-  );  
+    <motion.div
+      animate={{ y: [-4, 6, -4] }}
+      className="flex items-center justify-center"
+      transition={{
+        repeat: Infinity,
+        ease: "easeInOut",
+        times: [0, 0.5, 1],
+        duration: 2,
+      }}
+    >
+      <Card className="flex items-center justify-center py-4d! px-4">
+        <p className="text-2xl font-bold">Scroll Down</p>
+      </Card>
+    </motion.div>
+  );
 }

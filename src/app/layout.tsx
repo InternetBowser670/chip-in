@@ -7,6 +7,7 @@ import { Providers } from "@/components/providers";
 import { Analytics } from "@vercel/analytics/next";
 import TimezoneSetter from "@/components/ui/timezone-setter";
 import Script from "next/script";
+import { ThemeProvider } from "@/components/providers";
 
 export const metadata: Metadata = {
   title: "ChipIn",
@@ -39,7 +40,11 @@ export default function RootLayout({
         theme: dark,
       }}
     >
-      <html className="h-screen! w-screen! subpixel-antialiased" lang="en">
+      <html
+        suppressHydrationWarning
+        className="h-screen! w-screen! subpixel-antialiased"
+        lang="en"
+      >
         <head>
           {/* Google Analytics */}
           <Script
@@ -59,10 +64,12 @@ export default function RootLayout({
         <body
           className={`${openSans.className} antialiased! h-full! w-full min-h-screen! p-0 text-text-50! bg-background-900!`}
         >
-          <Providers>
-            <TimezoneSetter />
-            {children}
-          </Providers>
+          <ThemeProvider>
+            <Providers>
+              <TimezoneSetter />
+              {children}
+            </Providers>
+          </ThemeProvider>
         </body>
       </html>
       <Analytics />

@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { ParallaxProvider } from "react-scroll-parallax";
+import * as React from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -44,4 +46,18 @@ export function useChips() {
   const ctx = useContext(ChipsContext);
   if (!ctx) throw new Error("useChips must be used inside ChipsProvider");
   return ctx;
+}
+
+export function ThemeProvider({ children, ...props }: React.PropsWithChildren) {
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      {...props}
+    >
+      {children}
+    </NextThemesProvider>
+  );
 }

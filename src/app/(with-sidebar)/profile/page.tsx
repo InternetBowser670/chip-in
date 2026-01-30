@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import Card from "@/components/ui/global/card";
+import { Card } from "@/components/ui/card";
 import { Candle, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
@@ -89,7 +89,7 @@ export default function ProfilePage() {
 
   return (
     <div className="flex items-center justify-center h-full">
-      <Card noHover color="blue" className="h-[80%] w-[80%] overflow-auto">
+      <Card color="blue" className="h-[80%] w-[80%] overflow-auto p-4">
         {!profile ? (
           <>
             <h1 className="ml-2 text-2xl font-bold">Loading profile data...</h1>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <h1 className="mb-4 ml-2 text-xl font-bold">Chip History</h1>
-              <div className="w-full h-75" ref={chartContainerRef} />
+              <div className="h-50" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">
                 <p>User Id: {profile.id}</p> |
                 <p>Badges: {profile.badges ? profile.badges.map((val) => val.name).join(",") : "None"}</p>

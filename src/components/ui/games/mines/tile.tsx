@@ -4,8 +4,9 @@ import { AnimatePresence, motion } from "motion/react";
 import { GiUnlitBomb } from "react-icons/gi";
 import { IoDiamond } from "react-icons/io5";
 import { FaQuestion } from "react-icons/fa";
+import { useTheme } from "next-themes";
 
-export default function MinesTile({
+export default function   MinesTile({
   flipped,
   value,
   queued,
@@ -14,29 +15,28 @@ export default function MinesTile({
   value?: "mine" | "safe";
   queued?: boolean;
 }) {
+
+  const { resolvedTheme } = useTheme();
+
   return (
     <motion.div
       initial={false}
       animate={{
         backgroundColor: flipped
           ? value === "mine"
-            ? "#fb2c36"
-            : "#00c951"
-          : "#303236",
-        boxShadow: !flipped
-          ? "inset 0 -12px 0 rgba(255,255,255,0.15)"
-          : "inset 0 -12px 0 rgba(255,255,255,0)",
+            ? (resolvedTheme == "light" ? "#fb3740" : "#fb2c36")
+            : (resolvedTheme == "light" ? "#05df72" : "#00c951")
+          : (resolvedTheme == "light" ? "#f2fafd" : "#171925")
       }}
       // hex codes come from tailwind
 
-      whileHover={!flipped ? { y: -2, backgroundColor: "#364153" } : { y: 0 }}
+      whileHover={!flipped ? { y: -2, backgroundColor: (resolvedTheme == "light" ? "#e6eef1" : "#21242d") } : { y: 0 }}
       whileTap={!flipped ? { y: 4 } : {}}
       transition={{
         y: { type: "spring", stiffness: 400, damping: 30 },
-        boxShadow: { duration: 0.25 },
         backgroundColor: { duration: 0.25 },
       }}
-      className="relative flex items-center justify-center w-40 overflow-hidden border border-gray-300 rounded-md h-25"
+      className="relative flex items-center justify-center w-40 overflow-hidden border rounded-md border-foreground/20 h-25"
     >
       <AnimatePresence mode="wait">
         {queued && !flipped && (
@@ -103,7 +103,7 @@ export default function MinesTile({
               damping: 42,
               visualDuration: 0,
             }}
-            className="text-white opacity-85"
+            className="opacity-85"
           >
             <FaQuestion size={40} />
           </motion.div>

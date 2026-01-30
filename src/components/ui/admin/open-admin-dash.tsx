@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Card from "../global/card";
 import Link from "next/link";
-import clsx from "clsx";
+import { Button } from "../button";
 
 export default function OpenAdminDash({ small }: { small?: true }) {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -26,19 +25,9 @@ export default function OpenAdminDash({ small }: { small?: true }) {
 
   return (
     <Link href={"/dashboard/admin"} className="mb-6">
-      <Card chin color="red" className="w-full">
-        <h1
-          className={clsx(
-            "text-red-400 text-center",
-            small
-              ? "flex justify-center items-center shrink w-16 max-h-3 text-sm p-1"
-              : "text-3xl"
-          )}
-        >
-          {small ? "Admin" : "Open Admin Dashboard"}
-        </h1>
-        <div className="flex justify-center"></div>
-      </Card>
+      <Button variant="destructive" className="w-full">
+        {small ? "Admin" : "Open Admin Dashboard"}
+      </Button>
     </Link>
   );
 }

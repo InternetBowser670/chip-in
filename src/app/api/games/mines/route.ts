@@ -179,11 +179,14 @@ export async function POST(req: Request) {
       { $set: { activeMinesGame: game, totalChips: reducedChips } },
     );
 
+    const multiplier = calculateMinesMultiplier(calculateMinesProbability(minesCount, 0))
+
     return NextResponse.json({
       flippedTiles: [],
       betAmt,
       minesCount,
       reducedChips,
+      multiplier,
       fairness: {
         serverSeedHash,
         clientSeed,
@@ -252,8 +255,8 @@ export async function POST(req: Request) {
         endCount,
         change: endCount - game.startCount,
         date: endTime,
-        type: "mines_v1",
-        version: "mines_v1",
+        type: "mines",
+        version: "history_v3",
         actor: "user",
         minesData: {
           gameId: game.gameId,

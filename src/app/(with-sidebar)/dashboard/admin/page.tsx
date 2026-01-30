@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import Card from "@/components/ui/global/card";
+import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
@@ -11,7 +11,7 @@ import { useChips } from "@/components/providers";
 import { Badge } from "@/lib/types";
 import { v4 } from "uuid";
 import { IoReload } from "react-icons/io5";
-import { PrimaryButtonChildren } from "@/components/ui/global/buttons";
+import { Button } from "@/components/ui/button";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -176,16 +176,16 @@ export default function AdminPage() {
 
     return (
       <>
-        <Card noHover className="mx-20 mt-8">
+        <Card className="p-4 mx-20 mt-8">
           <div className="flex items-center justify-between w-full mb-6">
             <h1 className="text-3xl">Manage Users</h1>
-            <PrimaryButtonChildren
+            <Button
               onClick={async () => {
                 await fetchUserData();
               }}
             >
               <IoReload />
-            </PrimaryButtonChildren>
+            </Button>
           </div>
           <div className="h-125">
             <AgGridReact

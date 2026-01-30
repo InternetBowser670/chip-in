@@ -1,15 +1,22 @@
 "use client";
 
-import { PrimaryButton, SecondaryButton } from "@/components/ui/global/buttons";
 import { motion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
 import { useChips } from "@/components/providers";
 import { PiPokerChip } from "react-icons/pi";
-import ElasticSlider from "@/components/ElasticSlider";
+import { Slider } from "@/components/ui/slider";
 import { MinesAction } from "@/lib/types";
 import ControlledTile from "@/components/ui/games/mines/controlled-tile";
 import clsx from "clsx";
 import queue from "queue";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Field } from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 export default function MinesPage() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -194,94 +201,108 @@ export default function MinesPage() {
     sendAction({ type: "cashout" });
   }
 
+  function setMines(val: number[]) {
+    setMinesCount(Math.round(val[0]));
+  }
+
   return (
     <div className="flex items-center justify-center h-full">
       <div
         ref={containerRef}
-        className="h-[80%] w-[90%] bg-gray-800 rounded-2xl text-center overflow-auto flex"
+        className="h-[80%] w-[90%] bg-background rounded-2xl text-center overflow-auto flex border"
       >
         <motion.div
           initial={{ width: "100%" }}
           animate={{ width: !sidebarExpanded ? "30%" : "100%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
-          className={`h-full p-4 rounded-r-2xl bg-background-700 ${
+          className={`h-full p-4 rounded-r-2xl bg-card border-r ${
             sidebarExpanded ? "w-full" : "w-16"
           }`}
         >
           <div className="flex flex-col items-center h-full">
             <h1 className="mx-2 mb-10 text-5xl font-bold">Mines</h1>
-            <div
-              className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 xl:h-8 max-w-125 flex flex-col xl:flex-row items-center justify-between overflow-hidden ${
-                betAmt && chipsFetched && betAmt > chips
-                  ? "bg-red-600"
-                  : "bg-black"
-              }`}
-            >
-              <div className="flex items-center w-full pr-2 xl:w-auto xl:pr-0">
-                <input
-                  className={`focus:outline-0 text-white h-full pl-2 shrink min-w-0 ${
-                    betAmt == 0 && "text-red-600!"
-                  }`}
-                  title="bet"
-                  value={betAmt || ""}
-                  onChange={(e) => setBetAmt(parseInt(e.target.value) || null)}
-                  placeholder="Bet Amount"
-                  type="text"
-                />
-              </div>
-
-              <div className="flex items-center justify-end w-full h-full p-0 m-0 border-t-2 border-white xl:w-auto xl:border-t-0">
-                <PiPokerChip className="inline ml-2!" size={24} />
-                <button
-                  type="button"
-                  className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center border-l-white border-l-2"
-                  onClick={() => setBetAmt(betAmt && betAmt * 2)}
+            <div className="flex justify-center w-full mt-6">
+              <Field
+                className="flex flex-row justify-center w-full"
+                data-invalid={
+                  chipsFetched &&
+                  betAmt &&
+                  (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
+                }
+              >
+                <ButtonGroup
+                  className={`mx-2! max-w-125 flex items-center justify-between overflow-hidden`}
                 >
-                  x2
-                </button>
-                <button
-                  type="button"
-                  className="h-full! bg-background-600 px-2 border-x-white border-x-2"
-                  onClick={() => setBetAmt(betAmt && betAmt / 2)}
-                >
-                  /2
-                </button>
-                <button
-                  type="button"
-                  className="h-full! bg-background-600 px-2"
-                  onClick={() => setBetAmt(chips)}
-                >
-                  All
-                </button>
-              </div>
+                  <InputGroup>
+                    <InputGroupInput
+                      title="bet"
+                      value={betAmt || ""}
+                      onChange={(e) =>
+                        setBetAmt(parseInt(e.target.value) || null)
+                      }
+                      placeholder="Bet Amount"
+                      type="text"
+                    />
+                    <InputGroupAddon align={"inline-end"}>
+                      <PiPokerChip />
+                    </InputGroupAddon>
+                  </InputGroup>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
+                    onClick={() => setBetAmt(betAmt && betAmt * 2)}
+                  >
+                    x2
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
+                    onClick={() => setBetAmt(betAmt && betAmt / 2)}
+                  >
+                    /2
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
+                    onClick={() => setBetAmt(Math.floor(chips))}
+                  >
+                    All In
+                  </Button>
+                </ButtonGroup>
+              </Field>
             </div>
-            <div className="flex flex-col items-center justify-center w-full mt-3">
-              Mine Count:{" "}
-              <ElasticSlider
+            <div
+              className={clsx(
+                "flex flex-col items-center justify-center w-full mt-3",
+                sidebarExpanded && "max-w-1/2",
+              )}
+            >
+              Mine Count: {minesCount}
+              <Slider
                 className="mt-3 text-gray-50"
-                value={minesCount}
-                startingValue={1}
-                maxValue={24}
-                onChange={(val) => setMinesCount(Math.round(val))}
+                defaultValue={[minesCount]}
+                min={1}
+                max={24}
+                onValueChange={setMines}
               />
             </div>
             <motion.div className={clsx(!sidebarExpanded && "w-90%")}>
-              <PrimaryButton
+              <Button
                 onClick={startGame}
-                className={"w-full"}
+                className={"w-full my-4"}
                 disabled={gameActive || loading}
-                text="Start Game"
-              />
-              <SecondaryButton
-                className={"w-full"}
-                text={
-                  cashOutValue
-                    ? `Cash Out ${cashOutValue.toFixed(2)}`
-                    : "Cash Out"
-                }
+              >
+                {sidebarExpanded ? "Start Game" : "Restart Game"}
+              </Button>
+              <Button
+                className={"w-full mb-4"}
                 onClick={cashOut}
                 disabled={!gameActive || loading || !canCashOut}
-              />
+              >
+                {cashOutValue
+                  ? `Cash Out ${cashOutValue.toFixed(2)}`
+                  : "Cash Out"}
+              </Button>
               <p className="pl-4 text-left">
                 {multiplier && `Multiplier: ${multiplier.toFixed(5)}`}
               </p>
