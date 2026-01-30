@@ -29,12 +29,12 @@ export default function PlayingCard({
         height: cardHeight,
       }}
       className={clsx(
-        `${className} + relative flex flex-col items-center justify-between rounded-2xl  ${
+        `${className} + relative flex flex-col items-center justify-between rounded-2xl border ${
           suit === "hearts" || suit === "diamonds"
             ? "text-red-500"
-            : "text-gray-800"
+            : "text-foreground"
         }`,
-        faceDown ? "bg-background-700" : "bg-gray-50"
+        faceDown ? "bg-background-700" : "bg-card"
       )}
     >
       {faceDown ? (

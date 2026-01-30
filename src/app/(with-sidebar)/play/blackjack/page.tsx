@@ -1,8 +1,15 @@
 "use client";
 
 import { useChips } from "@/components/providers";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Field } from "@/components/ui/field";
 import PlayingCard from "@/components/ui/games/any/card";
-import { PrimaryButton } from "@/components/ui/global/buttons";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { BlackjackFinalHand, Card } from "@/lib/types";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "motion/react";
@@ -132,74 +139,73 @@ export default function BlackjackPage() {
     <div className="flex items-center justify-center h-full">
       <div
         ref={containerRef}
-        className="h-[80%] w-[90%] bg-gray-800 rounded-2xl text-center overflow-auto flex"
+        className="h-[80%] w-[90%] bg-background rounded-2xl text-center overflow-auto flex border"
       >
         <motion.div
           initial={{ width: "100%" }}
           animate={{ width: !sidebarExpanded ? "30%" : "100%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
-          className={`h-full p-4 rounded-r-2xl bg-background-700 ${
+          className={`h-full p-4 border-r bg-card rounded-r-2xl ${
             sidebarExpanded ? "w-full" : "w-16"
           }`}
         >
           <div className="flex flex-col items-center h-full">
             <h1 className="mx-2 text-5xl font-bold">Blackjack</h1>
             <div className="flex justify-center w-full mt-6">
-              <div
-                className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 xl:h-8 max-w-125 flex flex-col xl:flex-row items-center justify-between overflow-hidden ${
-                  betAmt && chipsFetched && betAmt > chips
-                    ? "bg-red-600"
-                    : "bg-black"
-                }`}
+              <Field
+                className="flex flex-row justify-center w-full"
+                data-invalid={
+                  chipsFetched &&
+                  betAmt &&
+                  (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
+                }
               >
-                <div className="flex items-center w-full pr-2 xl:w-auto xl:pr-0">
-                  <input
-                    className={`focus:outline-0 text-white h-full pl-2 shrink min-w-0 ${
-                      betAmt == 0 && "text-red-600!"
-                    }`}
-                    title="bet"
-                    value={betAmt || ""}
-                    onChange={(e) =>
-                      setBetAmt(parseInt(e.target.value) || null)
-                    }
-                    placeholder="Bet Amount"
-                    type="text"
-                  />
-                </div>
-
-                <div className="flex items-center justify-end w-full h-full p-0 m-0 border-t-2 border-white xl:w-auto xl:border-t-0">
-                  <PiPokerChip className="inline ml-2!" size={24} />
-                  <button
-                    type="button"
-                    className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center border-l-white border-l-2"
+                <ButtonGroup
+                  className={`mx-2! max-w-125 flex items-center justify-between overflow-hidden`}
+                >
+                  <InputGroup>
+                    <InputGroupInput
+                      title="bet"
+                      value={betAmt || ""}
+                      onChange={(e) =>
+                        setBetAmt(parseInt(e.target.value) || null)
+                      }
+                      placeholder="Bet Amount"
+                      type="text"
+                    />
+                    <InputGroupAddon align={"inline-end"}>
+                      <PiPokerChip />
+                    </InputGroupAddon>
+                  </InputGroup>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
                     onClick={() => setBetAmt(betAmt && betAmt * 2)}
                   >
                     x2
-                  </button>
-                  <button
-                    type="button"
-                    className="h-full! bg-background-600 px-2 border-x-white border-x-2"
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
                     onClick={() => setBetAmt(betAmt && betAmt / 2)}
                   >
                     /2
-                  </button>
-                  <button
-                    type="button"
-                    className="h-full! bg-background-600 px-2"
-                    onClick={() => setBetAmt(chips)}
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
+                    onClick={() => setBetAmt(Math.floor(chips))}
                   >
-                    All
-                  </button>
-                </div>
-              </div>
+                    All In
+                  </Button>
+                </ButtonGroup>
+              </Field>
             </div>
 
             <div className="mt-6">
-              <PrimaryButton
-                text={sidebarExpanded ? "Start Game" : "Restart Game"}
-                disabled={gameActive || loading}
-                onClick={startGame}
-              />
+              <Button disabled={gameActive || loading} onClick={startGame}>
+                {sidebarExpanded ? "Start Game" : "Restart Game"}
+              </Button>
             </div>
 
             <div className="flex items-center flex-1">
@@ -284,16 +290,16 @@ export default function BlackjackPage() {
                       style={{ width: "400px" }}
                       className={clsx(
                         "flex p-2 rounded-xl relative",
-                        i === activeHand && gameActive && "bg-white/10",
+                        i === activeHand && gameActive && "bg-card border",
                         resolvedHands[i] &&
                           !gameActive &&
                           (resolvedHands[i].outcome === "win" ||
                           resolvedHands[i].outcome === "blackjack"
                             ? "bg-green-600/80"
                             : resolvedHands[i].outcome === "lose" ||
-                              resolvedHands[i].outcome === "bust"
-                            ? "bg-red-600/70"
-                            : "bg-yellow-600/70")
+                                resolvedHands[i].outcome === "bust"
+                              ? "bg-red-600/70"
+                              : "bg-yellow-600/70"),
                       )}
                     >
                       <div
@@ -334,17 +340,25 @@ export default function BlackjackPage() {
                   transition: { ease: ["easeIn", "easeOut"] },
                   transitionDuration: 0.6,
                 }}
-                className="flex justify-center gap-6 bg-background-700 rounded-t-2xl mx-2 w-[calc(100%-16px)] absolute bottom-0"
+                className="flex justify-center gap-6 bg-card items-center rounded-t-2xl mx-2 w-[calc(100%-16px)] absolute bottom-0 border border-b-0"
               >
-                <div>
-                  <PrimaryButton text="Hit" onClick={() => send("hit")} />
-                  <PrimaryButton text="Stand" onClick={() => send("stand")} />
-                  <PrimaryButton
-                    disabled={!(hands[activeHand]?.length === 2) || hands.length > 1}
-                    text="Double"
+                <ButtonGroup className="my-4">
+                  <Button variant={"outline"} onClick={() => send("hit")}>
+                    Hit
+                  </Button>
+                  <Button variant={"outline"} onClick={() => send("stand")}>
+                    Stand
+                  </Button>
+                  <Button
+                    disabled={
+                      !(hands[activeHand]?.length === 2) || hands.length > 1
+                    }
+                    variant={"outline"}
                     onClick={() => send("double")}
-                  />
-                  <PrimaryButton
+                  >
+                    Double
+                  </Button>
+                  <Button
                     disabled={
                       !(
                         hands[activeHand]?.length === 2 &&
@@ -352,10 +366,12 @@ export default function BlackjackPage() {
                           hands[activeHand]?.[1].rank
                       )
                     }
-                    text="Split"
+                    variant={"outline"}
                     onClick={() => send("split")}
-                  />
-                </div>
+                  >
+                    Split
+                  </Button>
+                </ButtonGroup>
               </motion.div>
             </div>
           </div>

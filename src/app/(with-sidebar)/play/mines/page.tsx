@@ -270,7 +270,7 @@ export default function MinesPage() {
                 onClick={startGame}
                 className={"w-full"}
                 disabled={gameActive || loading}
-                text="Start Game"
+                text={sidebarExpanded ? "Start Game" : "Restart Game"}
               />
               <SecondaryButton
                 className={"w-full"}

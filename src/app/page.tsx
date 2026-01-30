@@ -299,7 +299,7 @@ export default function Home() {
                       <img
                         alt="Blackjack image"
                         className="w-full h-full"
-                        src={"/promos/blackjack-promo.png"}
+                        src={resolvedTheme == "light" ? "/promos/blackjack-promo-light.png" : "/promos/blackjack-promo-dark.png"}
                       />
                     </div>
                   </div>
