@@ -44,7 +44,7 @@ export default function Sidebar() {
               </ButtonGroup>
             </div>
             <Separator />
-            <div className="flex flex-col w-full gap-4 mx-2 mt-2 text-left">
+            <div className="flex flex-col w-full gap-2 mx-2 mt-2 text-left">
               <p className="text-xl font-bold">Games:</p>
               <Button
                 variant={"ghost"}
