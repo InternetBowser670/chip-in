@@ -314,7 +314,7 @@ export default function Home() {
                       <img
                         alt="Mines image"
                         className="w-full h-full"
-                        src={"/promos/mines-promo.png"}
+                        src={resolvedTheme == "light" ? "/promos/mines-promo-light.png" : "/promos/mines-promo-dark.png"}
                       />
                     </div>
                   </div>

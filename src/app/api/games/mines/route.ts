@@ -179,11 +179,14 @@ export async function POST(req: Request) {
       { $set: { activeMinesGame: game, totalChips: reducedChips } },
     );
 
+    const multiplier = calculateMinesMultiplier(calculateMinesProbability(minesCount, 0))
+
     return NextResponse.json({
       flippedTiles: [],
       betAmt,
       minesCount,
       reducedChips,
+      multiplier,
       fairness: {
         serverSeedHash,
         clientSeed,
