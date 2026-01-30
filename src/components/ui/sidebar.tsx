@@ -1,6 +1,5 @@
 "use client";
 
-import OpenProfile from "@/components/ui/profile/open-profile";
 import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -10,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ClaimChips from "@/components/ui/global/claim-chips";
 import ChipCount from "@/components/ui/global/chip-count";
-import { UserButton } from "@clerk/nextjs";
+import UserOptions from "./user-options";
 
 export default function Sidebar() {
   return (
@@ -54,14 +53,9 @@ export default function Sidebar() {
               </Link>
             </div>
           </div>
-          <div className="flex flex-col items-center mb-4 overflow-x-hidden">
+          <div className="flex flex-col items-center w-full mb-4 overflow-x-hidden">
             <OpenAdminDash small />
-            <div className="flex justify-end gap-4 overflow-hidden">
-              <UserButton />
-              <div className="overflow-hidden">
-                <OpenProfile />
-              </div>
-            </div>
+            <UserOptions />
           </div>
         </div>
       </div>
