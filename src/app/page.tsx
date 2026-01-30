@@ -105,7 +105,7 @@ export default function Home() {
           <div className="absolute top-0 z-30 flex flex-col items-center justify-center w-full h-full mb-20">
             <SplitText
               text="ChipIn"
-              className="mb-8 font-bold text-center text-7xl"
+              className="mb-8 font-bold text-center text-black text-7xl dark:text-white"
               delay={50}
               duration={1.25}
               ease="power3.out"
@@ -284,7 +284,11 @@ export default function Home() {
                       <img
                         alt="Coinflip image"
                         className="w-full h-full"
-                        src={resolvedTheme == "light" ? "/promos/coinflip-promo-light.png" : "/promos/coinflip-promo-dark.png"}
+                        src={
+                          resolvedTheme == "light"
+                            ? "/promos/coinflip-promo-light.png"
+                            : "/promos/coinflip-promo-dark.png"
+                        }
                       />
                     </div>
                   </div>
@@ -299,7 +303,11 @@ export default function Home() {
                       <img
                         alt="Blackjack image"
                         className="w-full h-full"
-                        src={resolvedTheme == "light" ? "/promos/blackjack-promo-light.png" : "/promos/blackjack-promo-dark.png"}
+                        src={
+                          resolvedTheme == "light"
+                            ? "/promos/blackjack-promo-light.png"
+                            : "/promos/blackjack-promo-dark.png"
+                        }
                       />
                     </div>
                   </div>
@@ -314,7 +322,11 @@ export default function Home() {
                       <img
                         alt="Mines image"
                         className="w-full h-full"
-                        src={resolvedTheme == "light" ? "/promos/mines-promo-light.png" : "/promos/mines-promo-dark.png"}
+                        src={
+                          resolvedTheme == "light"
+                            ? "/promos/mines-promo-light.png"
+                            : "/promos/mines-promo-dark.png"
+                        }
                       />
                     </div>
                   </div>
