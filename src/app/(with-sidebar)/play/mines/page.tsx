@@ -271,11 +271,12 @@ export default function MinesPage() {
                 </ButtonGroup>
               </Field>
             </div>
-            <div
+            <motion.div
               className={clsx(
-                "flex flex-col items-center justify-center w-full mt-3",
-                sidebarExpanded && "max-w-1/2",
+                "flex flex-col items-center justify-center w-full mt-3"
               )}
+              initial={{ width: "50%" }}
+              animate={{ width: sidebarExpanded ? "50%" : "100%"}}
             >
               Mine Count: {minesCount}
               <Slider
@@ -285,7 +286,7 @@ export default function MinesPage() {
                 max={24}
                 onValueChange={setMines}
               />
-            </div>
+            </motion.div>
             <motion.div className={clsx(!sidebarExpanded && "w-90%")}>
               <Button
                 onClick={startGame}
@@ -295,6 +296,7 @@ export default function MinesPage() {
                 {sidebarExpanded ? "Start Game" : "Restart Game"}
               </Button>
               <Button
+                variant={"secondary"}
                 className={"w-full mb-4"}
                 onClick={cashOut}
                 disabled={!gameActive || loading || !canCashOut}
