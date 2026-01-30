@@ -26,23 +26,6 @@ export default function Page() {
           <div className="flex gap-2">
             <Card className="p-4 mx-2">
               <div className="flex justify-center">
-                <GiCardJackSpades size="70" />
-              </div>
-              <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
-                Blackjack
-              </CardTitle>
-              <CardFooter>
-                <Button
-                  onClick={() => router.push("/play/blackjack")}
-                  className="w-full"
-                >
-                  Play now!
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="p-4 mx-2">
-              <div className="flex justify-center">
                 <GiCoinflip size="70" />
               </div>
               <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
@@ -51,6 +34,22 @@ export default function Page() {
               <CardFooter>
                 <Button
                   onClick={() => router.push("/play/coinflip")}
+                  className="w-full"
+                >
+                  Play now!
+                </Button>
+              </CardFooter>
+            </Card>
+            <Card className="p-4 mx-2">
+              <div className="flex justify-center">
+                <GiCardJackSpades size="70" />
+              </div>
+              <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
+                Blackjack
+              </CardTitle>
+              <CardFooter>
+                <Button
+                  onClick={() => router.push("/play/blackjack")}
                   className="w-full"
                 >
                   Play now!

@@ -2,13 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
+import { Field } from "@/components/ui/field";
 import { PiPokerChip } from "react-icons/pi";
 import { useChips } from "@/components/providers";
-import Card from "@/components/ui/global/card";
 import { sleep } from "@/lib/sleep";
 import clsx from "clsx";
 import confetti from "canvas-confetti";
 import { motion } from "motion/react";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -68,7 +75,7 @@ export default function Page() {
   }, [coinState]);
 
   async function handleFlip(face: "heads" | "tails") {
-    if (betAmt == null ||betAmt <= 0 || !Number.isInteger(betAmt)) {
+    if (betAmt == null || betAmt <= 0 || !Number.isInteger(betAmt)) {
       return alert("Invalid bet amount");
     }
 
@@ -139,60 +146,73 @@ export default function Page() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="flex overflow-hidden text-center bg-gray-800 rounded-2xl h-[80vh] w-[80%]!">
+      <div className="flex overflow-hidden text-center h-[80vh] w-[80%]! flex-row py-0 bg-background border rounded-2xl">
         <motion.div
           initial={{ width: "100%" }}
           animate={{ width: !extendSidebar ? "40%" : "100%" }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
-          className="h-full p-4 bg-background-700 rounded-r-2xl"
+          className="h-full p-4 border-r bg-card rounded-r-2xl"
         >
-          <div> 
+          <div>
             <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
-            <div className="flex justify-center">
-              <div className={`bg-black border-2 border-white rounded-2xl transition-colors duration-500 mx-2! h-8 max-w-125 flex items-center justify-between overflow-hidden ${betAmt && chipsFetched && betAmt > chips ? "bg-red-600" : "bg-black"}`}>
-                <input
-                  className={`flex-1 focus:outline-0 text-white h-full pl-2 ${betAmt == 0 && "text-red-600!"}`}
-                  title="bet"
-                  value={betAmt || ""}
-                  onChange={(e) => setBetAmt(parseInt(e.target.value) || null)}
-                  placeholder="Bet Amount"
-                  type="text"
-                />
-                <div className="flex items-center h-full p-0 m-0">
-                  <PiPokerChip className="inline ml-2!" size={24} />
-                  <button
-                    type="button"
-                    className="h-full! bg-background-600 px-2 ml-2! flex items-center justify-center text-center border-l-white border-l-2"
+            <div className="flex justify-center w-full">
+              <Field
+                className="flex flex-row justify-center w-full"
+                data-invalid={
+                  chipsFetched &&
+                  betAmt &&
+                  (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
+                }
+              >
+                <ButtonGroup
+                  className={`mx-2! max-w-125 flex items-center justify-between overflow-hidden`}
+                >
+                  <InputGroup>
+                    <InputGroupInput
+                      title="bet"
+                      value={betAmt || ""}
+                      onChange={(e) =>
+                        setBetAmt(parseInt(e.target.value) || null)
+                      }
+                      placeholder="Bet Amount"
+                      type="text"
+                    />
+                    <InputGroupAddon align={"inline-end"}>
+                      <PiPokerChip />
+                    </InputGroupAddon>
+                  </InputGroup>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
                     onClick={() => setBetAmt(betAmt && betAmt * 2)}
                   >
                     x2
-                  </button>
-                  <button
-                    type="button"
-                    className="h-full! bg-background-600 px-2 border-x-white border-x-2"
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
                     onClick={() => setBetAmt(betAmt && betAmt / 2)}
                   >
                     /2
-                  </button>
-                  <button
-                    type="button"
-                    className="h-full! bg-background-600 px-2"
-                    onClick={() => setBetAmt(chips)}
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    className="flex items-center justify-center text-center"
+                    onClick={() => setBetAmt(Math.floor(chips))}
                   >
                     All In
-                  </button>
-                </div>
-              </div>
+                  </Button>
+                </ButtonGroup>
+              </Field>
             </div>
             <div className="flex items-center justify-center mt-4 gap-15">
-              <Card
-                chin
-                color="red"
+              <Button
+                variant={"default"}
                 className={clsx(
                   coinState === "flipping" || animReady === false
                     ? "grayscale cursor-not-allowed"
-                    : "cursor-pointer"
+                    : "cursor-pointer",
                 )}
                 onClick={() =>
                   !(coinState === "flipping" || animReady === false) &&
@@ -200,14 +220,13 @@ export default function Page() {
                 }
               >
                 Start Heads
-              </Card>
-              <Card
-                chin
-                color="blue"
+              </Button>
+              <Button
+                variant={"default"}
                 className={clsx(
                   coinState === "flipping" || animReady === false
                     ? "grayscale cursor-not-allowed"
-                    : "cursor-pointer"
+                    : "cursor-pointer",
                 )}
                 onClick={() =>
                   !(coinState === "flipping" || animReady === false) &&
@@ -215,7 +234,7 @@ export default function Page() {
                 }
               >
                 Start Tails
-              </Card>
+              </Button>
             </div>
             <br />
             <br />
@@ -231,21 +250,20 @@ export default function Page() {
           <div
             className={clsx(
               "flex gap-2 opacity-0 transition-all duration-300 overflow-hidden w-fit h-12 items-center",
-              pastFlips.length > 0 && "opacity-100"
+              pastFlips.length > 0 && "opacity-100",
             )}
           >
             {pastFlips.map((flip, i) => (
-              <Card
-                color={flip.betFace == flip.outcome ? "green" : "red"}
+              <div
                 className={clsx(
-                  "h-4 flex justify-center items-center transition-all duration-300 min-w-30",
+                  "h-4 flex justify-center items-center transition-all duration-300 min-w-30 p-4 py-6 rounded-2xl",
                   flip.betFace == flip.outcome ? "bg-green-500" : "bg-red-500",
-                  "animate-[flipIn_.35s_ease-out]"
+                  "animate-[flipIn_.35s_ease-out]",
                 )}
                 key={i}
               >
                 {flip.betFace[0].toLocaleUpperCase()} - {flip.betAmt}
-              </Card>
+              </div>
             ))}
           </div>
           <div className="flex h-[calc(100%-64px)] w-full justify-center items-center pt-2">
