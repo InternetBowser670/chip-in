@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import Card from "@/components/ui/global/card";
+import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
@@ -176,7 +176,7 @@ export default function AdminPage() {
 
     return (
       <>
-        <Card noHover className="mx-20 mt-8">
+        <Card className="p-4 mx-20 mt-8">
           <div className="flex items-center justify-between w-full mb-6">
             <h1 className="text-3xl">Manage Users</h1>
             <Button
