@@ -34,7 +34,7 @@ export default function UserOptions() {
 
   const router = useRouter();
 
-  const [promoCodeDecnied, setPromoCodeDenied] = useState(false);
+  const [promoCodeDenied, setPromoCodeDenied] = useState(false);
 
   return (
     <>
@@ -100,7 +100,7 @@ export default function UserOptions() {
                     <Field>
                       <FieldLabel>Promo Code</FieldLabel>
                       <Input placeholder="Code..." />
-                      {promoCodeDecnied && (
+                      {promoCodeDenied && (
                         <Alert variant="destructive" className="max-w-md">
                           <AlertCircleIcon />
                           <AlertTitle>Invalid Promo Code</AlertTitle>
