@@ -1,6 +1,5 @@
 "use client";
 
-import OpenProfile from "@/components/ui/profile/open-profile";
 import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -10,9 +9,13 @@ import Image from "next/image";
 import Link from "next/link";
 import ClaimChips from "@/components/ui/global/claim-chips";
 import ChipCount from "@/components/ui/global/chip-count";
-import { UserButton } from "@clerk/nextjs";
+import UserOptions from "./user-options";
+import { useRouter } from "next/navigation";
+import { Separator } from "./separator";
 
 export default function Sidebar() {
+  const router = useRouter();
+
   return (
     <>
       <div className="w-50 h-full! bg-card border-r border-r-foreground/30">
@@ -40,28 +43,41 @@ export default function Sidebar() {
                 <ModeToggle />
               </ButtonGroup>
             </div>
-            <hr className="w-full border" />
-            <div className="flex flex-col w-full gap-4 mx-2 mt-2 text-left">
+            <Separator />
+            <div className="flex flex-col w-full gap-2 mx-2 mt-2 text-left">
               <p className="text-xl font-bold">Games:</p>
-              <Link href="/play/coinflip" className="flex items-center gap-2">
-                <p className="hover:underline">Coinflip</p>
-              </Link>
-              <Link href="/play/blackjack" className="flex items-center gap-2">
-                <p className="hover:underline">Blackjack</p>
-              </Link>
-              <Link href="/play/mines" className="flex items-center gap-2">
-                <p className="hover:underline">Mines</p>
-              </Link>
+              <Button
+                variant={"ghost"}
+                onClick={() => {
+                  router.push("/play/coinflip");
+                }}
+                className="flex items-center justify-start gap-2 text-start"
+              >
+                <p>Coinflip</p>
+              </Button>
+              <Button
+                variant={"ghost"}
+                onClick={() => {
+                  router.push("/play/blackjack");
+                }}
+                className="flex items-center justify-start gap-2 text-start"
+              >
+                <p>Blackjack</p>
+              </Button>
+              <Button
+                variant={"ghost"}
+                onClick={() => {
+                  router.push("/play/mines");
+                }}
+                className="flex items-center justify-start gap-2 text-start"
+              >
+                <p>Mines</p>
+              </Button>
             </div>
           </div>
-          <div className="flex flex-col items-center mb-4 overflow-x-hidden">
+          <div className="flex flex-col items-center w-full mb-4 overflow-x-hidden">
             <OpenAdminDash small />
-            <div className="flex justify-end gap-4 overflow-hidden">
-              <UserButton />
-              <div className="overflow-hidden">
-                <OpenProfile />
-              </div>
-            </div>
+            <UserOptions />
           </div>
         </div>
       </div>
