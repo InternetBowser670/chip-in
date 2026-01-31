@@ -10,11 +10,11 @@ import ControlledTile from "@/components/ui/games/mines/controlled-tile";
 import clsx from "clsx";
 import queue from "queue";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import { Field } from "@/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
 
@@ -223,60 +223,56 @@ export default function MinesPage() {
             <h1 className="mx-2 mb-10 text-5xl font-bold">Mines</h1>
             <div className="flex justify-center w-full mt-6">
               <Field
-                className="flex flex-row justify-center w-full"
+                className="flex flex-row justify-center w-1/2"
                 data-invalid={
                   chipsFetched &&
                   betAmt &&
                   (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
                 }
               >
-                <ButtonGroup
-                  className={`mx-2! max-w-125 flex items-center justify-between overflow-hidden`}
-                >
-                  <InputGroup>
-                    <InputGroupInput
-                      title="bet"
-                      value={betAmt || ""}
-                      onChange={(e) =>
-                        setBetAmt(parseInt(e.target.value) || null)
-                      }
-                      placeholder="Bet Amount"
-                      type="text"
-                    />
-                    <InputGroupAddon align={"inline-end"}>
-                      <PiPokerChip />
-                    </InputGroupAddon>
-                  </InputGroup>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(betAmt && betAmt * 2)}
-                  >
-                    x2
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(betAmt && betAmt / 2)}
-                  >
-                    /2
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(Math.floor(chips))}
-                  >
-                    All In
-                  </Button>
-                </ButtonGroup>
+                <InputGroup>
+                  <InputGroupInput
+                    title="bet"
+                    value={betAmt || ""}
+                    onChange={(e) =>
+                      setBetAmt(parseInt(e.target.value) || null)
+                    }
+                    placeholder="Bet Amount"
+                    type="text"
+                  />
+                  <InputGroupAddon align={"inline-end"}>
+                    <PiPokerChip />
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(betAmt && betAmt * 2)}
+                    >
+                      x2
+                    </InputGroupButton>
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(betAmt && betAmt / 2)}
+                    >
+                      /2
+                    </InputGroupButton>
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(Math.floor(chips))}
+                    >
+                      All In
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
               </Field>
             </div>
             <motion.div
               className={clsx(
-                "flex flex-col items-center justify-center w-full mt-3"
+                "flex flex-col items-center justify-center w-full mt-3",
               )}
               initial={{ width: "50%" }}
-              animate={{ width: sidebarExpanded ? "50%" : "100%"}}
+              animate={{ width: sidebarExpanded ? "50%" : "100%" }}
             >
               Mine Count: {minesCount}
               <Slider
