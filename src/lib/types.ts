@@ -41,6 +41,39 @@ export interface UserHistory {
   };
 }
 
+export interface GeneralHistory {
+  userId: string;
+  type: string;
+  betAmt: number;
+  startCount: number;
+  endCount: number;
+  change: number;
+  date: number;
+  actor: string;
+  version: string | "genHistory_v1";
+  coinFlipData?: {
+    betFace: CoinFlipFace;
+    outcome: CoinFlipFace;
+  };
+  blackjackData?: {
+    gameId: string;
+    outcome: "win" | "lose" | "push" | "blackjack";
+  };
+  minesData?: {
+    gameId: string;
+    minesCount: number;
+    grid: MinesGrid;
+    tilesFlippedCount: number;
+    tilesFlipped: FlippedTile[];
+    finalMultiplier: number;
+    fairness: {
+      serverSeed: string;
+      clientSeed: string;
+      nonce: number;
+    };
+  };
+}
+
 export interface CoinFlip {
   betAmt: number;
   betFace: CoinFlipFace;
@@ -60,14 +93,19 @@ export interface Badge {
 }
 export interface ChipInUser extends User {
   _id: ObjectId;
-  activeBlackjack?: BlackjackGame;
   totalChips: number;
-  chipClaims: Record<string, number>;
   timezone: string;
-  history: UserHistory[];
-  coinFlips: CoinFlip[];
-  badges?: Badge[];
+  minesCount: number;
+  blackjackCount: number;
+  coinFlipCount: number;
+  historyCount: number;
+  activeBlackjack?: BlackjackGame;
   activeMinesGame?: MinesGame;
+  badges?: Badge[];
+  chipClaims: Record<string, number>;
+  coinFlipProfit: number;
+  blackjackProfit: number;
+  minesProfit: number;
 }
 
 export interface PlayingCardProps {

@@ -5,13 +5,14 @@ import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { gridDarkTheme } from "@/components/grid";
+import { gridDarkTheme, gridLightTheme } from "@/components/grid";
 import { useUser } from "@clerk/nextjs";
 import { useChips } from "@/components/providers";
 import { Badge } from "@/lib/types";
 import { v4 } from "uuid";
 import { IoReload } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -19,6 +20,13 @@ export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [userData, setUserData] = useState<any[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const user = useUser();
 
@@ -168,10 +176,9 @@ export default function AdminPage() {
           return new Date(params.value).toLocaleString();
         },
       },
-      { field: "coinFlips", headerName: "Coinflips" },
-      { field: "blackjackPlays" },
-      { field: "minesPlays" },
-      { field: "history" },
+      { field: "coinFlipCount", headerName: "Coinflips" },
+      { field: "blackjackCount", headerName: "Blackjack Plays" },
+      { field: "minesCount", headerName: "Mines Plays" },
     ];
 
     return (
@@ -188,23 +195,25 @@ export default function AdminPage() {
             </Button>
           </div>
           <div className="h-125">
-            <AgGridReact
-              rowData={userData}
-              columnDefs={colDefs}
-              theme={gridDarkTheme}
-              defaultColDef={defaultColDef}
-              pagination={true}
-              onCellValueChanged={(event) => {
-                if (event.colDef.field === "totalChips") {
-                  giveUserChips(
-                    event.data.id,
-                    Number(event.data.totalChips),
-                    "set",
-                    event.data.username,
-                  );
-                }
-              }}
-            />
+            {mounted && (
+              <AgGridReact
+                rowData={userData}
+                columnDefs={colDefs}
+                theme={resolvedTheme == "light" ? gridLightTheme : gridDarkTheme}
+                defaultColDef={defaultColDef}
+                pagination={true}
+                onCellValueChanged={(event) => {
+                  if (event.colDef.field === "totalChips") {
+                    giveUserChips(
+                      event.data.id,
+                      Number(event.data.totalChips),
+                      "set",
+                      event.data.username,
+                    );
+                  }
+                }}
+              />
+            )}
           </div>
         </Card>
       </>

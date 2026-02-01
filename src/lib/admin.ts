@@ -1,20 +1,18 @@
 import { connectToDatabases } from "@/lib/mongodb";
 
+const ADMIN_IDS = ["user_327mnHFtfu53GG3queNB1TpZFVT", "user_327f5HQ2KhNPh2Sb02DUFQp1WqY"];
+
 export async function verifyAdmin(userId: string): Promise<boolean> {
-  const useProdDB = false;
-  const { mainDb } = await connectToDatabases(useProdDB);
+  if (ADMIN_IDS.includes(userId)) return true;
 
-  const users = mainDb.collection("users");
+  const { mainDb } = await connectToDatabases(false);
+  
+  const userDoc = await mainDb.collection("users").findOne(
+    { id: userId },
+    { projection: { badges: 1 } }
+  );
 
-  const userDoc = await users.findOne({ id: userId });
+  if (!userDoc?.badges) return false;
 
-  if (!userDoc) {
-    return false
-  }
-
-  if ((userDoc.badges?.some((badge: { name: string; }) => badge.name === "admin") == true || userId == "user_327mnHFtfu53GG3queNB1TpZFVT" || userId == "user_327f5HQ2KhNPh2Sb02DUFQp1WqY")) {
-    return true;
-  }
-    
-  return false;
+  return userDoc.badges.some((badge: { name: string }) => badge.name === "admin");
 }

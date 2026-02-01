@@ -10,7 +10,6 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { UserHistory } from "@/lib/types";
 
 export function MostPlayedGamesChart() {
   const [chartData, setChartData] = useState<{ game: string; value: number }[]>(
@@ -77,31 +76,10 @@ export function MostProfitableGamesChart() {
       const res = await fetch("/api/profile");
       const json = await res.json();
 
-      let coinFlipTotal = 0;
-      let blackjackTotal = 0;
-      let minesTotal = 0;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      json.user.history.forEach((item: any) => {
-        if (!(item satisfies UserHistory)) {
-          return;
-        }
-
-        if (item.type == "coinflip") {
-            coinFlipTotal += item.change;
-        } else if (item.type == "blackjack") {
-            blackjackTotal += item.change;
-        } else if (item.type == "mines_v1" || item.type == "mines") {
-            minesTotal += item.change;
-        } else return
-      });
-
-      console.log("totals" + blackjackTotal + " " + coinFlipTotal + " " + minesTotal)
-
       setChartData([
-        { game: "Coinflip", value: coinFlipTotal },
-        { game: "Blackjack", value: blackjackTotal },
-        { game: "Mines", value: minesTotal },
+        { game: "Coinflip", value: json.user.coinFlipProfit },
+        { game: "Blackjack", value: json.user.blackjackProfit },
+        { game: "Mines", value: json.user.minesProfit },
       ]);
     }
     fetchData();

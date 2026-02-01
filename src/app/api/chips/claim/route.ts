@@ -2,121 +2,87 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { connectToDatabases } from "@/lib/mongodb";
 import { DateTime } from "luxon";
-import { ChipInUser, UserHistory } from "@/lib/types";
+import { ChipInUser, GeneralHistory } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-// chip formula: ceil(10 * cbrt(x) * pow(x, 1/10)) / 10 * 1000
 function calculateChips(day: number): number {
   return Math.floor(
     (Math.ceil(10 * Math.cbrt(day) * Math.pow(day, 1 / 10)) / 10) * 1000
   );
 }
 
-function calculateStreak(
-  claims: Record<string, number>,
-  timezone: string
-): number {
+function calculateStreak(claims: Record<string, number>, timezone: string): number {
   const claimDates = Object.keys(claims).sort();
   if (claimDates.length === 0) return 0;
-
   let streak = 1;
-  let currentDate = DateTime.fromFormat(
-    claimDates[claimDates.length - 1],
-    "yyyy-MM-dd",
-    { zone: timezone }
-  );
-
+  let currentDate = DateTime.fromFormat(claimDates[claimDates.length - 1], "yyyy-MM-dd", { zone: timezone });
   for (let i = claimDates.length - 2; i >= 0; i--) {
     currentDate = currentDate.minus({ days: 1 });
-    const expectedDate = currentDate.toFormat("yyyy-MM-dd");
-
-    if (claimDates[i] === expectedDate) {
-      streak++;
-    } else {
-      break;
-    }
+    if (claimDates[i] === currentDate.toFormat("yyyy-MM-dd")) streak++;
+    else break;
   }
-
   return streak + 1;
 }
 
 export async function POST() {
-  const useProdDB = false;
-  const { mainDb } = await connectToDatabases(useProdDB);
-
   const clerkUser = await currentUser();
-  if (!clerkUser) {
-    return NextResponse.json(
-      { message: "You must sign in to claim chips" },
-      { status: 401 }
-    );
-  }
+  if (!clerkUser) return NextResponse.json({ message: "Sign in required" }, { status: 401 });
 
+  const { mainDb } = await connectToDatabases(false);
   const users = mainDb.collection<ChipInUser>("users");
+  const historyColl = mainDb.collection<GeneralHistory>("history");
 
-  const userDoc = await users.findOne({ id: clerkUser.id });
-  if (!userDoc) {
-    return NextResponse.json(
-      { message: "User document not found" },
-      { status: 404 }
-    );
-  }
+  const userDoc = await users.findOne(
+    { id: clerkUser.id },
+    { projection: { timezone: 1, chipClaims: 1, totalChips: 1 } }
+  );
+
+  if (!userDoc) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
   const timezone = userDoc.timezone || "UTC";
   const today = DateTime.now().setZone(timezone).toFormat("yyyy-MM-dd");
+  const chipClaims = userDoc.chipClaims || {};
 
-  const chipClaims: Record<string, number> = userDoc.chipClaims || {};
+  if (chipClaims[today]) return NextResponse.json({ message: "Already claimed" }, { status: 400 });
+
   const claimDates = Object.keys(chipClaims).sort();
-  const lastClaimDateStr = claimDates[claimDates.length - 1];
-
-  const totalChips = userDoc.totalChips || 0;
-
-  if (chipClaims[today]) {
-    return NextResponse.json(
-      { message: "Already claimed chips today" },
-      { status: 400 }
-    );
-  }
-
-  const yesterday = DateTime.now()
-    .setZone(timezone)
-    .minus({ days: 1 })
-    .toFormat("yyyy-MM-dd");
-
+  const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat("yyyy-MM-dd");
+  
   let streak = calculateStreak(chipClaims, timezone);
-
-  if (lastClaimDateStr !== yesterday) {
+  if (claimDates.length > 0 && claimDates[claimDates.length - 1] !== yesterday) {
     streak = 1;
   }
 
   const chips = calculateChips(streak);
+  const startCount = userDoc.totalChips || 0;
+  const endCount = startCount + chips;
 
-  await users.updateOne({ id: clerkUser.id }, {
-    $set: {
-      [`chipClaims.${today}`]: chips,
-      totalChips: totalChips + chips,
-    },
-    $push: {
-      history: {
-        type: "daily-claim",
-        change: chips,
-        startCount: userDoc.totalChips || 0,
-        endCount: totalChips + chips,
-        date: Date.now(),
-        actor: "user",
-        version: "history_v3",
-      } as UserHistory,
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any);
+  const historyDoc: GeneralHistory = {
+    userId: clerkUser.id,
+    type: "daily-claim",
+    betAmt: 0,
+    startCount,
+    endCount,
+    change: chips,
+    date: Date.now(),
+    actor: "user",
+    version: "genHistory_v1",
+  };
+  
+  await Promise.all([
+    historyColl.insertOne(historyDoc),
+    users.updateOne(
+      { id: clerkUser.id },
+      {
+        $set: { 
+          [`chipClaims.${today}`]: chips,
+          totalChips: endCount,
+        },
+        $inc: { historyCount: 1 }
+      }
+    )
+  ]);
 
-  return NextResponse.json(
-    {
-      message: "Success",
-      claimed: chips,
-      total: totalChips + chips,
-    },
-    { status: 200 }
-  );
+  return NextResponse.json({ message: "Success", claimed: chips, total: endCount });
 }

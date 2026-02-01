@@ -4,7 +4,7 @@ import {
   MinesGame,
   MinesGrid,
   MinesRow,
-  UserHistory,
+  GeneralHistory,
 } from "@/lib/types";
 import { connectToDatabases } from "@/lib/mongodb";
 import { currentUser } from "@clerk/nextjs/server";
@@ -19,89 +19,55 @@ import {
 export const dynamic = "force-dynamic";
 
 type TileValue = "mine" | "safe";
-
-type FlippedTile = {
-  coordinates: [number, number];
-  value: TileValue;
-};
+type FlippedTile = { coordinates: [number, number]; value: TileValue };
 
 function hashToFloat(seed: string, index: number): number {
-  const hash = crypto
-    .createHash("sha256")
-    .update(`${seed}:${index}`)
-    .digest("hex");
+  const hash = crypto.createHash("sha256").update(`${seed}:${index}`).digest("hex");
   return parseInt(hash.slice(0, 13), 16) / 0xfffffffffffff;
 }
 
-function generateProvablyFairGrid(
-  minesCount: number,
-  serverSeed: string,
-  clientSeed: string,
-  nonce: number,
-): MinesGrid {
+function generateProvablyFairGrid(minesCount: number, serverSeed: string, clientSeed: string, nonce: number): MinesGrid {
   const seed = `${serverSeed}:${clientSeed}:${nonce}`;
   const rolls: { index: number; roll: number }[] = [];
-
-  for (let i = 0; i < 25; i++) {
-    rolls.push({ index: i, roll: hashToFloat(seed, i) });
-  }
-
+  for (let i = 0; i < 25; i++) rolls.push({ index: i, roll: hashToFloat(seed, i) });
   rolls.sort((a, b) => a.roll - b.roll);
-
   const mineSet = new Set(rolls.slice(0, minesCount).map((r) => r.index));
   const grid: MinesGrid = [];
-
   for (let r = 0; r < 5; r++) {
     const row: MinesRow = [];
     for (let c = 0; c < 5; c++) {
       const idx = r * 5 + c;
-      row.push({
-        value: mineSet.has(idx) ? "mine" : "safe",
-        revealed: false,
-      });
+      row.push({ value: mineSet.has(idx) ? "mine" : "safe", revealed: false });
     }
     grid.push(row);
   }
-
   return grid;
 }
 
 export async function POST(req: Request) {
   const body = await req.json();
   const { action } = body as { action: MinesAction };
-
   const clerkUser = await currentUser();
-  if (!clerkUser)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!clerkUser) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   const { mainDb } = await connectToDatabases(false);
   const users = mainDb.collection<ChipInUser>("users");
+  const historyColl = mainDb.collection<GeneralHistory>("history");
 
-  const user = await users.findOne({ id: clerkUser.id });
-  if (!user)
-    return NextResponse.json({ message: "User not found" }, { status: 404 });
+  const user = await users.findOne({ id: clerkUser.id }, {
+    projection: { id: 1, totalChips: 1, activeMinesGame: 1, minesCount: 1, historyCount: 1, minesProfit: 1 }
+  });
+  if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
   if (action.type === "resume") {
     const game = user.activeMinesGame;
-    if (!game || game.finished) {
-      return NextResponse.json(
-        { message: "No active game to resume" },
-        { status: 400 },
-      );
-    }
-
+    if (!game || game.finished) return NextResponse.json({ message: "No active game to resume" }, { status: 400 });
     return NextResponse.json({
       flippedTiles: game.tilesFlipped,
       minesCount: game.minesCount,
       betAmt: game.betAmt,
-      multiplier: calculateMinesMultiplier(
-        calculateMinesProbability(game.minesCount, game.tilesFlippedCount),
-      ),
-      fairness: {
-        serverSeedHash: game.fairness.serverSeedHash,
-        clientSeed: game.fairness.clientSeed,
-        nonce: game.fairness.nonce,
-      },
+      multiplier: calculateMinesMultiplier(calculateMinesProbability(game.minesCount, game.tilesFlippedCount)),
+      fairness: { serverSeedHash: game.fairness.serverSeedHash, clientSeed: game.fairness.clientSeed, nonce: game.fairness.nonce },
     });
   }
 
@@ -121,263 +87,117 @@ export async function POST(req: Request) {
     }
 
     const { betAmt, minesCount, clientSeed = "default" } = action.info;
-
-    if (
-      !betAmt ||
-      betAmt <= 0 ||
-      !Number.isInteger(betAmt) ||
-      betAmt > user.totalChips
-    ) {
-      return NextResponse.json(
-        { message: "Invalid bet amount" },
-        { status: 400 },
-      );
-    }
-
-    if (minesCount < 1 || minesCount > 24 || !Number.isInteger(minesCount)) {
-      return NextResponse.json(
-        { message: "Invalid mines count" },
-        { status: 400 },
-      );
-    }
-
+    if (!betAmt || betAmt <= 0 || !Number.isInteger(betAmt) || betAmt > user.totalChips) 
+        return NextResponse.json({ message: "Invalid bet amount" }, { status: 400 });
+    if (minesCount < 1 || minesCount > 24 || !Number.isInteger(minesCount))
+        return NextResponse.json({ message: "Invalid mines count" }, { status: 400 });
+    
     const serverSeed = crypto.randomBytes(32).toString("hex");
-    const serverSeedHash = crypto
-      .createHash("sha256")
-      .update(serverSeed)
-      .digest("hex");
-
-    const grid = generateProvablyFairGrid(
-      minesCount,
-      serverSeed,
-      clientSeed,
-      0,
-    );
+    const serverSeedHash = crypto.createHash("sha256").update(serverSeed).digest("hex");
+    const grid = generateProvablyFairGrid(minesCount, serverSeed, clientSeed, 0);
 
     const game: MinesGame = {
-      gameId: v4(),
-      betAmt,
-      minesCount,
-      grid,
-      finished: false,
-      startCount: user.totalChips,
-      createdAt: Date.now(),
-      tilesFlippedCount: 0,
-      tilesFlipped: [],
-      fairness: {
-        serverSeedHash,
-        serverSeed: null,
-        clientSeed,
-        nonce: 0,
-      },
+      gameId: v4(), betAmt, minesCount, grid, finished: false, startCount: user.totalChips,
+      createdAt: Date.now(), tilesFlippedCount: 0, tilesFlipped: [],
+      fairness: { serverSeedHash, serverSeed, clientSeed, nonce: 0 },
     };
 
     const reducedChips = user.totalChips - betAmt;
-
-    await users.updateOne(
-      { id: clerkUser.id },
-      { $set: { activeMinesGame: game, totalChips: reducedChips } },
-    );
-
-    const multiplier = calculateMinesMultiplier(calculateMinesProbability(minesCount, 0))
+    await users.updateOne({ id: clerkUser.id }, { $set: { activeMinesGame: game, totalChips: reducedChips } });
 
     return NextResponse.json({
-      flippedTiles: [],
-      betAmt,
-      minesCount,
-      reducedChips,
-      multiplier,
-      fairness: {
-        serverSeedHash,
-        clientSeed,
-        nonce: 0,
-      },
+      flippedTiles: [], betAmt, minesCount, reducedChips,
+      multiplier: calculateMinesMultiplier(calculateMinesProbability(minesCount, 0)),
+      fairness: { serverSeedHash, clientSeed, nonce: 0 },
     });
   }
 
-  if (action.type === "flip") {
-    const game = user.activeMinesGame;
-    if (!game || game.finished) {
-      return NextResponse.json({ message: "No active game" }, { status: 400 });
-    }
+  const game = user.activeMinesGame;
+  if (!game || game.finished) return NextResponse.json({ message: "No active game" }, { status: 400 });
 
+  if (action.type === "flip") {
     const [row, col] = action.info.tileCoordinates;
     const tile = game.grid[row][col];
-    if (tile.revealed) {
-      return NextResponse.json(
-        { message: "Tile already revealed" },
-        { status: 400 },
-      );
-    }
+    if (tile.revealed) return NextResponse.json({ message: "Tile already revealed" }, { status: 400 });
 
-    const newGrid = game.grid.map((r, rIdx) =>
-      r.map((t, cIdx) =>
-        rIdx === row && cIdx === col ? { ...t, revealed: true } : t,
-      ),
-    );
-
+    tile.revealed = true;
     const isMine = tile.value === "mine";
-
-    const flippedTiles: FlippedTile[] = isMine
-      ? newGrid.flatMap((r, rIdx) =>
-          r.map((t, cIdx) => ({
-            coordinates: [rIdx, cIdx],
-            value: t.value as TileValue,
-          })),
-        )
-      : [
-          ...game.tilesFlipped,
-          {
-            coordinates: [row, col],
-            value: tile.value as TileValue,
-          },
-        ];
-
-    const updatedGame: MinesGame = {
-      ...game,
-      grid: newGrid,
-      finished: isMine,
-      tilesFlipped: flippedTiles,
-      tilesFlippedCount: game.tilesFlippedCount + 1,
-      fairness: {
-        ...game.fairness,
-        serverSeed: isMine ? game.fairness.serverSeedHash : null,
-      },
-    };
+    
+    const flippedTiles: FlippedTile[] = isMine 
+        ? game.grid.flatMap((r, rIdx) => r.map((t, cIdx) => ({ coordinates: [rIdx, cIdx] as [number, number], value: t.value as TileValue })))
+        : [...game.tilesFlipped, { coordinates: [row, col], value: tile.value as TileValue }];
 
     if (isMine) {
-      const endTime = Date.now();
-      const endCount = user.totalChips;
-
-      const history: UserHistory = {
-        betAmt: game.betAmt,
-        startCount: game.startCount,
-        endCount,
-        change: endCount - game.startCount,
-        date: endTime,
-        type: "mines",
-        version: "history_v3",
-        actor: "user",
-        minesData: {
-          gameId: game.gameId,
-          minesCount: game.minesCount,
-          grid: newGrid,
-          tilesFlippedCount: updatedGame.tilesFlippedCount,
-          tilesFlipped: flippedTiles,
-          finalMultiplier: 0,
-          fairness: {
-            serverSeed: game.fairness.serverSeedHash,
-            clientSeed: game.fairness.clientSeed,
-            nonce: game.fairness.nonce,
-          },
-        },
+      const netChange = -game.betAmt;
+      const historyDoc: GeneralHistory = {
+        userId: clerkUser.id, type: "mines", betAmt: game.betAmt, startCount: game.startCount,
+        endCount: user.totalChips, change: netChange, date: Date.now(), actor: "user", version: "genHistory_v1",
+        minesData: { 
+            gameId: game.gameId, minesCount: game.minesCount, grid: game.grid, 
+            tilesFlippedCount: game.tilesFlippedCount + 1, tilesFlipped: flippedTiles, 
+            finalMultiplier: 0, fairness: { serverSeed: game.fairness.serverSeed!, clientSeed: game.fairness.clientSeed, nonce: game.fairness.nonce } 
+        }
       };
 
-      await users.updateOne(
-        { id: clerkUser.id },
-        {
-          $set: { totalChips: endCount },
-          $push: { history, minesPlays: history },
-          $unset: { activeMinesGame: "" },
-        },
-      );
+      await Promise.all([
+        historyColl.insertOne(historyDoc),
+        users.updateOne({ id: clerkUser.id }, { 
+            $unset: { activeMinesGame: "" }, 
+            $inc: { minesCount: 1, historyCount: 1, minesProfit: netChange } 
+        })
+      ]);
 
       return NextResponse.json({
-        flippedTiles,
-        gameOver: true,
-        endCount,
-        fairness: {
-          serverSeed: game.fairness.serverSeedHash,
-          clientSeed: game.fairness.clientSeed,
-          nonce: game.fairness.nonce,
-        },
+        flippedTiles, gameOver: true, endCount: user.totalChips,
+        fairness: { serverSeed: game.fairness.serverSeed, clientSeed: game.fairness.clientSeed, nonce: game.fairness.nonce }
       });
     }
 
-    await users.updateOne(
-      { id: clerkUser.id },
-      { $set: { activeMinesGame: updatedGame } },
-    );
+    game.tilesFlipped = flippedTiles;
+    game.tilesFlippedCount++;
+    await users.updateOne({ id: clerkUser.id }, { $set: { activeMinesGame: game } });
 
     return NextResponse.json({
-      flippedTiles,
-      gameOver: false,
-      betAmt: game.betAmt,
-      multiplier: calculateMinesMultiplier(
-        calculateMinesProbability(
-          game.minesCount,
-          updatedGame.tilesFlippedCount,
-        ),
-      ),
+      flippedTiles, gameOver: false, betAmt: game.betAmt,
+      multiplier: calculateMinesMultiplier(calculateMinesProbability(game.minesCount, game.tilesFlippedCount)),
     });
   }
 
   if (action.type === "cashout") {
-    const game = user.activeMinesGame;
-    if (!game || game.finished) {
-      return NextResponse.json(
-        { message: "No active game to cash out" },
-        { status: 400 },
-      );
-    }
+    const mult = calculateMinesMultiplier(calculateMinesProbability(game.minesCount, game.tilesFlippedCount));
+    const winAmt = Math.floor(game.betAmt * mult);
+    const netChange = winAmt - game.betAmt;
+    const endCount = user.totalChips + winAmt;
 
-    const probability = calculateMinesProbability(
-      game.minesCount,
-      game.tilesFlippedCount,
-    );
-    const multiplier = calculateMinesMultiplier(probability);
-    const winnings = game.betAmt * multiplier;
-
-    const flippedTiles: FlippedTile[] = game.grid.flatMap((r, rIdx) =>
-      r.map((t, cIdx) => ({
-        coordinates: [rIdx, cIdx],
-        value: t.value as TileValue,
-      })),
+    const fullFlippedTiles: FlippedTile[] = game.grid.flatMap((r, rIdx) => 
+      r.map((t, cIdx) => ({ coordinates: [rIdx, cIdx] as [number, number], value: t.value as TileValue }))
     );
 
-    const endTime = Date.now();
-    const endCount = user.totalChips + winnings;
-
-    const history: UserHistory = {
-      betAmt: game.betAmt,
-      startCount: game.startCount,
-      endCount,
-      change: endCount - game.startCount,
-      date: endTime,
-      type: "mines_v1",
-      version: "mines_v1",
-      actor: "user",
-      minesData: {
-        gameId: game.gameId,
-        minesCount: game.minesCount,
-        grid: game.grid,
-        tilesFlippedCount: game.tilesFlippedCount,
-        tilesFlipped: game.tilesFlipped,
-        finalMultiplier: multiplier,
-        fairness: {
-          serverSeed: game.fairness.serverSeedHash,
-          clientSeed: game.fairness.clientSeed,
-          nonce: game.fairness.nonce,
-        },
-      },
+    const historyDoc: GeneralHistory = {
+      userId: clerkUser.id, type: "mines", betAmt: game.betAmt, startCount: game.startCount,
+      endCount, change: netChange, date: Date.now(), actor: "user", version: "genHistory_v1",
+      minesData: { 
+          gameId: game.gameId, minesCount: game.minesCount, grid: game.grid, 
+          tilesFlippedCount: game.tilesFlippedCount, tilesFlipped: game.tilesFlipped, 
+          finalMultiplier: mult, fairness: { serverSeed: game.fairness.serverSeed!, clientSeed: game.fairness.clientSeed, nonce: game.fairness.nonce } 
+      }
     };
 
-    await users.updateOne(
-      { id: clerkUser.id },
-      {
-        $set: { totalChips: endCount },
-        $push: { history, minesPlays: history },
-        $unset: { activeMinesGame: "" },
-      },
-    );
+    await Promise.all([
+      historyColl.insertOne(historyDoc),
+      users.updateOne({ id: clerkUser.id }, { 
+          $set: { totalChips: endCount }, 
+          $unset: { activeMinesGame: "" }, 
+          $inc: { minesCount: 1, historyCount: 1, minesProfit: netChange } 
+      })
+    ]);
 
-    return NextResponse.json({
-      message: `You cashed out and won ${winnings.toFixed(2)} chips!`,
-      winnings,
-      flippedTiles,
-      endCount,
+    return NextResponse.json({ 
+        success: true, 
+        winAmt, 
+        endCount, 
+        flippedTiles: fullFlippedTiles, 
+        fairness: { serverSeed: game.fairness.serverSeed, clientSeed: game.fairness.clientSeed, nonce: game.fairness.nonce } 
     });
   }
-
-  return NextResponse.json({ message: "Invalid action type" }, { status: 400 });
 }

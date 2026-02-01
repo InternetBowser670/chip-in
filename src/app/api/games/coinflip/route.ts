@@ -1,5 +1,5 @@
 import { connectToDatabases } from "@/lib/mongodb";
-import { ChipInUser, CoinFlip, CoinFlipFace, UserHistory } from "@/lib/types";
+import { ChipInUser, CoinFlipFace, GeneralHistory } from "@/lib/types";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
@@ -25,35 +25,34 @@ export async function POST(req: Request) {
   if (betAmt <= 0 || !Number.isInteger(betAmt)) {
     return NextResponse.json(
       { message: "Invalid bet amount" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
-  const useProdDB = false;
-  const { mainDb } = await connectToDatabases(useProdDB);
-
+  const { mainDb } = await connectToDatabases(false);
   const clerkUser = await currentUser();
+
   if (!clerkUser) {
-    return NextResponse.json(
-      { message: "You must sign in to claim chips" },
-      { status: 401 }
-    );
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const users = mainDb.collection<ChipInUser>("users");
+  const historyColl = mainDb.collection<GeneralHistory>("history");
 
-  const userDoc = await users.findOne({ id: clerkUser.id });
+  const userDoc = await users.findOne(
+    { id: clerkUser.id },
+    { projection: { id: 1, totalChips: 1 } },
+  );
+
   if (!userDoc) {
-    return NextResponse.json(
-      { message: "User document not found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  if ((userDoc.totalChips || 0) < betAmt) {
+  const currentChips = userDoc.totalChips || 0;
+  if (currentChips < betAmt) {
     return NextResponse.json(
-      { message: "Insufficient chips for this bet" },
-      { status: 400 }
+      { message: "Insufficient chips" },
+      { status: 400 },
     );
   }
 
@@ -61,46 +60,44 @@ export async function POST(req: Request) {
   const serverSeedHash = sha256(serverSeed);
   const outcome = fairCoinFlip(serverSeed);
 
-  let updatedChips = userDoc.totalChips || 0;
+  const isWin = betFace === outcome;
+  const netChange = isWin ? betAmt : -betAmt;
+  const updatedChips = currentChips + netChange;
+  const now = Date.now();
 
-  if (betFace === outcome) {
-    updatedChips += betAmt;
-  } else {
-    updatedChips -= betAmt;
-  }
+  const historyDoc: GeneralHistory = {
+    userId: clerkUser.id,
+    type: "coinflip",
+    betAmt,
+    startCount: currentChips,
+    endCount: updatedChips,
+    change: netChange,
+    date: now,
+    actor: "user",
+    version: "genHistory_v1",
+    coinFlipData: { betFace, outcome },
+  };
 
-  await users.updateOne(
-    { id: clerkUser.id },
-    {
-      $set: {
-        totalChips: updatedChips,
+  await Promise.all([
+    historyColl.insertOne(historyDoc),
+    users.updateOne(
+      { id: clerkUser.id },
+      {
+        $set: { totalChips: updatedChips },
+        $inc: {
+          coinFlipCount: 1,
+          historyCount: 1,
+          coinFlipProfit: netChange,
+        },
       },
-      $push: {
-        coinFlips: {
-          betAmt,
-          betFace,
-          outcome,
-          startCount: userDoc.totalChips || 0,
-          endCount: updatedChips,
-          date: Date.now(),
-          serverSeedHash,
-          serverSeed,
-          version: "coinflip_v2",
-        } as CoinFlip,
-        history: {
-          type: "coinflip",
-          coinFlipData: { betFace, outcome },
-          betAmt,
-          startCount: userDoc.totalChips || 0,
-          endCount: updatedChips,
-          change: betFace === outcome ? betAmt : -betAmt,
-          date: Date.now(),
-          actor: "user",
-          version: "history_v3",
-        } as UserHistory,
-      },
-    }
-  );
+    ),
+  ]);
 
-  return NextResponse.json({ outcome, updatedChips, serverSeedHash, serverSeed, status: 200 });
+  return NextResponse.json({
+    outcome,
+    updatedChips,
+    serverSeedHash,
+    serverSeed,
+    status: 200,
+  });
 }

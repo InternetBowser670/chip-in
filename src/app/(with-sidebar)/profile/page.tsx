@@ -2,52 +2,34 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { Candle, ProfileData } from "@/lib/types";
+import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData>();
+  const [history, setHistory] = useState<GeneralHistory[]>([]);
 
   const chartContainerRef = useRef(null);
 
   useEffect(() => {
+    if (!chartContainerRef.current || history.length === 0) return;
+
     try {
-    if (chartContainerRef.current && profile && profile.history != undefined) {
       const chartOptions = {
-        layout: {
-          textColor: "white",
-          background: { color: "black" },
-        },
+        layout: { textColor: "white", background: { color: "black" } }
       };
 
-      const historyChart = createChart(chartContainerRef.current, chartOptions);
-
-      historyChart.timeScale().fitContent();
-
-      const newSeries = historyChart.addSeries(CandlestickSeries, {
-        upColor: "#26a69a",
-        downColor: "#ef5350",
-        borderVisible: false,
-        wickUpColor: "#26a69a",
-        wickDownColor: "#ef5350",
-        wickVisible: true,
+      const chart = createChart(chartContainerRef.current, chartOptions);
+      const series = chart.addSeries(CandlestickSeries, {
+        upColor: "#26a69a", downColor: "#ef5350", borderVisible: false,
+        wickUpColor: "#26a69a", wickDownColor: "#ef5350", wickVisible: true,
       });
 
-      const sorted = [...profile.history].sort((a, b) => a.date - b.date);
-
       const candles = Object.values(
-        sorted.reduce<Record<string, Candle>>((acc, h) => {
+        history.reduce<Record<string, Candle>>((acc, h) => {
           if (!h?.date) return acc;
-
-          if (h.date < 1768392297000) return acc
-
           const d = new Date(h.date);
-
-          if (Number.isNaN(d.getTime())) {
-            return acc;
-          }
-
           const day = d.toISOString().split("T")[0];
 
           if (!acc[day]) {
@@ -63,28 +45,33 @@ export default function ProfilePage() {
             acc[day].low = Math.min(acc[day].low, h.startCount, h.endCount);
             acc[day].close = h.endCount;
           }
-
           return acc;
         }, {})
-      );
+      ).sort((a, b) => (a.time as string).localeCompare(b.time as string));
 
-      const data = candles.sort((a, b) => a.time.localeCompare(b.time));
+      series.setData(candles);
+      chart.timeScale().fitContent();
 
-      newSeries.setData(data);
-
-      historyChart.timeScale().fitContent();
-    }} catch (e) {
-        console.warn(e);
+      return () => chart.remove();
+    } catch (e) {
+      console.warn(chartContainerRef.current, e);
     }
-  }, [profile]);
+  }, [history]);
 
   useEffect(() => {
-    async function fetchProfile() {
-      const res = await fetch("/api/profile");
-      setProfile((await res.json()).user);
-    }
+    async function fetchData() {
+      const [profileRes, historyRes] = await Promise.all([
+        fetch("/api/profile"),
+        fetch("/api/profile/history"),
+      ]);
 
-    fetchProfile();
+      const profileData = await profileRes.json();
+      const historyData = await historyRes.json();
+
+      setProfile(profileData.user);
+      setHistory(historyData.history);
+    }
+    fetchData();
   }, []);
 
   return (
@@ -111,7 +98,12 @@ export default function ProfilePage() {
               <div className="h-50" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">
                 <p>User Id: {profile.id}</p> |
-                <p>Badges: {profile.badges ? profile.badges.map((val) => val.name).join(",") : "None"}</p>
+                <p>
+                  Badges:{" "}
+                  {profile.badges
+                    ? profile.badges.map((val) => val.name).join(",")
+                    : "None"}
+                </p>
               </div>
             </div>
           </>

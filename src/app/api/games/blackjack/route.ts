@@ -6,11 +6,10 @@ import crypto from "crypto";
 import {
   Card,
   BlackjackGame,
-  BlackjackHistory,
   ChipInUser,
   ResolvedHand,
   BlackjackHandOutcome,
-  UserHistory,
+  GeneralHistory,
 } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +51,6 @@ function shuffle(deck: Card[], seed: string): Card[] {
 function handValue(cards: Card[]): number {
   let total = 0;
   let aces = 0;
-
   for (const c of cards) {
     if (c.rank === "A") {
       aces++;
@@ -63,32 +61,40 @@ function handValue(cards: Card[]): number {
       total += Number(c.rank);
     }
   }
-
   while (total > 21 && aces--) total -= 10;
   return total;
 }
 
 export async function POST(req: Request) {
   const { action, betAmt } = await req.json();
-
   const clerkUser = await currentUser();
   if (!clerkUser)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   const { mainDb } = await connectToDatabases(false);
-
   const users = mainDb.collection<ChipInUser>("users");
-  const blackjackColl = mainDb.collection<BlackjackHistory>("blackjack");
+  const historyColl = mainDb.collection<GeneralHistory>("history");
 
-  const user = await users.findOne({ id: clerkUser.id });
-  if (!user) {
+  const user = await users.findOne(
+    { id: clerkUser.id },
+    {
+      projection: {
+        id: 1,
+        totalChips: 1,
+        activeBlackjack: 1,
+        blackjackCount: 1,
+        historyCount: 1,
+        blackjackProfit: 1,
+      },
+    },
+  );
+
+  if (!user)
     return NextResponse.json({ message: "User not found" }, { status: 404 });
-  }
 
   if (action === "resume") {
     const g = user.activeBlackjack;
     if (!g || g.finished) return NextResponse.json({ active: false });
-
     return NextResponse.json({
       active: true,
       gameId: g.gameId,
@@ -101,32 +107,28 @@ export async function POST(req: Request) {
   }
 
   if (action === "start") {
-    if (!betAmt || betAmt <= 0 || user.totalChips < betAmt || !Number.isInteger(betAmt))
-      return NextResponse.json(
-        { message: "Invalid bet amount" },
-        { status: 400 }
-      );
-
+    if (
+      !betAmt ||
+      betAmt <= 0 ||
+      user.totalChips < betAmt ||
+      !Number.isInteger(betAmt)
+    )
+      return NextResponse.json({ message: "Invalid bet" }, { status: 400 });
     if (user.activeBlackjack)
       return NextResponse.json(
-        { message: "Game already active" },
-        { status: 409 }
+        { message: "Active game exists" },
+        { status: 409 },
       );
 
     const serverSeed = crypto.randomBytes(32).toString("hex");
     const serverSeedHash = sha256(serverSeed);
-
     const deck = shuffle(generateDeck(), serverSeed);
 
     const game: BlackjackGame = {
       gameId: crypto.randomUUID(),
       betAmt,
       hands: [
-        {
-          cards: [deck.pop()!, deck.pop()!],
-          finished: false,
-          bet: betAmt,
-        },
+        { cards: [deck.pop()!, deck.pop()!], finished: false, bet: betAmt },
       ],
       dealerHand: [deck.pop()!, deck.pop()!],
       activeHandIndex: 0,
@@ -141,9 +143,8 @@ export async function POST(req: Request) {
 
     await users.updateOne(
       { id: clerkUser.id },
-      { $set: { activeBlackjack: game } }
+      { $set: { activeBlackjack: game } },
     );
-
     return NextResponse.json({
       gameId: game.gameId,
       playerHand: game.hands[0].cards,
@@ -155,94 +156,68 @@ export async function POST(req: Request) {
   const game = user.activeBlackjack;
   if (!game || game.finished)
     return NextResponse.json({ message: "No active game" }, { status: 400 });
-
   const hand = game.hands[game.activeHandIndex];
 
   if (action === "hit") {
     hand.cards.push(game.deck.pop()!);
     if (handValue(hand.cards) > 21) hand.finished = true;
-  }
-
-  if (action === "double") {
-    if (hand.cards.length !== 2)
+  } else if (action === "double") {
+    if (
+      hand.cards.length !== 2 ||
+      user.totalChips < hand.bet * 2 ||
+      game.hands.length > 1
+    )
       return NextResponse.json(
-        { message: "Double only allowed on first move" },
-        { status: 400 }
+        { message: "Double not allowed" },
+        { status: 400 },
       );
-
-    if (user.totalChips < hand.bet * 2)
-      return NextResponse.json(
-        { message: "Insufficient chips to double" },
-        { status: 400 }
-      );
-
-    if (game.hands.length > 1)
-      return NextResponse.json(
-        { message: "Cannot double after splitting" },
-        { status: 400 }
-      );
-
     hand.bet *= 2;
     hand.doubled = true;
     hand.cards.push(game.deck.pop()!);
     hand.finished = true;
-  }
-
-  if (action === "split") {
-    if (hand.cards.length !== 2)
+  } else if (action === "split") {
+    if (
+      hand.cards.length !== 2 ||
+      hand.cards[0].rank !== hand.cards[1].rank ||
+      user.totalChips < hand.bet * 2
+    )
       return NextResponse.json(
-        { message: "Split requires two cards" },
-        { status: 400 }
+        { message: "Split not allowed" },
+        { status: 400 },
       );
-
-    if (hand.cards[0].rank !== hand.cards[1].rank)
-      return NextResponse.json(
-        { message: "Cards must match to split" },
-        { status: 400 }
-      );
-
-    if (user.totalChips < hand.bet * 2)
-      return NextResponse.json(
-        { message: "Insufficient chips to split" },
-        { status: 400 }
-      );
-
     const [c1, c2] = hand.cards;
-
     game.hands.splice(
       game.activeHandIndex,
       1,
       { cards: [c1, game.deck.pop()!], finished: false, bet: hand.bet },
-      { cards: [c2, game.deck.pop()!], finished: false, bet: hand.bet }
+      { cards: [c2, game.deck.pop()!], finished: false, bet: hand.bet },
     );
   }
 
   if (action === "stand" || hand.finished) {
     hand.finished = true;
-
     if (game.activeHandIndex < game.hands.length - 1) {
       game.activeHandIndex++;
+      await users.updateOne(
+        { id: clerkUser.id },
+        { $set: { activeBlackjack: game } },
+      );
+      return NextResponse.json({ nextHand: true });
     } else {
-      while (handValue(game.dealerHand) < 17) {
+      while (handValue(game.dealerHand) < 17)
         game.dealerHand.push(game.deck.pop()!);
-      }
-
       const dealerTotal = handValue(game.dealerHand);
       const resolvedHands: ResolvedHand[] = [];
-
       let netChange = 0;
 
       for (const h of game.hands) {
         const playerTotal = handValue(h.cards);
-        const isBlackjack =
-          h.cards.length === 2 && playerTotal === 21 && !h.doubled;
-
+        const isBJ = h.cards.length === 2 && playerTotal === 21 && !h.doubled;
         let outcome: BlackjackHandOutcome;
-
         if (playerTotal > 21) {
           outcome = "bust";
           netChange -= h.bet;
-        } else if (isBlackjack && dealerTotal !== 21) {
+        } else if (isBJ && dealerTotal !== 21) {
           outcome = "blackjack";
           netChange += Math.floor(h.bet * 1.5);
         } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
@@ -254,7 +229,6 @@ export async function POST(req: Request) {
         } else {
           outcome = "push";
         }
-
         resolvedHands.push({
           cards: h.cards,
           outcome,
@@ -262,26 +236,21 @@ export async function POST(req: Request) {
           doubled: !!h.doubled,
         });
       }
-      const endCount = Math.max(0, game.startCount + netChange);
 
+      const endCount = Math.max(0, game.startCount + netChange);
       const endTime = Date.now();
 
-      const history: BlackjackHistory = {
-        userId: clerkUser.id,
-        gameId: game.gameId,
-        betAmt: game.betAmt,
-        startCount: game.startCount,
-        endCount,
-        change: netChange,
-        playerHands: resolvedHands.map((h) => h.cards),
-        dealerHand: game.dealerHand,
-        date: endTime,
-        version: "blackjack_v1",
-        serverSeedHash: game.serverSeedHash,
-        serverSeed: game.serverSeed,
-      };
+      let gameOutcome: "win" | "lose" | "push" | "blackjack" = "lose";
+      if (netChange > 0) {
+        gameOutcome = resolvedHands.some((h) => h.outcome === "blackjack")
+          ? "blackjack"
+          : "win";
+      } else if (netChange === 0) {
+        gameOutcome = "push";
+      }
 
-      const UserHistory: UserHistory = {
+      const generalHistory: GeneralHistory = {
+        userId: clerkUser.id,
         type: "blackjack",
         betAmt: game.betAmt,
         startCount: game.startCount,
@@ -289,40 +258,42 @@ export async function POST(req: Request) {
         change: netChange,
         date: endTime,
         actor: "user",
-        version: "blackjack_v1",
+        version: "genHistory_v1",
+        blackjackData: {
+          gameId: game.gameId,
+          outcome: gameOutcome,
+        },
       };
 
-      await blackjackColl.insertOne(history);
-
-      await users.updateOne(
-        { id: clerkUser.id },
-        {
-          $set: { totalChips: endCount },
-          $unset: { activeBlackjack: "" },
-          $push: {
-            blackjackPlays: history as BlackjackHistory,
-            history: UserHistory as UserHistory,
+      await Promise.all([
+        historyColl.insertOne(generalHistory),
+        users.updateOne(
+          { id: clerkUser.id },
+          {
+            $set: { totalChips: endCount },
+            $unset: { activeBlackjack: "" },
+            $inc: {
+              blackjackCount: 1,
+              historyCount: 1,
+              blackjackProfit: netChange,
+            },
           },
-        }
-      );
+        ),
+      ]);
 
       return NextResponse.json({
         dealerHand: game.dealerHand,
         finalHands: resolvedHands,
         updatedChips: endCount,
-        serverSeedHash: history.serverSeedHash,
-        serverSeed: history.serverSeed,
+        serverSeedHash: game.serverSeedHash,
+        serverSeed: game.serverSeed,
       });
     }
   }
 
   await users.updateOne(
     { id: clerkUser.id },
-    { $set: { activeBlackjack: game } }
+    { $set: { activeBlackjack: game } },
   );
-
-  return NextResponse.json({
-    activeHand: game.activeHandIndex,
-    hands: game.hands.map((h) => h.cards),
-  });
+  return NextResponse.json({ playerHand: hand.cards, finished: hand.finished });
 }

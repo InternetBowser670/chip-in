@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { connectToDatabases } from "@/lib/mongodb";
 import { DateTime } from "luxon";
+import { ChipInUser } from "@/lib/types";
 
 function calculateStreak(
   claims: Record<string, number>,
@@ -38,9 +39,13 @@ export async function GET() {
   }
 
   const { mainDb } = await connectToDatabases(false);
-  const users = mainDb.collection("users");
+  const users = mainDb.collection<ChipInUser>("users");
 
-  const userDoc = await users.findOne({ id: clerkUser.id });
+  const userDoc = await users.findOne(
+    { id: clerkUser.id },
+    { projection: { timezone: 1, chipClaims: 1, totalChips: 1 } }
+  );
+
   if (!userDoc) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
@@ -53,18 +58,15 @@ export async function GET() {
   }
 
   const timezone = userDoc.timezone;
-  const today = DateTime.now().setZone(timezone).toFormat("yyyy-MM-dd");
+  const now = DateTime.now().setZone(timezone);
+  const today = now.toFormat("yyyy-MM-dd");
 
   const chipClaims: Record<string, number> = userDoc.chipClaims || {};
   const claimDates = Object.keys(chipClaims).sort();
   const lastClaimDateStr = claimDates[claimDates.length - 1];
 
   if (chipClaims[today]) {
-    const nextAvailable = DateTime.now()
-      .setZone(timezone)
-      .plus({ days: 1 })
-      .startOf("day")
-      .toISO();
+    const nextAvailable = now.plus({ days: 1 }).startOf("day").toISO();
     return NextResponse.json({
       canClaim: false,
       amount: null,
@@ -74,13 +76,10 @@ export async function GET() {
     });
   }
 
-  const yesterday = DateTime.now()
-    .setZone(timezone)
-    .minus({ days: 1 })
-    .toFormat("yyyy-MM-dd");
+  const yesterday = now.minus({ days: 1 }).toFormat("yyyy-MM-dd");
 
   let streak = calculateStreak(chipClaims, timezone);
-  if (lastClaimDateStr !== yesterday) {
+  if (lastClaimDateStr !== yesterday && claimDates.length > 0) {
     streak = 1;
   }
 

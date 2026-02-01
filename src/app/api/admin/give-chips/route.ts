@@ -2,7 +2,7 @@ import { connectToDatabases } from "@/lib/mongodb";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { verifyAdmin } from "@/lib/admin";
-import { ChipInUser, UserHistory } from "@/lib/types";
+import { ChipInUser, GeneralHistory } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -10,81 +10,52 @@ export async function POST(req: Request) {
   const { userId, amt, mode } = await req.json();
 
   const clerkUser = await currentUser();
-
-  if (!clerkUser) {
-    return NextResponse.json({ isAdmin: false });
+  if (!clerkUser || !(await verifyAdmin(clerkUser.id))) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  if (!(await verifyAdmin(clerkUser.id))) {
-    return NextResponse.json({ isAdmin: false });
-  }
-
-  const useProdDB = false;
-  const { mainDb } = await connectToDatabases(useProdDB);
-
+  const { mainDb } = await connectToDatabases(false);
   const users = mainDb.collection<ChipInUser>("users");
+  const historyColl = mainDb.collection<GeneralHistory>("history");
 
-  const userDoc = await users.findOne({ id: userId });
+  // Slim projection to prevent loading large arrays
+  const userDoc = await users.findOne({ id: userId }, { projection: { totalChips: 1 } });
 
   if (!userDoc) {
-    return NextResponse.json(
-      { message: "User document not found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  if (mode === "set") {
-    await users.updateOne(
-      { id: userId },
-      {
-        $set: { totalChips: amt },
-        $push: {
-          history: {
-            $each: [
-              {
-                type: "chipSet",
-                startCount: userDoc.totalChips ?? 0,
-                endCount: amt,
-                change: amt - (userDoc.totalChips ?? 0),
-                date: Date.now(),
-                actor: "admin",
-                version: "history_v3",
-              } as UserHistory,
-            ],
-          },
-        },
-      }
-    );
-    return NextResponse.json(
-      { message: `Chips set to ${amt} for ${userId} successfully`, amt, userId},
-      { status: 200 }
-    );
-  } else if (mode === "increment") {
-    await users.updateOne(
-      { id: userId },
-      {
-        $inc: { totalChips: amt },
-        $push: {
-          history: {
-            $each: [
-              {
-                type: "chipIncrement",
-                startCount: userDoc.totalChips ?? 0,
-                endCount: (userDoc.totalChips ?? 0) + amt,
-                change: amt,
-                date: Date.now(),
-                actor: "admin",
-                version: "history_v3",
-              } as UserHistory,
-            ],
-          },
-        },
-      }
-    );
+  const startCount = userDoc.totalChips ?? 0;
+  const endCount = mode === "set" ? amt : startCount + amt;
+  const change = endCount - startCount;
 
-    return NextResponse.json(
-      { message: "Chips incremented successfully" },
-      { status: 200 }
-    );
-  }
+  const historyDoc: GeneralHistory = {
+    userId,
+    type: mode === "set" ? "chipSet" : "chipIncrement",
+    betAmt: 0,
+    startCount,
+    endCount,
+    change,
+    date: Date.now(),
+    actor: "admin",
+    version: "genHistory_v1",
+  };
+
+  // Atomic update: User chips and External history
+  await Promise.all([
+    historyColl.insertOne(historyDoc),
+    users.updateOne(
+      { id: userId },
+      { 
+        $set: { totalChips: endCount },
+        $inc: { historyCount: 1 } 
+      }
+    )
+  ]);
+
+  return NextResponse.json({ 
+    message: `Chips ${mode === "set" ? 'set' : 'incremented'} successfully`, 
+    amt: endCount, 
+    userId 
+  });
 }

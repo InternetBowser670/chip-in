@@ -221,9 +221,13 @@ export default function MinesPage() {
         >
           <div className="flex flex-col items-center h-full">
             <h1 className="mx-2 mb-10 text-5xl font-bold">Mines</h1>
-            <div className="flex justify-center w-full mt-6">
+            <motion.div
+              className="flex justify-center mt-6"
+              initial={{ width: "40%" }}
+              animate={{ width: !sidebarExpanded ? "100%" : "40%" }}
+            >
               <Field
-                className="flex flex-row justify-center w-1/2"
+                className="flex flex-row justify-center w-full"
                 data-invalid={
                   chipsFetched &&
                   betAmt &&
@@ -266,7 +270,7 @@ export default function MinesPage() {
                   </InputGroupAddon>
                 </InputGroup>
               </Field>
-            </div>
+            </motion.div>
             <motion.div
               className={clsx(
                 "flex flex-col items-center justify-center w-full mt-3",
