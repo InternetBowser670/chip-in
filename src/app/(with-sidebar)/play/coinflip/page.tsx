@@ -10,10 +10,10 @@ import clsx from "clsx";
 import confetti from "canvas-confetti";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { useTheme } from "next-themes";
@@ -160,6 +160,11 @@ export default function Page() {
             <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
             <div className="flex justify-center w-full">
+              <motion.div
+              className="flex justify-center mt-6"
+              initial={{ width: "40%" }}
+              animate={{ width: !extendSidebar ? "100%" : "40%" }}
+            >
               <Field
                 className="flex flex-row justify-center w-full"
                 data-invalid={
@@ -168,46 +173,43 @@ export default function Page() {
                   (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
                 }
               >
-                <ButtonGroup
-                  className={`mx-2! max-w-125 flex items-center justify-between overflow-hidden`}
-                >
-                  <InputGroup>
-                    <InputGroupInput
-                      title="bet"
-                      value={betAmt || ""}
-                      onChange={(e) =>
-                        setBetAmt(parseInt(e.target.value) || null)
-                      }
-                      placeholder="Bet Amount"
-                      type="text"
-                    />
-                    <InputGroupAddon align={"inline-end"}>
-                      <PiPokerChip />
-                    </InputGroupAddon>
-                  </InputGroup>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(betAmt && betAmt * 2)}
-                  >
-                    x2
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(betAmt && betAmt / 2)}
-                  >
-                    /2
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(Math.floor(chips))}
-                  >
-                    All In
-                  </Button>
-                </ButtonGroup>
+                <InputGroup>
+                  <InputGroupInput
+                    title="bet"
+                    value={betAmt || ""}
+                    onChange={(e) =>
+                      setBetAmt(parseInt(e.target.value) || null)
+                    }
+                    placeholder="Bet Amount"
+                    type="text"
+                  />
+                  <InputGroupAddon align={"inline-end"}>
+                    <PiPokerChip />
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(betAmt && betAmt * 2)}
+                    >
+                      x2
+                    </InputGroupButton>
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(betAmt && betAmt / 2)}
+                    >
+                      /2
+                    </InputGroupButton>
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(Math.floor(chips))}
+                    >
+                      All In
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
               </Field>
+            </motion.div>
             </div>
             <div className="flex items-center justify-center mt-4 gap-15">
               <Button

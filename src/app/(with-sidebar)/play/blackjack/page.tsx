@@ -8,6 +8,7 @@ import PlayingCard from "@/components/ui/games/any/card";
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { BlackjackFinalHand, Card } from "@/lib/types";
@@ -151,7 +152,11 @@ export default function BlackjackPage() {
         >
           <div className="flex flex-col items-center h-full">
             <h1 className="mx-2 text-5xl font-bold">Blackjack</h1>
-            <div className="flex justify-center w-full mt-6">
+            <motion.div
+              className="flex justify-center mt-6"
+              initial={{ width: "40%" }}
+              animate={{ width: !sidebarExpanded ? "100%" : "40%" }}
+            >
               <Field
                 className="flex flex-row justify-center w-full"
                 data-invalid={
@@ -160,47 +165,43 @@ export default function BlackjackPage() {
                   (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
                 }
               >
-                <ButtonGroup
-                  className={`mx-2! max-w-125 flex items-center justify-between overflow-hidden`}
-                >
-                  <InputGroup>
-                    <InputGroupInput
-                      title="bet"
-                      value={betAmt || ""}
-                      onChange={(e) =>
-                        setBetAmt(parseInt(e.target.value) || null)
-                      }
-                      placeholder="Bet Amount"
-                      type="text"
-                    />
-                    <InputGroupAddon align={"inline-end"}>
-                      <PiPokerChip />
-                    </InputGroupAddon>
-                  </InputGroup>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(betAmt && betAmt * 2)}
-                  >
-                    x2
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(betAmt && betAmt / 2)}
-                  >
-                    /2
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    className="flex items-center justify-center text-center"
-                    onClick={() => setBetAmt(Math.floor(chips))}
-                  >
-                    All In
-                  </Button>
-                </ButtonGroup>
+                <InputGroup>
+                  <InputGroupInput
+                    title="bet"
+                    value={betAmt || ""}
+                    onChange={(e) =>
+                      setBetAmt(parseInt(e.target.value) || null)
+                    }
+                    placeholder="Bet Amount"
+                    type="text"
+                  />
+                  <InputGroupAddon align={"inline-end"}>
+                    <PiPokerChip />
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(betAmt && betAmt * 2)}
+                    >
+                      x2
+                    </InputGroupButton>
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(betAmt && betAmt / 2)}
+                    >
+                      /2
+                    </InputGroupButton>
+                    <InputGroupButton
+                      variant={"outline"}
+                      className="flex items-center justify-center text-center text-foreground"
+                      onClick={() => setBetAmt(Math.floor(chips))}
+                    >
+                      All In
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
               </Field>
-            </div>
+            </motion.div>
 
             <div className="mt-6">
               <Button disabled={gameActive || loading} onClick={startGame}>
