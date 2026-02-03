@@ -10,6 +10,7 @@ export async function POST(req: Request) {
   const { userId, amt, mode } = await req.json();
 
   const clerkUser = await currentUser();
+  
   if (!clerkUser || !(await verifyAdmin(clerkUser.id))) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
@@ -18,7 +19,6 @@ export async function POST(req: Request) {
   const users = mainDb.collection<ChipInUser>("users");
   const historyColl = mainDb.collection<GeneralHistory>("history");
 
-  // Slim projection to prevent loading large arrays
   const userDoc = await users.findOne({ id: userId }, { projection: { totalChips: 1 } });
 
   if (!userDoc) {
@@ -41,7 +41,6 @@ export async function POST(req: Request) {
     version: "genHistory_v1",
   };
 
-  // Atomic update: User chips and External history
   await Promise.all([
     historyColl.insertOne(historyDoc),
     users.updateOne(

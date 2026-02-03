@@ -32,7 +32,7 @@ const Checkbox: React.FC<CustomCheckboxProps> = ({
         />
         <span className="block w-6 h-6 transition-colors bg-black border-2 border-white rounded-sm hover:bg-[#091d36] peer-checked:bg-[#091d36] duration-300" />
         <svg
-          className={`absolute top-[2px] left-[2px] w-5 h-5 text-white pointer-events-none transition-opacity ${
+          className={`absolute top-0.5 left-0.5 w-5 h-5 text-white pointer-events-none transition-opacity ${
             checked ? "opacity-100" : "opacity-0"
           }`}
           fill="none"

@@ -11,9 +11,9 @@ export default async function SidebarLayout({
   return (
     <>
       <SignedIn>
-        <div className="flex h-screen! w-full">
+        <div className="flex h-screen! w-screen overflow-hidden">
           <Sidebar />
-          <div className="h-full rounded-2xl w-[calc(100%-12.5rem)]">
+          <div className="h-full rounded-2xl overflow-y-auto w-[calc(100%-12.5rem)]">
             {children}
           </div>
         </div>

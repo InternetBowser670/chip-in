@@ -13,6 +13,8 @@ import { v4 } from "uuid";
 import { IoReload } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
+import CreatePromoCode from "@/components/ui/admin/manage-promo-codes";
+import { Separator } from "@/components/ui/separator";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -183,8 +185,8 @@ export default function AdminPage() {
 
     return (
       <>
-        <Card className="p-4 mx-20 mt-8">
-          <div className="flex items-center justify-between w-full mb-6">
+        <Card className="p-4 mx-20 mt-8 w-[90%]">
+          <div className="flex items-center justify-between w-full">
             <h1 className="text-3xl">Manage Users</h1>
             <Button
               onClick={async () => {
@@ -194,12 +196,15 @@ export default function AdminPage() {
               <IoReload />
             </Button>
           </div>
+          <Separator />
           <div className="h-125">
             {mounted && (
               <AgGridReact
                 rowData={userData}
                 columnDefs={colDefs}
-                theme={resolvedTheme == "light" ? gridLightTheme : gridDarkTheme}
+                theme={
+                  resolvedTheme == "light" ? gridLightTheme : gridDarkTheme
+                }
                 defaultColDef={defaultColDef}
                 pagination={true}
                 onCellValueChanged={(event) => {
@@ -221,9 +226,12 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="max-h-full p-4 overflow-y-auto">
+    <div className="w-full p-4 overflow-auto overflow-x-auto">
       <h1 className="mb-2 text-5xl font-bold">Admin Options:</h1>
-      <UserGrid />
+      <div className="flex flex-col items-center w-full gap-4">
+        <UserGrid />
+        <CreatePromoCode />
+      </div>
     </div>
   );
 }

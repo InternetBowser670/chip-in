@@ -269,3 +269,16 @@ export type FlippedTile = {
   coordinates: [number, number];
   value: "mine" | "safe";
 };
+
+export interface PromoCode {
+  codeName: string;
+  chipValue: number;
+  expiryDate?: number;
+  usersClaimed?: string[];
+  creator: string;
+  maxUsers?: number;
+  type: "promoCode_v1";
+  dateCreated: number;
+  startDate?: Date;
+  forceAvailable?: "always" | "never";
+}

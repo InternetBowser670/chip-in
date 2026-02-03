@@ -8,6 +8,7 @@ import { Analytics } from "@vercel/analytics/next";
 import TimezoneSetter from "@/components/ui/timezone-setter";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: "ChipIn",
@@ -42,7 +43,7 @@ export default function RootLayout({
     >
       <html
         suppressHydrationWarning
-        className="h-screen! w-screen! subpixel-antialiased"
+        className="h-screen! w-screen! subpixel-antialiased overflow-hidden"
         lang="en"
       >
         <head>
@@ -62,12 +63,14 @@ export default function RootLayout({
           </Script>
         </head>
         <body
+          suppressHydrationWarning
           className={`${openSans.className} antialiased! h-full! w-full min-h-screen! p-0 text-text-50! bg-background-900!`}
         >
           <ThemeProvider>
             <Providers>
               <TimezoneSetter />
               {children}
+              <Toaster />
             </Providers>
           </ThemeProvider>
         </body>
