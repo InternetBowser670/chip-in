@@ -185,13 +185,25 @@ export async function POST(req: Request) {
         { message: "Split not allowed" },
         { status: 400 },
       );
+
     const [c1, c2] = hand.cards;
+
     game.hands.splice(
       game.activeHandIndex,
       1,
       { cards: [c1, game.deck.pop()!], finished: false, bet: hand.bet },
       { cards: [c2, game.deck.pop()!], finished: false, bet: hand.bet },
     );
+
+    await users.updateOne(
+      { id: clerkUser.id },
+      { $set: { activeBlackjack: game } },
+    );
+
+    return NextResponse.json({
+      hands: game.hands.map((h) => h.cards),
+      activeHand: game.activeHandIndex,
+    });
   }
 
   if (action === "stand" || hand.finished) {
@@ -202,7 +214,7 @@ export async function POST(req: Request) {
         { id: clerkUser.id },
         { $set: { activeBlackjack: game } },
       );
-      return NextResponse.json({ nextHand: true });
+      return NextResponse.json({ activeHand: game.activeHandIndex });
     } else {
       while (handValue(game.dealerHand) < 17)
         game.dealerHand.push(game.deck.pop()!);
@@ -295,5 +307,9 @@ export async function POST(req: Request) {
     { id: clerkUser.id },
     { $set: { activeBlackjack: game } },
   );
-  return NextResponse.json({ playerHand: hand.cards, finished: hand.finished });
+  return NextResponse.json({ 
+    hands: game.hands.map(h => h.cards),
+    activeHand: game.activeHandIndex, 
+    finished: hand.finished 
+  });
 }
