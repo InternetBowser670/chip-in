@@ -295,7 +295,7 @@ export default function ManagePromoCodes() {
                 <FieldLabel>Amount of users that can use</FieldLabel>
                 <Input
                   type="number"
-                  value={maxUsers ?? undefined}
+                  value={maxUsers ?? ""}
                   onChange={(event) =>
                     setMaxUsers(event.target.value ? +event.target.value : null)
                   }
