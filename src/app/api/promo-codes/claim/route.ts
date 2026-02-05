@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { connectToDatabases } from "@/lib/mongodb";
 import { ChipInUser, GeneralHistory, PromoCode } from "@/lib/types";
 import { currentUser } from "@clerk/nextjs/server";

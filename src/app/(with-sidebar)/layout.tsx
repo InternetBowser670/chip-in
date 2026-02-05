@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import Sidebar from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 
 export default async function SidebarLayout({
   children,
@@ -20,7 +21,7 @@ export default async function SidebarLayout({
       </SignedIn>
       <SignedOut>
         <div className="flex h-screen!">
-          <div className="w-50 h-full! bg-background-700">
+          <div className="w-50 h-full! bg-card border-r border-r-foreground/30">
             <div className="flex flex-col items-center justify-between h-full pt-2">
               <Link href={"/"} className="flex justify-center">
                 <Image
@@ -31,15 +32,10 @@ export default async function SidebarLayout({
                 />
                 <p className="flex items-center text-lg!">ChipIn</p>
               </Link>
-              <div className="flex flex-col items-center mb-4">
+              <div className="flex flex-col items-center gap-2 mb-4">
                 <SignInButton />
                 <SignUpButton>
-                  <button
-                    type="button"
-                    className="px-2 py-1 m-2 text-sm font-medium transition-all border-2 border-b-4 cursor-pointer rounded-2xl bg-accent-900 sm:text-base sm:px-5 border-accent-400 hover:bg-accent-800"
-                  >
-                    Sign Up
-                  </button>
+                  <Button>Sign Up</Button>
                 </SignUpButton>
               </div>
             </div>
