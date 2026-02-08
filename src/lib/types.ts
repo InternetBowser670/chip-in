@@ -72,6 +72,12 @@ export interface GeneralHistory {
       nonce: number;
     };
   };
+  promoCodeData?: {
+    code: string;
+    reward: number;
+    rewardType: "chips" | "bonus" | "multiplier";
+    usesRemaining?: number;
+  };
 }
 
 export interface CoinFlip {

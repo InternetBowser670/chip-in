@@ -29,7 +29,7 @@ function ChipsProvider({ children }: { children: React.ReactNode }) {
     const fetchChips = async () => {
       const res = await fetch("/api/chips/status");
       const data = await res.json();
-      setChips(data.total ?? 0);
+      setChips(+data.total);
       setChipsFetched(true);
     };
     fetchChips();

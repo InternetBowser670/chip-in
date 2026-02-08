@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     creator: clerkUser.id,
     dateCreated: Date.now(),
     codeName: code,
-    chipValue: value,
+    chipValue: +value,
     expiryDate,
     usersClaimed: [],
     maxUsers,

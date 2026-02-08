@@ -28,13 +28,53 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { useState } from "react";
+import { useChips } from "../providers";
 
 export default function UserOptions() {
   const { user } = useUser();
 
   const router = useRouter();
 
-  const [promoCodeDenied, setPromoCodeDenied] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [redeeming, setRedeeming] = useState(false);
+  const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
+
+  const { setChips } = useChips();
+
+  async function redeemPromoCode() {
+    if (!promoCode.trim()) {
+      setPromoError("Please enter a promo code");
+      return;
+    }
+
+    setRedeeming(true);
+    setPromoError(null);
+
+    try {
+      const res = await fetch("/api/promo-codes/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setPromoError(data?.message ?? "Failed to redeem promo code");
+        return;
+      }
+
+      setPromoCode("");
+      setChips(data.newBalance);
+      setPromoSuccess("Promo code redeemed successfully!");
+      router.refresh();
+    } catch {
+      setPromoError("Network error. Try again.");
+    } finally {
+      setRedeeming(false);
+    }
+  }
 
   return (
     <>
@@ -99,11 +139,23 @@ export default function UserOptions() {
                     </DialogDescription>
                     <Field>
                       <FieldLabel>Promo Code</FieldLabel>
-                      <Input placeholder="Code..." />
-                      {promoCodeDenied && (
+                      <Input
+                        placeholder="Code..."
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        disabled={redeeming}
+                      />
+
+                      {promoError && (
                         <Alert variant="destructive" className="max-w-md">
                           <AlertCircleIcon />
-                          <AlertTitle>Invalid Promo Code</AlertTitle>
+                          <AlertTitle>{promoError}</AlertTitle>
+                        </Alert>
+                      )}
+                      {promoSuccess && (
+                        <Alert className="max-w-md">
+                          <TbGift className="w-4 h-4" />
+                          <AlertTitle>{promoSuccess}</AlertTitle>
                         </Alert>
                       )}
                     </Field>
@@ -112,7 +164,9 @@ export default function UserOptions() {
                     <DialogClose asChild>
                       <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button onClick={() => { setPromoCodeDenied(true); }}>Redeem Code</Button>
+                    <Button onClick={redeemPromoCode} disabled={redeeming}>
+                      {redeeming ? "Redeeming..." : "Redeem Code"}
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
