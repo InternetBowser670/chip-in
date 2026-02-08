@@ -57,8 +57,8 @@ export default function ManagePromoCodes() {
       body: JSON.stringify({
         code: codeName,
         value: codeValue,
-        expiryDate: willExpire && expiryDate && +expiryDate,
-        startDate: willStart && startingDate && +startingDate,
+        expiryDate: willExpire && expiryDate && +expiryDate.getTime(),
+        startDate: willStart && startingDate && +startingDate.getTime(),
         maxUsers,
       }),
     });

@@ -279,6 +279,6 @@ export interface PromoCode {
   maxUsers?: number;
   type: "promoCode_v1";
   dateCreated: number;
-  startDate?: Date;
+  startDate?: number;
   forceAvailable?: "always" | "never";
 }
