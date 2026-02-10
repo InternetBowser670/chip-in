@@ -74,7 +74,9 @@ export function useLiveUsers() {
     }
 
     const socket = new WebSocket(
-      `ws://localhost:6741/live-user-count?route=${encodeURIComponent(pathname)}`,
+      process.env.FORCE_DEV_WS == "true"
+        ? `ws://localhost:6741/live-user-count?route=${encodeURIComponent(pathname)}`
+        : `https://api.chip-in.internetbowser.com/live-user-count?route=${encodeURIComponent(pathname)}`,
     );
     socketRef.current = socket;
 
