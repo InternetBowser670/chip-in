@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { ParallaxProvider } from "react-scroll-parallax";
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
@@ -66,25 +66,36 @@ export function ThemeProvider({ children, ...props }: React.PropsWithChildren) {
 export function useLiveUsers() {
   const [counts, setCounts] = useState({ page: 0, global: 0 });
   const pathname = usePathname();
+  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket(process.env.FORCE_DEV_WS == "true" ?
-      `ws://localhost:6741/live-user-count?route=${encodeURIComponent(pathname)}` : `https://relieved-rheta-internetbowser-9b345b52.koyeb.app/live-user-count?route=${encodeURIComponent(pathname)}`
+    if (socketRef.current) {
+      socketRef.current.close();
+    }
+
+    const socket = new WebSocket(
+      `ws://localhost:6741/live-user-count?route=${encodeURIComponent(pathname)}`,
     );
+    socketRef.current = socket;
 
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        setCounts(prev => ({
+        setCounts((prev) => ({
           page: data.pageCount ?? prev.page,
-          global: data.globalCount ?? prev.global
+          global: data.globalCount ?? prev.global,
         }));
-      } catch (err) {
-        console.error("WS Error:", err);
+      } catch (e) {
+        console.log(e);
       }
     };
 
-    return () => socket.close();
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+    };
   }, [pathname]);
 
   return counts;
