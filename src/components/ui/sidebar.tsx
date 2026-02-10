@@ -12,16 +12,25 @@ import ChipCount from "@/components/ui/global/chip-count";
 import UserOptions from "./user-options";
 import { useRouter } from "next/navigation";
 import { Separator } from "./separator";
+import { useLiveUsers } from "@/components/providers";
+import { useEffect } from "react";
+import GlobalUserCount from "./global/global-user-count";
 
 export default function Sidebar() {
   const router = useRouter();
+
+  const counts = useLiveUsers();
+
+  useEffect(() => {
+    console.log("Live user count (page): " + counts.page);
+  }, [counts.page]);
 
   return (
     <>
       <div className="w-50 h-full! bg-card border-r border-r-foreground/30">
         <div className="flex flex-col items-center justify-between h-full">
           <div className="flex flex-col items-center mx-2 mt-2">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center mb-4">
               <Link href={"/"} className="flex justify-center">
                 <Image
                   src={"/chip-in-logo.png"}
@@ -42,6 +51,7 @@ export default function Sidebar() {
                 </Button>
                 <ModeToggle />
               </ButtonGroup>
+              <GlobalUserCount />
             </div>
             <Separator />
             <div className="flex flex-col w-full gap-2 mx-2 mt-2 text-left">
