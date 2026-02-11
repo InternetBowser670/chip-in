@@ -29,6 +29,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { useChips } from "../providers";
+import { SignOutButton } from "@clerk/nextjs";
 
 export default function UserOptions() {
   const { user } = useUser();
@@ -111,7 +112,7 @@ export default function UserOptions() {
               </div>
             </div>
             <Separator />
-            <div>
+            <div className="flex flex-col gap-1">
               <Button
                 onClick={() => router.push("/profile")}
                 variant={"ghost"}
@@ -170,6 +171,17 @@ export default function UserOptions() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+              <Separator />
+              <SignOutButton>
+                <Button
+                  onClick={() => router.push("/profile")}
+                  variant={"destructive"}
+                  className="justify-start w-full gap-4 bg-transparent! hover:bg-destructive/20!"
+                >
+                  <FaRegUser />
+                  Sign out
+                </Button>
+              </SignOutButton>
             </div>
           </PopoverContent>
         </Popover>
