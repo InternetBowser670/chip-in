@@ -1,10 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { ParallaxProvider } from "react-scroll-parallax";
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { usePathname } from "next/navigation";
+
+let globalSocket: WebSocket | null = null;
+let isConnecting = false;
+const listeners = new Set<(counts: { page: number; global: number }) => void>();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -66,37 +70,60 @@ export function ThemeProvider({ children, ...props }: React.PropsWithChildren) {
 export function useLiveUsers() {
   const [counts, setCounts] = useState({ page: 0, global: 0 });
   const pathname = usePathname();
-  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if (socketRef.current) {
-      socketRef.current.close();
-    }
+    listeners.add(setCounts);
 
-    const socket = new WebSocket(
-      process.env.FORCE_DEV_WS == "true"
-        ? `ws://localhost:6741/live-user-count?route=${encodeURIComponent(pathname)}`
-        : `https://api.chip-in.internetbowser.com/live-user-count?route=${encodeURIComponent(pathname)}`,
-    );
-    socketRef.current = socket;
-
-    socket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        setCounts((prev) => ({
-          page: data.pageCount ?? prev.page,
-          global: data.globalCount ?? prev.global,
-        }));
-      } catch (e) {
-        console.log(e);
+    const connect = () => {
+      if (
+        isConnecting ||
+        globalSocket?.readyState === 1 ||
+        globalSocket?.readyState === 0
+      ) {
+        if (globalSocket?.readyState === 1) {
+          globalSocket.send(
+            JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }),
+          );
+        }
+        return;
       }
+
+      isConnecting = true;
+
+      const url =
+        process.env.NEXT_PUBLIC_WS_URL ??
+        `wss://://api.chip-in.internetbowser.com{encodeURIComponent(pathname)}`;
+
+      const socket = new WebSocket(url);
+
+      socket.onopen = () => {
+        isConnecting = false;
+        globalSocket = socket;
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          const newCounts = {
+            page: data.pageCount ?? 0,
+            global: data.globalCount ?? 0,
+          };
+          listeners.forEach((listener) => listener(newCounts));
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      socket.onclose = () => {
+        isConnecting = false;
+        globalSocket = null;
+      };
     };
 
+    connect();
+
     return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = null;
-      }
+      listeners.delete(setCounts);
     };
   }, [pathname]);
 
