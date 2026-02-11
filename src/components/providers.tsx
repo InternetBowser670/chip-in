@@ -8,7 +8,8 @@ import { usePathname } from "next/navigation";
 
 let globalSocket: WebSocket | null = null;
 let isConnecting = false;
-const listeners = new Set<(counts: { page: number; global: number }) => void>();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const listeners = new Set<(counts: any) => void>();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -68,64 +69,55 @@ export function ThemeProvider({ children, ...props }: React.PropsWithChildren) {
 }
 
 export function useLiveUsers() {
-  const [counts, setCounts] = useState({ page: 0, global: 0 });
+  const [counts, setCounts] = useState({
+    page: 0,
+    global: 0,
+    coinflip: 0,
+    mines: 0,
+    blackjack: 0,
+  });
   const pathname = usePathname();
 
   useEffect(() => {
     listeners.add(setCounts);
 
     const connect = () => {
-      if (
-        isConnecting ||
-        globalSocket?.readyState === 1 ||
-        globalSocket?.readyState === 0
-      ) {
+      if (isConnecting || globalSocket?.readyState === 1 || globalSocket?.readyState === 0) {
         if (globalSocket?.readyState === 1) {
-          globalSocket.send(
-            JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }),
-          );
+          globalSocket.send(JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }));
         }
         return;
       }
 
       isConnecting = true;
-
       const url = process.env.NEXT_PUBLIC_WS_BASE_URL
         ? process.env.NEXT_PUBLIC_WS_BASE_URL + "live-user-count?route=" + encodeURIComponent(pathname)
         : `wss://api.chip-in.internetbowser.com/${encodeURIComponent(pathname)}`;
 
       const socket = new WebSocket(url);
-
-      socket.onopen = () => {
-        isConnecting = false;
-        globalSocket = socket;
-      };
-
+      socket.onopen = () => { isConnecting = false; globalSocket = socket; };
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
           const newCounts = {
             page: data.pageCount ?? 0,
             global: data.globalCount ?? 0,
+            coinflip: data.coinflipCount ?? 0,
+            mines: data.minesCount ?? 0,
+            blackjack: data.blackjackCount ?? 0
           };
-          listeners.forEach((listener) => listener(newCounts));
+          listeners.forEach((l) => l(newCounts));
         } catch (e) {
-          console.error(e);
+          console.log(e)
         }
       };
-
-      socket.onclose = () => {
-        isConnecting = false;
-        globalSocket = null;
-      };
+      socket.onclose = () => { isConnecting = false; globalSocket = null; };
     };
 
     connect();
-
-    return () => {
-      listeners.delete(setCounts);
-    };
+    return () => { listeners.delete(setCounts); };
   }, [pathname]);
 
   return counts;
 }
+

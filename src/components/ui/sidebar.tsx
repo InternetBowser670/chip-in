@@ -12,18 +12,10 @@ import ChipCount from "@/components/ui/global/chip-count";
 import UserOptions from "./user-options";
 import { useRouter } from "next/navigation";
 import { Separator } from "./separator";
-import { useLiveUsers } from "@/components/providers";
-import { useEffect } from "react";
 import GlobalUserCount from "./global/global-user-count";
 
 export default function Sidebar() {
   const router = useRouter();
-
-  const counts = useLiveUsers();
-
-  useEffect(() => {
-    console.log("Live user count (page): " + counts.page);
-  }, [counts.page]);
 
   return (
     <>

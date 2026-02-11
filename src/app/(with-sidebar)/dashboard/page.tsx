@@ -8,15 +8,20 @@ import {
   GiUnlitBomb,
 } from "react-icons/gi";
 import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
-import { Card, CardFooter, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   MostPlayedGamesChart,
   MostProfitableGamesChart,
 } from "@/components/ui/stats/stats-charts";
+import { useLiveUsers } from "@/components/providers";
+import Ping from "@/components/ui/global/ping";
+import { FaUser } from "react-icons/fa";
 
 export default function Page() {
   const router = useRouter();
+
+  const { mines, blackjack, coinflip } = useLiveUsers();
 
   return (
     <>
@@ -28,9 +33,17 @@ export default function Page() {
               <div className="flex justify-center">
                 <GiCoinflip size="70" />
               </div>
-              <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
-                Coinflip
-              </CardTitle>
+              <CardContent>
+                <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
+                  Coinflip
+                </CardTitle>
+                <div className="flex items-center w-full justify-center gap-2">
+                  <Ping />
+                  <FaUser />
+                  <p>Live users:</p>
+                  {coinflip}
+                </div>
+              </CardContent>
               <CardFooter>
                 <Button
                   onClick={() => router.push("/play/coinflip")}
@@ -44,9 +57,17 @@ export default function Page() {
               <div className="flex justify-center">
                 <GiCardJackSpades size="70" />
               </div>
-              <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
-                Blackjack
-              </CardTitle>
+              <CardContent>
+                <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
+                  Blackjack
+                </CardTitle>
+                <div className="flex items-center w-full justify-center gap-2">
+                  <Ping />
+                  <FaUser />
+                  <p>Live users:</p>
+                  {blackjack}
+                </div>
+              </CardContent>
               <CardFooter>
                 <Button
                   onClick={() => router.push("/play/blackjack")}
@@ -60,9 +81,17 @@ export default function Page() {
               <div className="flex justify-center">
                 <GiUnlitBomb size="70" />
               </div>
-              <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
-                Mines
-              </CardTitle>
+              <CardContent>
+                <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
+                  Mines
+                </CardTitle>
+                <div className="flex items-center w-full justify-center gap-2">
+                  <Ping />
+                  <FaUser />
+                  <p>Live users:</p>
+                  {mines}
+                </div>
+              </CardContent>
               <CardFooter>
                 <Button
                   onClick={() => router.push("/play/mines")}
