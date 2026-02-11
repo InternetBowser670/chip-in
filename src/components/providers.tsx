@@ -92,7 +92,7 @@ export function useLiveUsers() {
 
       const url = process.env.NEXT_PUBLIC_WS_BASE_URL
         ? process.env.NEXT_PUBLIC_WS_BASE_URL + "live-user-count?route=" + encodeURIComponent(pathname)
-        : `wss://://api.chip-in.internetbowser.com/${encodeURIComponent(pathname)}`;
+        : `wss://api.chip-in.internetbowser.com/${encodeURIComponent(pathname)}`;
 
       const socket = new WebSocket(url);
 
