@@ -87,8 +87,7 @@ export default function Home() {
             warpStrength={1}
             mouseInfluence={2}
             parallax={2}
-            noise={0.1}
-            transparent
+            noise={0}
             autoRotate={2}
             className={clsx(
               "absolute -z-1",
