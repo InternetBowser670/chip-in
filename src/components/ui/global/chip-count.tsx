@@ -17,7 +17,7 @@ export default function ChipCount() {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 mt-2 text-xl font-bold">
+    <div className="flex items-center gap-2 text-xl font-bold">
       {mounted ? (
         <>
           <PiPokerChip size={24} />

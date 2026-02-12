@@ -112,7 +112,7 @@ export default function ClaimChips() {
 
   return (
     <Button
-      className="w-full my-4"
+      className="w-full"
       onClick={handleClaim}
       disabled={!status?.canClaim || loading || claimed}
     >

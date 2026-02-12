@@ -5,11 +5,7 @@ import { ParallaxProvider } from "react-scroll-parallax";
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { usePathname } from "next/navigation";
-
-let globalSocket: WebSocket | null = null;
-let isConnecting = false;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const listeners = new Set<(counts: any) => void>();
+import { useUser } from "@clerk/nextjs";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -68,56 +64,122 @@ export function ThemeProvider({ children, ...props }: React.PropsWithChildren) {
   );
 }
 
+let globalSocket: WebSocket | null = null;
+let isConnecting = false;
+const globalCounts = { page: 0, global: 0, coinflip: 0, mines: 0, blackjack: 0 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const listeners = new Set<(counts: any) => void>();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const chatListeners = new Set<(msg: any) => void>();
+
+function connect(pathname: string) {
+  if (globalSocket?.readyState === WebSocket.OPEN) {
+    globalSocket.send(
+      JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }),
+    );
+    return;
+  }
+
+  if (isConnecting || globalSocket?.readyState === WebSocket.CONNECTING) return;
+
+  isConnecting = true;
+  const url = process.env.NEXT_PUBLIC_WS_BASE_URL
+    ? process.env.NEXT_PUBLIC_WS_BASE_URL +
+      "live-user-count?route=" +
+      encodeURIComponent(pathname)
+    : `wss://://api.chip-in.internetbowser.com{encodeURIComponent(pathname)}`;
+
+  const socket = new WebSocket(url);
+
+  socket.onopen = () => {
+    isConnecting = false;
+    globalSocket = socket;
+    socket.send(JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }));
+  };
+
+  socket.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === "COUNT_UPDATE") {
+        const newCounts = {
+          page: data.pageCount ?? 0,
+          global: data.globalCount ?? 0,
+          coinflip: data.coinflipCount ?? 0,
+          mines: data.minesCount ?? 0,
+          blackjack: data.blackjackCount ?? 0,
+        };
+        listeners.forEach((l) => l(newCounts));
+      } else if (data.type === "CHAT_MESSAGE") {
+        chatListeners.forEach((l) => l(data));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  socket.onclose = () => {
+    isConnecting = false;
+    globalSocket = null;
+    setTimeout(() => connect(pathname), 3000);
+  };
+}
+
 export function useLiveUsers() {
-  const [counts, setCounts] = useState({
-    page: 0,
-    global: 0,
-    coinflip: 0,
-    mines: 0,
-    blackjack: 0,
-  });
+  const [counts, setCounts] = useState(globalCounts);
   const pathname = usePathname();
 
   useEffect(() => {
     listeners.add(setCounts);
-
-    const connect = () => {
-      if (isConnecting || globalSocket?.readyState === 1 || globalSocket?.readyState === 0) {
-        if (globalSocket?.readyState === 1) {
-          globalSocket.send(JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }));
-        }
-        return;
-      }
-
-      isConnecting = true;
-      const url = process.env.NEXT_PUBLIC_WS_BASE_URL
-        ? process.env.NEXT_PUBLIC_WS_BASE_URL + "live-user-count?route=" + encodeURIComponent(pathname)
-        : `wss://api.chip-in.internetbowser.com/live-user-count?route=${encodeURIComponent(pathname)}`;
-
-      const socket = new WebSocket(url);
-      socket.onopen = () => { isConnecting = false; globalSocket = socket; };
-      socket.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          const newCounts = {
-            page: data.pageCount ?? 0,
-            global: data.globalCount ?? 0,
-            coinflip: data.coinflipCount ?? 0,
-            mines: data.minesCount ?? 0,
-            blackjack: data.blackjackCount ?? 0
-          };
-          listeners.forEach((l) => l(newCounts));
-        } catch (e) {
-          console.log(e)
-        }
-      };
-      socket.onclose = () => { isConnecting = false; globalSocket = null; };
+    connect(pathname);
+    return () => {
+      listeners.delete(setCounts);
     };
-
-    connect();
-    return () => { listeners.delete(setCounts); };
   }, [pathname]);
 
   return counts;
 }
+export function useLiveChat() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [messages, setMessages] = useState<any[]>([]);
+  const [isInChat, setIsInChat] = useState(false);
+  const { user } = useUser();
 
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handler = (msg: any) =>
+      setMessages((prev) => [...prev, msg].slice(-50));
+    chatListeners.add(handler);
+    return () => {
+      chatListeners.delete(handler);
+    };
+  }, []);
+
+  const join = () => {
+    if (globalSocket?.readyState === WebSocket.OPEN && !isInChat) {
+      globalSocket.send(
+        JSON.stringify({ type: "JOIN_CHAT", userId: user?.id, username: user?.username }),
+      );
+      setIsInChat(true);
+    }
+  };
+
+  const leave = () => {
+    if (globalSocket?.readyState === WebSocket.OPEN && isInChat) {
+      globalSocket.send(
+        JSON.stringify({ type: "LEAVE_CHAT", userId: user?.id, username: user?.username }),
+      );
+      setIsInChat(false);
+      setMessages([]);
+    }
+  };
+
+  const sendMessage = (text: string) => {
+    if (globalSocket?.readyState === WebSocket.OPEN && isInChat) {
+      globalSocket.send(
+        JSON.stringify({ type: "CHAT_MESSAGE", text, username: user?.username }),
+      );
+    }
+  };
+
+  return { messages, sendMessage, join, leave, isInChat };
+}

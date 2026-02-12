@@ -25,8 +25,8 @@ export default function Page() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full h-full gap-4 overflow-y-auto">
-        <div className="w-full p-2 pl-4 bg-card border-foreground/30">
+      <div className="flex flex-col items-center w-full h-full gap-4 overflow-auto overflow-y-auto">
+        <div className="min-w-full p-2 pl-4 bg-card border-foreground/30">
           <h2 className="pb-2 text-3xl font-bold">Games:</h2>
           <div className="flex gap-2">
             <Card className="p-4 mx-2">
@@ -37,7 +37,7 @@ export default function Page() {
                 <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
                   Coinflip
                 </CardTitle>
-                <div className="flex items-center w-full justify-center gap-2">
+                <div className="flex items-center justify-center w-full gap-2">
                   <Ping />
                   <FaUser />
                   <p>Live users:</p>
@@ -61,7 +61,7 @@ export default function Page() {
                 <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
                   Blackjack
                 </CardTitle>
-                <div className="flex items-center w-full justify-center gap-2">
+                <div className="flex items-center justify-center w-full gap-2">
                   <Ping />
                   <FaUser />
                   <p>Live users:</p>
@@ -85,7 +85,7 @@ export default function Page() {
                 <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
                   Mines
                 </CardTitle>
-                <div className="flex items-center w-full justify-center gap-2">
+                <div className="flex items-center justify-center w-full gap-2">
                   <Ping />
                   <FaUser />
                   <p>Live users:</p>
@@ -116,7 +116,7 @@ export default function Page() {
             </Card>
           </div>
         </div>
-        <div className="w-full p-2 pl-4 bg-card border-foreground/30">
+        <div className="min-w-full p-2 pl-4 bg-card border-foreground/30">
           <h2 className="pb-2 text-3xl font-bold">Statistics:</h2>
           <div className="flex gap-4">
             <MostPlayedGamesChart />

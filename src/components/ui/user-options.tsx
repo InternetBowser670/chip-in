@@ -171,7 +171,8 @@ export default function UserOptions() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              <Separator />
+            </div>
+            <Separator />
               <SignOutButton>
                 <Button
                   onClick={() => router.push("/profile")}
@@ -182,7 +183,6 @@ export default function UserOptions() {
                   Sign out
                 </Button>
               </SignOutButton>
-            </div>
           </PopoverContent>
         </Popover>
       </ClerkLoaded>

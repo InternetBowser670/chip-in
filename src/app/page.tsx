@@ -157,7 +157,7 @@ export default function Home() {
             <div className="absolute bottom-10">
               <ScrollDown />
             </div>
-            <Card className="absolute p-2 px-4 bottom-4 right-4">
+            <Card className="absolute z-30 p-2 px-4 pointer-events-auto bottom-4 right-4">
               <span>
                 <Link className="underline" href={"https://internetbowser.com"}>
                   InternetBowser
