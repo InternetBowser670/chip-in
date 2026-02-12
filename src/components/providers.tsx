@@ -87,7 +87,7 @@ function connect(pathname: string) {
     ? process.env.NEXT_PUBLIC_WS_BASE_URL +
       "live-user-count?route=" +
       encodeURIComponent(pathname)
-    : `wss://://api.chip-in.internetbowser.com{encodeURIComponent(pathname)}`;
+    : `wss://api.chip-in.internetbowser.com/live-user-count?route=${encodeURIComponent(pathname)}`;
 
   const socket = new WebSocket(url);
 
