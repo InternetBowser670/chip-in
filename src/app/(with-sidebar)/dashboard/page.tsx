@@ -27,7 +27,7 @@ export default function Page() {
     <>
       <div className="flex flex-col flex-1 w-full h-full gap-4 overflow-auto overflow-y-auto">
         <div className="flex flex-col flex-1 gap-4 min-w-fit">
-          <div className="p-2 pl-4 bg-card border-foreground/30 min-w-fit">
+          <div className="flex flex-col justify-center p-4 in-w-full bg-card border-foreground/30">
             <h2 className="pb-2 text-3xl font-bold">Games:</h2>
             <div className="flex gap-2">
               <Card className="p-4 mx-2">
@@ -117,7 +117,7 @@ export default function Page() {
               </Card>
             </div>
           </div>
-          <div className="flex-1 min-w-full p-2 pl-4 bg-card border-foreground/30">
+          <div className="flex flex-col justify-center p-4 in-w-full bg-card border-foreground/30">
             <h2 className="pb-2 text-3xl font-bold">Statistics:</h2>
             <div className="flex gap-4">
               <MostPlayedGamesChart />
