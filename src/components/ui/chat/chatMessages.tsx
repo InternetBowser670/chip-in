@@ -9,13 +9,16 @@ export default function ChatMessage({ msg }: any) {
           <div className="w-full px-2 py-2 border-l-2 bg-foreground/5 border-l-foreground/20">
             {msg.text}
           </div>
+        ) : msg.displayType == "chatMessage" ? (
+          <>
+            <p className="font-bold">{msg.username}: </p>
+            <p>{msg.text}</p>
+          </>
         ) : (
-          msg.displayType == "chatMessage" && (
-            <>
-              <p className="font-bold">{msg.username}: </p>
-              <p>{msg.text}</p>
-            </>
-          )
+          <>
+            <p className="font-bold">{msg.username}: </p>
+            <p>{msg.text}</p>
+          </>
         )}
       </div>
     </>

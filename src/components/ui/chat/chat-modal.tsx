@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import FloatingWindow from "../global/floating-window";
 import { Button } from "../button";
-import { useLiveChat } from "@/components/providers";
+import { useLiveChat, useLiveUsers } from "@/components/providers";
 import {
   InputGroup,
   InputGroupInput,
@@ -11,6 +11,7 @@ import {
 import { IoArrowUpOutline } from "react-icons/io5";
 import { useUser } from "@clerk/nextjs";
 import ChatMessage from "./chatMessages";
+import Ping from "../global/ping";
 
 export default function ChatModal() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -18,7 +19,9 @@ export default function ChatModal() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, join, leave, isInChat } = useLiveChat();
+  const { chat } = useLiveUsers();
+
+  const { messages, sendMessage, join, leave, isInChat, ping } = useLiveChat();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -62,9 +65,17 @@ export default function ChatModal() {
         {chatOpen ? "Close chat" : "Open chat"}
       </Button>
       {chatOpen && (
-        <FloatingWindow onClose={() => setChatOpen(false)} title="Live Chat">
+        <FloatingWindow
+          onClose={() => setChatOpen(false)}
+          titleElement={
+            <div>
+              <h2 className="text-xl font-semibold">Live Chat</h2>
+              <span className="flex items-center gap-2"><Ping color="blue" />Users online: {chat}</span>
+            </div>
+          }
+        >
           <div className="flex flex-col flex-1 max-h-full overflow-hidden">
-            <div 
+            <div
               ref={scrollRef}
               className="flex-1 pr-2 space-y-2 overflow-y-auto"
             >
@@ -73,7 +84,7 @@ export default function ChatModal() {
               ))}
             </div>
 
-            <div className="p-2">
+            <div className="flex flex-col gap-2 p-2">
               <InputGroup>
                 <InputGroupInput
                   value={message}
@@ -82,11 +93,19 @@ export default function ChatModal() {
                   placeholder="Type a message..."
                 />
                 <InputGroupAddon align={"inline-end"}>
-                   <InputGroupButton onClick={handleSubmit} variant={"outline"}>
+                  <InputGroupButton
+                    onClick={handleSubmit}
+                    disabled={!messageValid}
+                    variant={"outline"}
+                  >
                     <IoArrowUpOutline />
                   </InputGroupButton>
                 </InputGroupAddon>
               </InputGroup>
+              <span className="flex items-center gap-2">
+                <Ping color="green" size={2} />
+                Ping: {ping}
+              </span>
             </div>
           </div>
         </FloatingWindow>

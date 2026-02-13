@@ -8,8 +8,8 @@ export default function GlobalUserCount() {
   return (
     <span className="flex items-center gap-2">
       <span className="relative flex size-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
-        <span className="relative inline-flex size-2 rounded-full bg-sky-500"></span>
+        <span className="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-sky-400"></span>
+        <span className="relative inline-flex rounded-full size-2 bg-sky-500"></span>
       </span>
       Users online: {global}
     </span>

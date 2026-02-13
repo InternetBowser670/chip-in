@@ -8,11 +8,11 @@ import { IoClose } from "react-icons/io5";
 
 export default function FloatingWindow ({
   children,
-  title,
+  titleElement,
   onClose
 }: {
   children: ReactNode;
-  title: string;
+  titleElement: ReactNode;
   onClose: () => void;
 }) {
   const nodeRef = useRef(null);
@@ -25,7 +25,7 @@ export default function FloatingWindow ({
       >
         <Card className="flex flex-col p-4 overflow-hidden shadow-2xl resize min-w-75 min-h-60 h-125 w-96">
           <div className="flex items-center justify-between pb-2 mb-2 border-b cursor-move select-none drag-handle">
-            <h2 className="text-xl font-semibold">{title}</h2>
+            {titleElement}
             <Button onClick={onClose} variant="ghost" size="icon">
               <IoClose />
             </Button>

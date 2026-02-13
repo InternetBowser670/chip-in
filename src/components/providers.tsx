@@ -64,37 +64,45 @@ export function ThemeProvider({ children, ...props }: React.PropsWithChildren) {
   );
 }
 
-let globalSocket: WebSocket | null = null;
-let isConnecting = false;
-const globalCounts = { page: 0, global: 0, coinflip: 0, mines: 0, blackjack: 0 };
+// count
+let countSocket: WebSocket | null = null;
+let chatSocket: WebSocket | null = null;
+let isConnectingCounts = false;
+let isConnectingChat = false;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const listeners = new Set<(counts: any) => void>();
+const countListeners = new Set<(counts: any) => void>();
+const pingListeners = new Set<(ping: number) => void>();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const chatListeners = new Set<(msg: any) => void>();
 
-function connect(pathname: string) {
-  if (globalSocket?.readyState === WebSocket.OPEN) {
-    globalSocket.send(
-      JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }),
-    );
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let chatPingInterval: any = null;
+const chatPingListeners = new Set<(ping: number) => void>();
+
+const WS_PROD_BASE = "wss://api.chip-in.internetbowser.com/";
+const WS_BASE = process.env.NEXT_PUBLIC_WS_BASE_URL || WS_PROD_BASE;
+
+function connectCounts(pathname: string) {
+  if (countSocket?.readyState === 1) {
+    countSocket.send(JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }));
     return;
   }
+  if (isConnectingCounts || countSocket?.readyState === 0) return;
 
-  if (isConnecting || globalSocket?.readyState === WebSocket.CONNECTING) return;
-
-  isConnecting = true;
-  const url = process.env.NEXT_PUBLIC_WS_BASE_URL
-    ? process.env.NEXT_PUBLIC_WS_BASE_URL +
-      "live-user-count?route=" +
-      encodeURIComponent(pathname)
-    : `wss://api.chip-in.internetbowser.com/live-user-count?route=${encodeURIComponent(pathname)}`;
-
-  const socket = new WebSocket(url);
+  isConnectingCounts = true;
+  const socket = new WebSocket(
+    `${WS_BASE}live-user-count?route=${encodeURIComponent(pathname)}`,
+  );
 
   socket.onopen = () => {
-    isConnecting = false;
-    globalSocket = socket;
+    isConnectingCounts = false;
+    countSocket = socket;
     socket.send(JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }));
+    setInterval(() => {
+      if (socket.readyState === 1)
+        socket.send(JSON.stringify({ type: "PING", timestamp: Date.now() }));
+    }, 1000);
   };
 
   socket.onmessage = (event) => {
@@ -107,66 +115,130 @@ function connect(pathname: string) {
           coinflip: data.coinflipCount ?? 0,
           mines: data.minesCount ?? 0,
           blackjack: data.blackjackCount ?? 0,
+          chat: data.chatCount ?? 0
         };
-        listeners.forEach((l) => l(newCounts));
-      } else if (data.type === "CHAT_MESSAGE") {
-        chatListeners.forEach((l) => l(data));
+        countListeners.forEach((l) => l(newCounts));
+      } else if (data.type === "PONG") {
+        pingListeners.forEach((l) => l(Date.now() - data.timestamp));
       }
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
   };
 
   socket.onclose = () => {
-    isConnecting = false;
-    globalSocket = null;
-    setTimeout(() => connect(pathname), 3000);
+    isConnectingCounts = false;
+    countSocket = null;
+    setTimeout(() => connectCounts(pathname), 3000);
+  };
+}
+
+function connectChat() {
+  if (
+    isConnectingChat ||
+    chatSocket?.readyState === 1 ||
+    chatSocket?.readyState === 0
+  )
+    return;
+
+  isConnectingChat = true;
+  const socket = new WebSocket(`${WS_BASE}live-chat`);
+
+  socket.onopen = () => {
+    isConnectingChat = false;
+    chatSocket = socket;
+
+    if (chatPingInterval) clearInterval(chatPingInterval);
+    chatPingInterval = setInterval(() => {
+      if (socket.readyState === 1) {
+        socket.send(JSON.stringify({ type: "PING", timestamp: Date.now() }));
+      }
+    }, 1000);
+  };
+
+  socket.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === "CHAT_MESSAGE") {
+        chatListeners.forEach((l) => l(data));
+      } else if (data.type === "PONG") {
+        chatPingListeners.forEach((l) => l(Date.now() - data.timestamp));
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  };
+
+  socket.onclose = () => {
+    isConnectingChat = false;
+    chatSocket = null;
+    if (chatPingInterval) clearInterval(chatPingInterval);
+    setTimeout(() => connectChat(), 3000);
   };
 }
 
 export function useLiveUsers() {
-  const [counts, setCounts] = useState(globalCounts);
+  const [counts, setCounts] = useState({
+    page: 0,
+    global: 0,
+    coinflip: 0,
+    mines: 0,
+    blackjack: 0,
+    chat: 0
+  });
+  const [ping, setPing] = useState(0);
   const pathname = usePathname();
 
   useEffect(() => {
-    listeners.add(setCounts);
-    connect(pathname);
+    countListeners.add(setCounts);
+    pingListeners.add(setPing);
+    connectCounts(pathname);
     return () => {
-      listeners.delete(setCounts);
+      countListeners.delete(setCounts);
+      pingListeners.delete(setPing);
     };
   }, [pathname]);
 
-  return counts;
+  return { ...counts, ping };
 }
+
 export function useLiveChat() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [messages, setMessages] = useState<any[]>([]);
   const [isInChat, setIsInChat] = useState(false);
+
   const { user } = useUser();
+
+  const ping = useChatPing();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = (msg: any) =>
       setMessages((prev) => [...prev, msg].slice(-50));
     chatListeners.add(handler);
+    connectChat();
     return () => {
       chatListeners.delete(handler);
     };
   }, []);
 
   const join = () => {
-    if (globalSocket?.readyState === WebSocket.OPEN && !isInChat) {
-      globalSocket.send(
-        JSON.stringify({ type: "JOIN_CHAT", userId: user?.id, username: user?.username }),
+    if (chatSocket?.readyState === 1 && !isInChat) {
+      chatSocket.send(
+        JSON.stringify({
+          type: "JOIN_CHAT",
+          userId: user?.id,
+          username: user?.username,
+        }),
       );
       setIsInChat(true);
     }
   };
 
   const leave = () => {
-    if (globalSocket?.readyState === WebSocket.OPEN && isInChat) {
-      globalSocket.send(
-        JSON.stringify({ type: "LEAVE_CHAT", userId: user?.id, username: user?.username }),
+    if (chatSocket?.readyState === 1 && isInChat) {
+      chatSocket.send(
+        JSON.stringify({ type: "LEAVE_CHAT", username: user?.username }),
       );
       setIsInChat(false);
       setMessages([]);
@@ -174,12 +246,25 @@ export function useLiveChat() {
   };
 
   const sendMessage = (text: string) => {
-    if (globalSocket?.readyState === WebSocket.OPEN && isInChat) {
-      globalSocket.send(
-        JSON.stringify({ type: "CHAT_MESSAGE", text, username: user?.username }),
+    if (chatSocket?.readyState === 1 && isInChat) {
+      chatSocket.send(
+        JSON.stringify({
+          type: "CHAT_MESSAGE",
+          text,
+          username: user?.username,
+        }),
       );
     }
   };
 
-  return { messages, sendMessage, join, leave, isInChat };
+  return { messages, sendMessage, join, leave, isInChat, ping };
+}
+
+export function useChatPing() {
+  const [ping, setPing] = useState(0);
+  useEffect(() => {
+    chatPingListeners.add(setPing);
+    return () => { chatPingListeners.delete(setPing); };
+  }, []);
+  return ping;
 }
