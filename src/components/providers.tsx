@@ -84,7 +84,7 @@ let chatPingInterval: any = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let countPingInterval: any = null;
 
-const WS_PROD_BASE = "wss://://api.chip-in.internetbowser.com";
+const WS_PROD_BASE = "wss://api.chip-in.internetbowser.com/";
 const WS_BASE = process.env.NEXT_PUBLIC_WS_BASE_URL || WS_PROD_BASE;
 
 async function connectCounts(pathname: string, getToken: () => Promise<string | null>) {
