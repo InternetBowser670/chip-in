@@ -77,7 +77,7 @@ export default function ChatModal() {
           <div className="flex flex-col flex-1 max-h-full overflow-hidden">
             <div
               ref={scrollRef}
-              className="flex-1 pr-2 space-y-2 overflow-y-auto"
+              className="flex-1 max-w-full pr-2 space-y-2 overflow-y-auto"
             >
               {messages.map((msg, i) => (
                 <ChatMessage key={i} msg={msg} />
