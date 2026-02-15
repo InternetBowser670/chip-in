@@ -141,7 +141,7 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 50px; /* Adjust the height as needed */
+  height: 50px;
   background-image: linear-gradient(
     to bottom,
     rgba(237, 237, 237, 0),
@@ -154,7 +154,7 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 50px; /* Adjust the height as needed */
+  height: 50px;
   background-image: linear-gradient(
     to bottom,
     rgba(18, 18, 18, 0),

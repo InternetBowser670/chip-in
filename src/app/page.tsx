@@ -22,6 +22,7 @@ import SplitText from "@/components/SplitText";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import GlassSurface from "@/components/GlassSurface";
+import clsx from "clsx";
 
 export default function Home() {
   const router = useRouter();
@@ -90,6 +91,7 @@ export default function Home() {
             alphaParticles={false}
             disableRotation={false}
             pixelRatio={1}
+            className={resolvedTheme == "light" ? "fadeBottom" : "fadeBottomDark"}
           />
           <div className="absolute top-0 z-30 flex flex-col items-center justify-center w-full h-full mb-20 pointer-events-none">
             {mounted && (
@@ -104,7 +106,7 @@ export default function Home() {
                     />
                     <SplitText
                       text="ChipIn"
-                      className="font-bold text-center text-black text-8xl dark:text-white"
+                      className={clsx("font-bold text-center text-black text-8xl dark:text-white")}
                       delay={50}
                       duration={1.25}
                       ease="power3.out"
