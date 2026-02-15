@@ -78,6 +78,12 @@ export default function Sidebar() {
               </Button>
             </div>
             <Separator />
+            <script
+              async={true}
+              data-cfasync="false"
+              src="https://pl28698903.effectivegatecpm.com/faea847c47ef9e830735a750d376884a/invoke.js"
+            ></script>
+            <div id="container-faea847c47ef9e830735a750d376884a"></div>
           </div>
           <div className="flex flex-col items-center w-full mb-4 overflow-x-hidden">
             <OpenAdminDash small />

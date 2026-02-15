@@ -17,6 +17,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { BannerAd } from "@/components/ui/global/ads";
 
 export default function MinesPage() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -309,9 +310,10 @@ export default function MinesPage() {
                 {multiplier && `Multiplier: ${multiplier.toFixed(5)}`}
               </p>
             </motion.div>
-            <div className="flex items-center justify-center flex-1 w-full">
+            <div className="flex items-center justify-center w-full my-2">
               <h2 className="text-2xl font-bold">{message}</h2>
             </div>
+            <BannerAd />
           </div>
         </motion.div>
         <motion.div

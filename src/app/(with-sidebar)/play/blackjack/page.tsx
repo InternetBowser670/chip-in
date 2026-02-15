@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Field } from "@/components/ui/field";
 import PlayingCard from "@/components/ui/games/any/card";
+import { BannerAd } from "@/components/ui/global/ads";
 import {
   InputGroup,
   InputGroupAddon,
@@ -209,9 +210,10 @@ export default function BlackjackPage() {
               </Button>
             </div>
 
-            <div className="flex items-center flex-1">
-              <h2 className="text-2xl font-bold">{message}</h2>
+            <div className="flex items-center">
+              <h2 className="my-8 text-2xl font-bold">{message}</h2>
             </div>
+            <BannerAd className="flex justify-center" />
           </div>
         </motion.div>
         <motion.div

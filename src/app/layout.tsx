@@ -9,6 +9,7 @@ import TimezoneSetter from "@/components/ui/timezone-setter";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner"
+import { Popunder, SocialBar } from "@/components/ui/global/ads";
 
 export const metadata: Metadata = {
   title: "ChipIn",
@@ -61,6 +62,7 @@ export default function RootLayout({
             gtag('config', 'G-3GKZ3LXBM9');
           `}
           </Script>
+          <Popunder />
         </head>
         <body
           suppressHydrationWarning
@@ -73,6 +75,7 @@ export default function RootLayout({
               <Toaster />
             </Providers>
           </ThemeProvider>
+          <SocialBar />
         </body>
       </html>
       <Analytics />

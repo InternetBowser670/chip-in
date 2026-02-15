@@ -17,6 +17,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { useTheme } from "next-themes";
+import { BannerAd } from "@/components/ui/global/ads";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -156,60 +157,60 @@ export default function Page() {
           transition={{ duration: 0.35, ease: "easeInOut" }}
           className="h-full p-4 border-r bg-card rounded-r-2xl"
         >
-          <div>
+          <div className="h-full">
             <motion.h1 className="text-5xl font-bold">Coinflip</motion.h1>
             <br />
             <div className="flex justify-center w-full">
               <motion.div
-              className="flex justify-center mt-6"
-              initial={{ width: "40%" }}
-              animate={{ width: !extendSidebar ? "100%" : "40%" }}
-            >
-              <Field
-                className="flex flex-row justify-center w-full"
-                data-invalid={
-                  chipsFetched &&
-                  betAmt &&
-                  (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
-                }
+                className="flex justify-center mt-6"
+                initial={{ width: "40%" }}
+                animate={{ width: !extendSidebar ? "100%" : "40%" }}
               >
-                <InputGroup>
-                  <InputGroupInput
-                    title="bet"
-                    value={betAmt || ""}
-                    onChange={(e) =>
-                      setBetAmt(parseInt(e.target.value) || null)
-                    }
-                    placeholder="Bet Amount"
-                    type="text"
-                  />
-                  <InputGroupAddon align={"inline-end"}>
-                    <PiPokerChip />
-                    <InputGroupButton
-                      variant={"outline"}
-                      className="flex items-center justify-center text-center text-foreground"
-                      onClick={() => setBetAmt(betAmt && betAmt * 2)}
-                    >
-                      x2
-                    </InputGroupButton>
-                    <InputGroupButton
-                      variant={"outline"}
-                      className="flex items-center justify-center text-center text-foreground"
-                      onClick={() => setBetAmt(betAmt && betAmt / 2)}
-                    >
-                      /2
-                    </InputGroupButton>
-                    <InputGroupButton
-                      variant={"outline"}
-                      className="flex items-center justify-center text-center text-foreground"
-                      onClick={() => setBetAmt(Math.floor(chips))}
-                    >
-                      All In
-                    </InputGroupButton>
-                  </InputGroupAddon>
-                </InputGroup>
-              </Field>
-            </motion.div>
+                <Field
+                  className="flex flex-row justify-center w-full"
+                  data-invalid={
+                    chipsFetched &&
+                    betAmt &&
+                    (betAmt > chips || betAmt < 0 || !Number.isInteger(betAmt))
+                  }
+                >
+                  <InputGroup>
+                    <InputGroupInput
+                      title="bet"
+                      value={betAmt || ""}
+                      onChange={(e) =>
+                        setBetAmt(parseInt(e.target.value) || null)
+                      }
+                      placeholder="Bet Amount"
+                      type="text"
+                    />
+                    <InputGroupAddon align={"inline-end"}>
+                      <PiPokerChip />
+                      <InputGroupButton
+                        variant={"outline"}
+                        className="flex items-center justify-center text-center text-foreground"
+                        onClick={() => setBetAmt(betAmt && betAmt * 2)}
+                      >
+                        x2
+                      </InputGroupButton>
+                      <InputGroupButton
+                        variant={"outline"}
+                        className="flex items-center justify-center text-center text-foreground"
+                        onClick={() => setBetAmt(betAmt && betAmt / 2)}
+                      >
+                        /2
+                      </InputGroupButton>
+                      <InputGroupButton
+                        variant={"outline"}
+                        className="flex items-center justify-center text-center text-foreground"
+                        onClick={() => setBetAmt(Math.floor(chips))}
+                      >
+                        All In
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </Field>
+              </motion.div>
             </div>
             <div className="flex items-center justify-center mt-4 gap-15">
               <Button
@@ -244,6 +245,7 @@ export default function Page() {
             <br />
             <br />
             <h2 className="text-2xl font-bold text-center">{message}</h2>
+            <BannerAd className="flex justify-center mt-2" />
           </div>
         </motion.div>
         <motion.div
@@ -262,7 +264,13 @@ export default function Page() {
               <div
                 className={clsx(
                   "h-4 flex justify-center items-center transition-all duration-300 min-w-30 p-4 py-6 rounded-2xl",
-                  resolvedTheme == "light" ? (flip.betFace == flip.outcome ? "bg-green-500/85" : "bg-red-500/85") : (flip.betFace == flip.outcome ? "bg-green-500" : "bg-red-500"),
+                  resolvedTheme == "light"
+                    ? flip.betFace == flip.outcome
+                      ? "bg-green-500/85"
+                      : "bg-red-500/85"
+                    : flip.betFace == flip.outcome
+                      ? "bg-green-500"
+                      : "bg-red-500",
                   "animate-[flipIn_.35s_ease-out]",
                 )}
                 key={i}
