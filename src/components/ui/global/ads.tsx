@@ -14,10 +14,12 @@ export function BannerAd({ className }: Props) {
   const isAdmin = useAdminStatus();
 
   useEffect(() => {
-    if (isAdmin) return;
     if (!containerRef.current) return;
 
+    // Always clear previous content
     containerRef.current.replaceChildren();
+
+    if (isAdmin) return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).atOptions = {
@@ -36,7 +38,7 @@ export function BannerAd({ className }: Props) {
     containerRef.current.appendChild(script);
   }, [pathname, isAdmin]);
 
-  if (isAdmin === true) return null;
+  if (isAdmin) return null;
 
   return <div ref={containerRef} className={className} />;
 }
@@ -46,6 +48,11 @@ export function NativeBannerAd({ className }: Props) {
   const isAdmin = useAdminStatus();
 
   useEffect(() => {
+    const existing = document.querySelector(
+      'script[src*="effectivegatecpm.com/faea847c47ef9e830735a750d376884a"]',
+    );
+    existing?.remove();
+
     if (isAdmin) return;
 
     const script = document.createElement("script");
@@ -61,7 +68,7 @@ export function NativeBannerAd({ className }: Props) {
     };
   }, [pathname, isAdmin]);
 
-  if (isAdmin === true) return null;
+  if (isAdmin) return null;
 
   return (
     <div
@@ -71,11 +78,17 @@ export function NativeBannerAd({ className }: Props) {
   );
 }
 
-export function Popunder() {
+export function SocialBar() {
   const pathname = usePathname();
   const isAdmin = useAdminStatus();
+  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
+    if (scriptRef.current) {
+      scriptRef.current.remove();
+      scriptRef.current = null;
+    }
+
     if (isAdmin) return;
 
     const script = document.createElement("script");
@@ -84,20 +97,28 @@ export function Popunder() {
     script.async = true;
 
     document.body.appendChild(script);
+    scriptRef.current = script;
 
     return () => {
       script.remove();
+      scriptRef.current = null;
     };
   }, [pathname, isAdmin]);
 
   return null;
 }
 
-export function SocialBar() {
+export function Popunder() {
   const pathname = usePathname();
   const isAdmin = useAdminStatus();
+  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
   useEffect(() => {
+    if (scriptRef.current) {
+      scriptRef.current.remove();
+      scriptRef.current = null;
+    }
+
     if (isAdmin) return;
 
     const script = document.createElement("script");
@@ -106,9 +127,11 @@ export function SocialBar() {
     script.async = true;
 
     document.body.appendChild(script);
+    scriptRef.current = script;
 
     return () => {
       script.remove();
+      scriptRef.current = null;
     };
   }, [pathname, isAdmin]);
 
