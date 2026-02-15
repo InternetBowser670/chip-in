@@ -17,6 +17,7 @@ import {
 import { useLiveUsers } from "@/components/providers";
 import Ping from "@/components/ui/global/ping";
 import { FaUser } from "react-icons/fa";
+import { BannerAd } from "@/components/ui/global/ads";
 
 export default function Page() {
   const router = useRouter();
@@ -115,13 +116,20 @@ export default function Page() {
                   </Button>
                 </CardFooter>
               </Card>
+              <div className="flex gap-4">
+                <BannerAd />
+                <BannerAd />
+              </div>
             </div>
           </div>
           <div className="flex flex-col justify-center p-4 in-w-full bg-card border-foreground/30">
             <h2 className="pb-2 text-3xl font-bold">Statistics:</h2>
-            <div className="flex gap-4">
+            <div className="flex items-center gap-4">
               <MostPlayedGamesChart />
               <MostProfitableGamesChart />
+              <BannerAd />
+              <BannerAd />
+              <BannerAd />
             </div>
             <p className="p-2 italic">Hover for exact numbers</p>
           </div>
