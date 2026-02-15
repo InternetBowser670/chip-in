@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Script from "next/script";
+import { usePathname } from "next/navigation";
+import { useAdminStatus } from "@/lib/hooks/useAdminStatus";
 
 type Props = {
   className?: string;
@@ -9,11 +10,14 @@ type Props = {
 
 export function BannerAd({ className }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const initialized = useRef(false);
+  const pathname = usePathname();
+  const isAdmin = useAdminStatus();
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+    if (isAdmin) return;
+    if (!containerRef.current) return;
+
+    containerRef.current.replaceChildren();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).atOptions = {
@@ -29,20 +33,21 @@ export function BannerAd({ className }: Props) {
       "https://www.highperformanceformat.com/4bc736e0d24ef16362375cb1886e45f8/invoke.js";
     script.async = true;
 
-    containerRef.current?.appendChild(script);
+    containerRef.current.appendChild(script);
+  }, [pathname, isAdmin]);
 
-    return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      containerRef.current?.replaceChildren();
-      initialized.current = false;
-    };
-  }, []);
+  if (isAdmin === true) return null;
 
   return <div ref={containerRef} className={className} />;
 }
 
 export function NativeBannerAd({ className }: Props) {
+  const pathname = usePathname();
+  const isAdmin = useAdminStatus();
+
   useEffect(() => {
+    if (isAdmin) return;
+
     const script = document.createElement("script");
     script.src =
       "https://pl28698903.effectivegatecpm.com/faea847c47ef9e830735a750d376884a/invoke.js";
@@ -54,7 +59,9 @@ export function NativeBannerAd({ className }: Props) {
     return () => {
       script.remove();
     };
-  }, []);
+  }, [pathname, isAdmin]);
+
+  if (isAdmin === true) return null;
 
   return (
     <div
@@ -65,20 +72,45 @@ export function NativeBannerAd({ className }: Props) {
 }
 
 export function Popunder() {
-  return (
-    <Script
-      id="effectivegate-popunder"
-      src="https://pl28717193.effectivegatecpm.com/6b/a3/83/6ba3835d9e6cd0e9ae9f612febd8a2e0.js"
-      strategy="afterInteractive"
-    />
-  );
+  const pathname = usePathname();
+  const isAdmin = useAdminStatus();
+
+  useEffect(() => {
+    if (isAdmin) return;
+
+    const script = document.createElement("script");
+    script.src =
+      "https://pl28717193.effectivegatecpm.com/6b/a3/83/6ba3835d9e6cd0e9ae9f612febd8a2e0.js";
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      script.remove();
+    };
+  }, [pathname, isAdmin]);
+
+  return null;
 }
 
 export function SocialBar() {
-  return (
-    <Script
-      src="https://presidepickles.com/a9/0b/88/a90b88a7741ed885556d70e5f4b92b34.js"
-      strategy="afterInteractive"
-    />
-  );
+  const pathname = usePathname();
+  const isAdmin = useAdminStatus();
+
+  useEffect(() => {
+    if (isAdmin) return;
+
+    const script = document.createElement("script");
+    script.src =
+      "https://presidepickles.com/a9/0b/88/a90b88a7741ed885556d70e5f4b92b34.js";
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      script.remove();
+    };
+  }, [pathname, isAdmin]);
+
+  return null;
 }

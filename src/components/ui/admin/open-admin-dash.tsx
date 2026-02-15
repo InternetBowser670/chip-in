@@ -1,23 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "../button";
+import { useAdminStatus } from "@/lib/hooks/useAdminStatus";
 
 export default function OpenAdminDash({ small }: { small?: true }) {
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  useEffect(() => {
-    async function checkAdmin() {
-      const res = await fetch("/api/check-admin", {
-        method: "GET",
-      });
-      const data = await res.json();
-      setIsAdmin(await data.isAdmin);
-    }
-
-    checkAdmin();
-  }, []);
+  const isAdmin = useAdminStatus();
 
   if (!isAdmin) {
     return null;
