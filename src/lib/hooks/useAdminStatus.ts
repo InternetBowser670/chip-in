@@ -4,30 +4,31 @@ import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "isAdminCache";
 const CACHE_TTL = 1000 * 60 * 5;
+
 type CacheShape = {
   value: boolean;
   expires: number;
 };
 
-export function useAdminStatus() {
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+export function useAdminStatus(): boolean | null {
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   useEffect(() => {
-    let cachedValue: boolean | null = null;
+    let didUseCache = false;
 
-    const cached = localStorage.getItem(STORAGE_KEY);
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY);
 
-    if (cached) {
-      try {
+      if (cached) {
         const parsed: CacheShape = JSON.parse(cached);
 
         if (Date.now() < parsed.expires) {
-          cachedValue = parsed.value;
+          didUseCache = true;
           setIsAdmin(parsed.value);
         }
-      } catch {
-        // ignore
       }
+    } catch {
+      // ignore
     }
 
     async function verifyWithServer() {
@@ -47,7 +48,7 @@ export function useAdminStatus() {
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
       } catch {
-        if (cachedValue === null) {
+        if (!didUseCache) {
           setIsAdmin(false);
         }
       }
