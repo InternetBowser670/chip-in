@@ -87,7 +87,10 @@ let countPingInterval: any = null;
 const WS_PROD_BASE = "wss://api.chip-in.internetbowser.com/";
 const WS_BASE = process.env.NEXT_PUBLIC_WS_BASE_URL || WS_PROD_BASE;
 
-async function connectCounts(pathname: string, getToken: () => Promise<string | null>) {
+async function connectCounts(
+  pathname: string,
+  getToken: () => Promise<string | null>,
+) {
   if (countSocket?.readyState === 1) {
     countSocket.send(JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }));
     return;
@@ -110,7 +113,7 @@ async function connectCounts(pathname: string, getToken: () => Promise<string | 
     isConnectingCounts = false;
     countSocket = socket;
     socket.send(JSON.stringify({ type: "CHANGE_ROUTE", route: pathname }));
-    
+
     if (countPingInterval) clearInterval(countPingInterval);
     countPingInterval = setInterval(() => {
       if (socket.readyState === 1)
@@ -163,7 +166,9 @@ async function connectChat(getToken: () => Promise<string | null>) {
   }
 
   isConnectingChat = true;
-  const socket = new WebSocket(`${WS_BASE}live-chat?token=${encodeURIComponent(token)}`);
+  const socket = new WebSocket(
+    `${WS_BASE}live-chat?token=${encodeURIComponent(token)}`,
+  );
 
   socket.onopen = () => {
     isConnectingChat = false;
@@ -226,11 +231,12 @@ export function useLiveUsers() {
   return { ...counts, ping };
 }
 
-export function useLiveChat() {
+export function useLiveChat(chatOpen: boolean) {
   const { getToken, isLoaded, isSignedIn } = useAuth();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [messages, setMessages] = useState<any[]>([]);
   const [isInChat, setIsInChat] = useState(false);
+  const [messagePing, setMessagePing] = useState(false);
 
   const { user } = useUser();
   const ping = useChatPing();
@@ -239,14 +245,23 @@ export function useLiveChat() {
     if (!isLoaded || !isSignedIn) return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handler = (msg: any) =>
+    const handler = (msg: any) => {
       setMessages((prev) => [...prev, msg].slice(-50));
+      
+      const joinMsgMatch = /^(.+) joined the chat$/
+
+      if (msg.isSystem = true && (msg.text.match(joinMsgMatch) == user?.username) && !chatOpen) {
+        setMessagePing(true);
+      }
+    };
+
     chatListeners.add(handler);
     connectChat(getToken);
     return () => {
       chatListeners.delete(handler);
     };
-  }, [isLoaded, isSignedIn, getToken]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, isSignedIn, getToken, user?.username]);
 
   const join = () => {
     setMessages([]);
@@ -259,13 +274,17 @@ export function useLiveChat() {
         }),
       );
       setIsInChat(true);
+      setMessagePing(false);
     }
   };
 
   const leave = () => {
     if (chatSocket?.readyState === 1 && isInChat) {
       chatSocket.send(
-        JSON.stringify({ type: "LEAVE_CHAT", username: user?.username || user?.firstName || "Anonymous" }),
+        JSON.stringify({
+          type: "LEAVE_CHAT",
+          username: user?.username || user?.firstName || "Anonymous",
+        }),
       );
       setIsInChat(false);
       setMessages([]);
@@ -284,7 +303,7 @@ export function useLiveChat() {
     }
   };
 
-  return { messages, sendMessage, join, leave, isInChat, ping };
+  return { messages, sendMessage, join, leave, isInChat, ping, messagePing };
 }
 
 export function useChatPing() {

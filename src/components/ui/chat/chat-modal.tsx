@@ -21,7 +21,7 @@ export default function ChatModal() {
 
   const { chat } = useLiveUsers();
 
-  const { messages, sendMessage, join, leave, isInChat, ping } = useLiveChat();
+  const { messages, sendMessage, join, leave, isInChat, ping, messagePing } = useLiveChat(chatOpen);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -61,8 +61,10 @@ export default function ChatModal() {
         disabled={!user}
         onClick={() => setChatOpen(!chatOpen)}
         variant={"outline"}
+        className="relative"
       >
         {chatOpen ? "Close chat" : "Open chat"}
+        {messagePing && <Ping size={3} className="absolute! -right-1.5 -top-1.5" />}
       </Button>
       {chatOpen && (
         <FloatingWindow
@@ -70,7 +72,10 @@ export default function ChatModal() {
           titleElement={
             <div>
               <h2 className="text-xl font-semibold">Live Chat</h2>
-              <span className="flex items-center gap-2"><Ping color="blue" />Users online: {chat}</span>
+              <span className="flex items-center gap-2">
+                <Ping color="blue" />
+                Users online: {chat}
+              </span>
             </div>
           }
         >
