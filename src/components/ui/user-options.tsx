@@ -1,6 +1,6 @@
 "use client";
 
-import { ClerkLoaded, ClerkLoading, useUser } from "@clerk/nextjs";
+import { ClerkLoaded, ClerkLoading, useUser, UserProfile } from "@clerk/nextjs";
 import { RiExpandUpDownLine } from "react-icons/ri";
 import { Button } from "./button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { FaRegUser } from "react-icons/fa";
+import { FaRegUser, FaUserAltSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -30,6 +30,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { useChips } from "../providers";
 import { SignOutButton } from "@clerk/nextjs";
+import { FaUserGear } from "react-icons/fa6";
 
 export default function UserOptions() {
   const { user } = useUser();
@@ -171,6 +172,25 @@ export default function UserOptions() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+              <Dialog>
+                <DialogTrigger className="w-full">
+                  <div className="inline-flex whitespace-nowrap rounded-md text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 px-4 py-2 has-[>svg]:px-3 items-center justify-start w-full gap-4 p-2 font-medium hover:text-accent-foreground hover:bg-accent dark:hover:bg-accent/50">
+                    <FaUserGear />
+                    Manage
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-fit!">
+                  <DialogHeader>
+                    <DialogTitle>
+                      <div className="flex gap-2">
+                        <FaUserGear /> Manage User
+                      </div>
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="flex justify-center"><UserProfile routing="hash" /></div>
+                  
+                </DialogContent>
+              </Dialog>
             </div>
             <Separator />
               <SignOutButton>
@@ -179,7 +199,7 @@ export default function UserOptions() {
                   variant={"destructive"}
                   className="justify-start w-full gap-4 bg-transparent! hover:bg-destructive/20!"
                 >
-                  <FaRegUser />
+                  <FaUserAltSlash />
                   Sign out
                 </Button>
               </SignOutButton>
