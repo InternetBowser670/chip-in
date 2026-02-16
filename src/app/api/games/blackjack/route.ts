@@ -307,9 +307,9 @@ export async function POST(req: Request) {
     { id: clerkUser.id },
     { $set: { activeBlackjack: game } },
   );
-  return NextResponse.json({ 
-    hands: game.hands.map(h => h.cards),
-    activeHand: game.activeHandIndex, 
-    finished: hand.finished 
+  return NextResponse.json({
+    hands: game.hands.map((h) => h.cards),
+    activeHand: game.activeHandIndex,
+    finished: hand.finished,
   });
 }
