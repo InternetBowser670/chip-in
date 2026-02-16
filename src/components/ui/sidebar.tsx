@@ -15,6 +15,8 @@ import { Separator } from "./separator";
 import GlobalUserCount from "./global/global-user-count";
 import ChatModal from "./chat/chat-modal";
 import { NativeBannerAd } from "./global/ads";
+import { usePathname } from "next/navigation";
+import { clsx } from "clsx";
 
 export default function Sidebar() {
   
@@ -57,7 +59,9 @@ export default function Sidebar() {
                 onClick={() => {
                   router.push("/play/coinflip");
                 }}
-                className="flex items-center justify-start gap-2 text-start"
+                className={clsx("flex items-center justify-start gap-2 text-start",
+                  { "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4": usePathname() === "/play/coinflip" }
+                )}
               >
                 <p>Coinflip</p>
               </Button>
@@ -66,7 +70,9 @@ export default function Sidebar() {
                 onClick={() => {
                   router.push("/play/blackjack");
                 }}
-                className="flex items-center justify-start gap-2 text-start"
+                className={clsx("flex items-center justify-start gap-2 text-start",
+                  { "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4": usePathname() === "/play/blackjack" }
+                )}
               >
                 <p>Blackjack</p>
               </Button>
@@ -75,7 +81,9 @@ export default function Sidebar() {
                 onClick={() => {
                   router.push("/play/mines");
                 }}
-                className="flex items-center justify-start gap-2 text-start"
+                className={clsx("flex items-center justify-start gap-2 text-start",
+                  { "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4": usePathname() === "/play/mines" }
+                )}
               >
                 <p>Mines</p>
               </Button>
