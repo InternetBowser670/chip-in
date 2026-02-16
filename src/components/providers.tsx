@@ -249,6 +249,7 @@ export function useLiveChat() {
   }, [isLoaded, isSignedIn, getToken]);
 
   const join = () => {
+    setMessages([]);
     if (chatSocket?.readyState === 1 && !isInChat) {
       chatSocket.send(
         JSON.stringify({
