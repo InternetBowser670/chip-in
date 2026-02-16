@@ -214,7 +214,10 @@ export async function POST(req: Request) {
         { id: clerkUser.id },
         { $set: { activeBlackjack: game } },
       );
-      return NextResponse.json({ activeHand: game.activeHandIndex });
+      return NextResponse.json({
+        hands: game.hands.map((h) => h.cards),
+        activeHand: game.activeHandIndex,
+      });
     } else {
       while (handValue(game.dealerHand) < 17)
         game.dealerHand.push(game.deck.pop()!);

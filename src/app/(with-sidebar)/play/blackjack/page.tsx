@@ -367,7 +367,7 @@ export default function BlackjackPage() {
                         hands[activeHand]?.length === 2 &&
                         hands[activeHand]?.[0].rank ===
                           hands[activeHand]?.[1].rank
-                      )
+                      ) || hands.length > 1
                     }
                     variant={"outline"}
                     onClick={() => send("split")}
