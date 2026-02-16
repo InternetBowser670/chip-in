@@ -107,6 +107,7 @@ export function Popunder() {
   return null;
 }
 
+
 export function SocialBar() {
   const pathname = usePathname();
   const isAdmin = useAdminStatus();
@@ -118,7 +119,7 @@ export function SocialBar() {
       scriptRef.current = null;
     }
 
-    if (isAdmin) return;
+    if (isAdmin !== false) return;
 
     const script = document.createElement("script");
     script.src =
@@ -129,8 +130,10 @@ export function SocialBar() {
     scriptRef.current = script;
 
     return () => {
-      script.remove();
-      scriptRef.current = null;
+      if (scriptRef.current) {
+        scriptRef.current.remove();
+        scriptRef.current = null;
+      }
     };
   }, [pathname, isAdmin]);
 
