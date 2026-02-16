@@ -331,9 +331,9 @@ export default function MinesPage() {
           >
             <div className="relative flex flex-1 h-full overflow-hidden">
               <div className="relative flex items-center justify-center w-full h-full">
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center w-full h-full p-8">
                   {gridNumsArr.map((row, rowIndex) => (
-                    <div className="flex" key={rowIndex}>
+                    <div className="flex w-full h-1/5" key={rowIndex}>
                       {row.map((colIndex) => {
                         const flipped = flippedTiles.find(
                           (t) =>

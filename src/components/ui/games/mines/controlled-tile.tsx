@@ -24,7 +24,7 @@ const ControlledTile = memo(function ControlledTile({
   }, [revealed, rowIndex, colIndex, onFlip]);
 
   return (
-    <button type="button" className="m-2" onClick={handleClick}>
+    <button type="button" className="w-1/5 m-3" onClick={handleClick}>
       <MinesTile flipped={revealed} value={value} queued={queued} />
     </button>
   );

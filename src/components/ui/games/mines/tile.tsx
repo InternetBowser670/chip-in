@@ -36,7 +36,7 @@ export default function   MinesTile({
         y: { type: "spring", stiffness: 400, damping: 30 },
         backgroundColor: { duration: 0.25 },
       }}
-      className="relative flex items-center justify-center w-40 overflow-hidden border rounded-md border-foreground/20 h-25"
+      className="relative flex items-center justify-center w-full h-full overflow-hidden border rounded-md border-foreground/20"
     >
       <AnimatePresence mode="wait">
         {queued && !flipped && (
