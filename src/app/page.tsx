@@ -78,21 +78,25 @@ export default function Home() {
               </GlassSurface>
             )}
           </header>
-          <Particles
-          key={resolvedTheme}
-            particleColors={
-              resolvedTheme == "light" ? ["#000000"] : ["#ffffff"]
-            }
-            particleCount={200}
-            particleSpread={10}
-            speed={0.1}
-            particleBaseSize={200}
-            moveParticlesOnHover
-            alphaParticles={false}
-            disableRotation={false}
-            pixelRatio={1}
-            className={resolvedTheme == "light" ? "fadeBottom" : "fadeBottomDark"}
-          />
+          {mounted && (
+            <Particles
+              key={resolvedTheme}
+              particleColors={
+                resolvedTheme == "light" ? ["#000000"] : ["#ffffff"]
+              }
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={200}
+              moveParticlesOnHover
+              alphaParticles={false}
+              disableRotation={false}
+              pixelRatio={1}
+              className={
+                resolvedTheme == "light" ? "fadeBottom" : "fadeBottomDark"
+              }
+            />
+          )}
           <div className="absolute top-0 z-30 flex flex-col items-center justify-center w-full h-full mb-20 pointer-events-none">
             {mounted && (
               <GlassSurface width={"50%"} height={"50%"}>
@@ -106,7 +110,9 @@ export default function Home() {
                     />
                     <SplitText
                       text="ChipIn"
-                      className={clsx("font-bold text-center text-black text-8xl dark:text-white")}
+                      className={clsx(
+                        "font-bold text-center text-black text-8xl dark:text-white",
+                      )}
                       delay={50}
                       duration={1.25}
                       ease="power3.out"
@@ -197,70 +203,72 @@ export default function Home() {
           </div>
           <div className="absolute top-0 right-0 flex items-start w-1/2 h-full">
             <div className="relative w-full h-3/4">
-              <CardSwap
-                cardDistance={60}
-                verticalDistance={70}
-                delay={5000}
-                pauseOnHover={false}
-              >
-                <CardSwapCard>
-                  <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
-                    <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
-                      Coinflip
-                    </h3>
-                    <hr className="border border-foreground" />
-                    <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
-                      <img
-                        alt="Coinflip image"
-                        className="w-full h-full"
-                        src={
-                          resolvedTheme == "light"
-                            ? "/promos/coinflip-promo-light.png"
-                            : "/promos/coinflip-promo-dark.png"
-                        }
-                      />
+              {mounted && (
+                <CardSwap
+                  cardDistance={60}
+                  verticalDistance={70}
+                  delay={5000}
+                  pauseOnHover={false}
+                >
+                  <CardSwapCard>
+                    <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
+                      <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
+                        Coinflip
+                      </h3>
+                      <hr className="border border-foreground" />
+                      <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
+                        <img
+                          alt="Coinflip image"
+                          className="w-full h-full"
+                          src={
+                            resolvedTheme == "light"
+                              ? "/promos/coinflip-promo-light.png"
+                              : "/promos/coinflip-promo-dark.png"
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
-                </CardSwapCard>
-                <CardSwapCard>
-                  <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
-                    <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
-                      Blackjack
-                    </h3>
-                    <hr className="border border-foreground" />
-                    <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
-                      <img
-                        alt="Blackjack image"
-                        className="w-full h-full"
-                        src={
-                          resolvedTheme == "light"
-                            ? "/promos/blackjack-promo-light.png"
-                            : "/promos/blackjack-promo-dark.png"
-                        }
-                      />
+                  </CardSwapCard>
+                  <CardSwapCard>
+                    <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
+                      <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
+                        Blackjack
+                      </h3>
+                      <hr className="border border-foreground" />
+                      <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
+                        <img
+                          alt="Blackjack image"
+                          className="w-full h-full"
+                          src={
+                            resolvedTheme == "light"
+                              ? "/promos/blackjack-promo-light.png"
+                              : "/promos/blackjack-promo-dark.png"
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
-                </CardSwapCard>
-                <CardSwapCard>
-                  <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
-                    <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
-                      Mines
-                    </h3>
-                    <hr className="border border-foreground" />
-                    <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
-                      <img
-                        alt="Mines image"
-                        className="w-full h-full"
-                        src={
-                          resolvedTheme == "light"
-                            ? "/promos/mines-promo-light.png"
-                            : "/promos/mines-promo-dark.png"
-                        }
-                      />
+                  </CardSwapCard>
+                  <CardSwapCard>
+                    <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
+                      <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
+                        Mines
+                      </h3>
+                      <hr className="border border-foreground" />
+                      <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
+                        <img
+                          alt="Mines image"
+                          className="w-full h-full"
+                          src={
+                            resolvedTheme == "light"
+                              ? "/promos/mines-promo-light.png"
+                              : "/promos/mines-promo-dark.png"
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
-                </CardSwapCard>
-              </CardSwap>
+                  </CardSwapCard>
+                </CardSwap>
+              )}
             </div>
           </div>
         </div>

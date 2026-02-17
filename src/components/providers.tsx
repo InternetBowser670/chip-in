@@ -250,7 +250,7 @@ export function useLiveChat(chatOpen: boolean) {
       
       const joinMsgMatch = /^(.+) joined the chat$/
 
-      if (msg.isSystem = true && !(msg.text.match(joinMsgMatch)[1] == user?.username) && !chatOpen) {
+      if (!(msg.text.match(joinMsgMatch)[1] == user?.username && msg.isSystem) && !chatOpen) {
         setMessagePing(true);
       }
     };
