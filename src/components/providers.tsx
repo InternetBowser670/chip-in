@@ -247,10 +247,16 @@ export function useLiveChat(chatOpen: boolean) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = (msg: any) => {
       setMessages((prev) => [...prev, msg].slice(-50));
-      
-      const joinMsgMatch = /^(.+) joined the chat$/
 
-      if (!(msg.text.match(joinMsgMatch)[1] == user?.username && msg.isSystem) && !chatOpen) {
+      const joinMsgMatch = /^(.+) joined the chat$/;
+      const leftMsgMatch = /^(.+) left the chat$/;
+
+      const match = msg.text?.match(joinMsgMatch);
+      const lMatch = msg.text?.match(leftMsgMatch);
+
+      const isSelfJoin = msg.isSystem && (match && match[1] === user?.username || lMatch && lMatch[1] === user?.username);
+
+      if (!isSelfJoin && !chatOpen) {
         setMessagePing(true);
       }
     };
@@ -260,11 +266,9 @@ export function useLiveChat(chatOpen: boolean) {
     return () => {
       chatListeners.delete(handler);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, isSignedIn, getToken, user?.username]);
+  }, [isLoaded, isSignedIn, getToken, user?.username, chatOpen]);
 
   const join = () => {
-    setMessages([]);
     if (chatSocket?.readyState === 1 && !isInChat) {
       chatSocket.send(
         JSON.stringify({
@@ -287,7 +291,6 @@ export function useLiveChat(chatOpen: boolean) {
         }),
       );
       setIsInChat(false);
-      setMessages([]);
     }
   };
 

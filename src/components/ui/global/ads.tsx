@@ -83,7 +83,7 @@ export function NativeBannerAd({ className }: Props) {
 export function Popunder() {
   const isAdmin = useAdminStatus();
 
-  if (isAdmin) return null;
+  if (isAdmin !== false) return null;
 
   return (
     <Script
