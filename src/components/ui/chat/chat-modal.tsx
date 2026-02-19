@@ -74,7 +74,7 @@ export default function ChatModal() {
               <h2 className="text-xl font-semibold">Live Chat</h2>
               <span className="flex items-center gap-2">
                 <Ping color="blue" />
-                Users online: {chat}
+                Users on chat: {chat}
               </span>
             </div>
           }
