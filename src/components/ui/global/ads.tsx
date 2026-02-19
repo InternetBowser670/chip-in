@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAdminStatus } from "@/lib/hooks/useAdminStatus";
+import Script from "next/script";
 
 type Props = {
   className?: string;
@@ -30,7 +31,7 @@ export function BannerAd({ className }: Props) {
 
     const script = document.createElement("script");
     script.src =
-      "https://presidepickles.com/4bc736e0d24ef16362375cb1886e45f8/invoke.js";
+      "https://rustscrupulousstates.com/4bc736e0d24ef16362375cb1886e45f8/invoke.js";
     script.async = true;
 
     containerRef.current.appendChild(script);
@@ -40,6 +41,7 @@ export function BannerAd({ className }: Props) {
 
   return <div ref={containerRef} className={className} />;
 }
+
 export function NativeBannerAd({ className }: Props) {
   const pathname = usePathname();
   const isAdmin = useAdminStatus();
@@ -55,7 +57,7 @@ export function NativeBannerAd({ className }: Props) {
 
     const script = document.createElement("script");
     script.src =
-      "https://presidepickles.com/faea847c47ef9e830735a750d376884a/invoke.js";
+      "https://rustscrupulousstates.com/faea847c47ef9e830735a750d376884a/invoke.js";
     script.async = true;
     script.setAttribute("data-cfasync", "false");
 
@@ -79,35 +81,17 @@ export function NativeBannerAd({ className }: Props) {
 }
 
 export function Popunder() {
-  const pathname = usePathname();
   const isAdmin = useAdminStatus();
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
 
-  useEffect(() => {
-    if (isAdmin !== false) return;
+  if (isAdmin) return null;
 
-    if (scriptRef.current) return;
-
-    const script = document.createElement("script");
-    script.src =
-      "https://pl28717193.effectivegatecpm.com/6b/a3/83/6ba3835d9e6cd0e9ae9f612febd8a2e0.js";
-    script.async = true;
-
-    document.body.appendChild(script);
-    scriptRef.current = script;
-
-    return () => {
-      if (scriptRef.current) {
-        scriptRef.current.remove();
-        scriptRef.current = null;
-      }
-    };
-  }, [pathname, isAdmin]);
-
-  return null;
+  return (
+    <Script
+      src="https://rustscrupulousstates.com/6b/a3/83/6ba3835d9e6cd0e9ae9f612febd8a2e0.js"
+      strategy="afterInteractive"
+    />
+  );
 }
-
-
 export function SocialBar() {
   const pathname = usePathname();
   const isAdmin = useAdminStatus();
@@ -123,17 +107,15 @@ export function SocialBar() {
 
     const script = document.createElement("script");
     script.src =
-      "https://presidepickles.com/a9/0b/88/a90b88a7741ed885556d70e5f4b92b34.js";
+      "https://rustscrupulousstates.com/a9/0b/88/a90b88a7741ed885556d70e5f4b92b34.js";
     script.async = true;
 
     document.body.appendChild(script);
     scriptRef.current = script;
 
     return () => {
-      if (scriptRef.current) {
-        scriptRef.current.remove();
-        scriptRef.current = null;
-      }
+      scriptRef.current?.remove();
+      scriptRef.current = null;
     };
   }, [pathname, isAdmin]);
 
