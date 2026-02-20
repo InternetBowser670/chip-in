@@ -1,4 +1,5 @@
 'use client';
+
 import { motion } from "motion/react";
 import { useState } from "react";
 import { useChips } from "@/components/providers";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/input-group";
 import { BannerAd } from "@/components/ui/global/ads";
 import { Field } from "@/components/ui/field";
+import clsx from "clsx";
 
 export default function Page(){
   const { chips, setChips, chipsFetched } = useChips();
@@ -19,9 +21,13 @@ export default function Page(){
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState(true);
   const [slotsSpinning, setSlotSpinning] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("Place your bet to start a new game!");
   
   async function handleSpin() {
-    console.log("K ur spinning")
+    console.log("K ur spinning");
+    setSlotSpinning(true);
+    setExtendSidebar(false);
+    setMessage("Spinning... ");
   }
   
   return (
@@ -91,6 +97,11 @@ export default function Page(){
             <div className="flex items-center justify-center mt-4 gap-15">
               <Button
                 variant={"default"}
+                className={clsx(
+                slotsSpinning
+                ? "grayscale cursor-not-allowed"
+                : "cursor-pointer",
+                )}
                 onClick={() =>
                 !slotsSpinning &&
                 handleSpin()
@@ -98,8 +109,20 @@ export default function Page(){
               >
                 Spin
               </Button>
-        </div>
+            </div>
+            <br />
+            <br />
+            <h2 className="text-2xl font-bold text-center">{message}</h2>
+            <BannerAd className="flex justify-center mt-2" />
           </div>
+        </motion.div>
+        <motion.div
+          initial={{ width: "0%" }}
+          animate={{ width: extendSidebar ? 0 : "60%" }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className={`flex-1 py-4 overflow-hidden ${!extendSidebar && "p-4"}`}
+        >
+            <h1>This is where the slots will be</h1>
         </motion.div>
       </div>
     </div>
