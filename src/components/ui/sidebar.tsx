@@ -19,9 +19,8 @@ import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 
 export default function Sidebar() {
-  
-  const router = useRouter();  
-  
+  const router = useRouter();
+
   return (
     <>
       <div className="w-50 h-full! bg-card border-r border-r-foreground/30">
@@ -59,8 +58,12 @@ export default function Sidebar() {
                 onClick={() => {
                   router.push("/play/coinflip");
                 }}
-                className={clsx("flex items-center justify-start gap-2 text-start",
-                  { "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4": usePathname() === "/play/coinflip" }
+                className={clsx(
+                  "flex items-center justify-start gap-2 text-start",
+                  {
+                    "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4":
+                      usePathname() === "/play/coinflip",
+                  },
                 )}
               >
                 <p>Coinflip</p>
@@ -70,8 +73,12 @@ export default function Sidebar() {
                 onClick={() => {
                   router.push("/play/blackjack");
                 }}
-                className={clsx("flex items-center justify-start gap-2 text-start",
-                  { "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4": usePathname() === "/play/blackjack" }
+                className={clsx(
+                  "flex items-center justify-start gap-2 text-start",
+                  {
+                    "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4":
+                      usePathname() === "/play/blackjack",
+                  },
                 )}
               >
                 <p>Blackjack</p>
@@ -81,11 +88,34 @@ export default function Sidebar() {
                 onClick={() => {
                   router.push("/play/mines");
                 }}
-                className={clsx("flex items-center justify-start gap-2 text-start",
-                  { "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4": usePathname() === "/play/mines" }
+                className={clsx(
+                  "flex items-center justify-start gap-2 text-start",
+                  {
+                    "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4":
+                      usePathname() === "/play/mines",
+                  },
                 )}
               >
                 <p>Mines</p>
+              </Button>
+            </div>
+            <Separator />
+            <div className="flex flex-col w-full gap-2 mx-2 my-2 text-left">
+              <p className="text-xl font-bold">Other:</p>
+              <Button
+                variant={"ghost"}
+                onClick={() => {
+                  router.push("/leaderboard");
+                }}
+                className={clsx(
+                  "flex items-center justify-start gap-2 text-start",
+                  {
+                    "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4":
+                      usePathname() === "/leaderboard",
+                  },
+                )}
+              >
+                <p>Leaderboard</p>
               </Button>
             </div>
             <Separator />
