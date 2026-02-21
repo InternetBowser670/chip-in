@@ -14,6 +14,7 @@ import {
 import { BannerAd } from "@/components/ui/global/ads";
 import { Field } from "@/components/ui/field";
 import clsx from "clsx";
+import { DotLottie } from "@lottiefiles/dotlottie-web";
 
 export default function Page(){
   const slot1Ref = useRef<HTMLCanvasElement | null>(null);
