@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useChips } from "@/components/providers";
 import { PiPokerChip } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,10 @@ import { Field } from "@/components/ui/field";
 import clsx from "clsx";
 
 export default function Page(){
+  const slot1Ref = useRef<HTMLCanvasElement | null>(null);
+  const slot2Ref = useRef<HTMLCanvasElement | null>(null);
+  const slot3Ref = useRef<HTMLCanvasElement | null>(null);
+  
   const { chips, setChips, chipsFetched } = useChips();
   
   const [betAmt, setBetAmt] = useState<number | null>(null);
@@ -24,10 +28,17 @@ export default function Page(){
   const [message, setMessage] = useState<string>("Place your bet to start a new game!");
   
   async function handleSpin() {
-    console.log("K ur spinning");
+    if (betAmt == null || betAmt <= 0 || !Number.isInteger(betAmt)) {
+      return alert("Invalid bet amount");
+    }
+    
+    if (slotsSpinning) return;
+    
     setSlotSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
+
+    //Ill add routing later trust
   }
   
   return (
@@ -122,7 +133,13 @@ export default function Page(){
           transition={{ duration: 0.35, ease: "easeInOut" }}
           className={`flex-1 py-4 overflow-hidden ${!extendSidebar && "p-4"}`}
         >
-            <h1>This is where the slots will be</h1>
+          <div className="flex items-center justify-center">
+          <div className="flex h-[calc(100%-64px)] my-32 justify-center items-center pt-2 border-2 rounded-lg">
+            <canvas ref={slot1Ref} width="180" height="300" />
+            <canvas ref={slot2Ref} width="180" height="300" />
+            <canvas ref={slot3Ref} width="180" height="300" />
+          </div>
+          </div>
         </motion.div>
       </div>
     </div>
