@@ -20,6 +20,7 @@ export default function Page(){
   const slot1Ref = useRef<HTMLCanvasElement | null>(null);
   const slot2Ref = useRef<HTMLCanvasElement | null>(null);
   const slot3Ref = useRef<HTMLCanvasElement | null>(null);
+  const dotLottieRef = useRef<DotLottie | null>(null);
   
   const { chips, setChips, chipsFetched } = useChips();
   
