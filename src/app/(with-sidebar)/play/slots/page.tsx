@@ -15,6 +15,7 @@ import { BannerAd } from "@/components/ui/global/ads";
 import { Field } from "@/components/ui/field";
 import clsx from "clsx";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
+import { sleep } from "@/lib/sleep";
 
 export default function Page(){
   const slot1Ref = useRef<HTMLCanvasElement | null>(null);
@@ -40,7 +41,31 @@ export default function Page(){
     setExtendSidebar(false);
     setMessage("Spinning... ");
 
-    //Ill add routing later trust
+    const res = await fetch("/api/games/slots", {
+      method: "POST",
+      body: JSON.stringify({ betAmt, slots: 3}),
+    });
+
+    if (res) {console.log('Fetched res')};
+
+    await sleep(4500)
+
+    let json;
+
+    try {
+      json = await res.json();
+    } catch {
+      json = { outcomes: ["err"], message: "Invalid or empty response" };
+    }
+
+    const outcomes = json.outcomes;
+
+    if (json.updatedChips !== undefined) {
+      setChips(json.updatedChips);
+    }
+
+    //This is temporary- until i add animations
+    setMessage(outcomes);
   }
   
   return (

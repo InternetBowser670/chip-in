@@ -15,7 +15,9 @@ function oneInThree(seed: string) {
 }
 
 export async function POST(req: Request) {
-  const { betAmt, slots } = await req.json();
+  console.log('POST succeded')
+  
+    const { betAmt, slots } = await req.json();
 
   if (betAmt <= 0 || !Number.isInteger(betAmt)) {
     return NextResponse.json(
