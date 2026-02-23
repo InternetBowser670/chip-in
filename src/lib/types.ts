@@ -39,6 +39,10 @@ export interface UserHistory {
       nonce: number;
     };
   };
+  slotsData?: {
+    gameId: string;
+    outcome: "win" | "lose";
+  };
 }
 
 export interface GeneralHistory {
@@ -71,6 +75,10 @@ export interface GeneralHistory {
       clientSeed: string;
       nonce: number;
     };
+  };
+  slotsData?: {
+    gameId: string;
+    outcome: "win" | "lose";
   };
   promoCodeData?: {
     code: string;

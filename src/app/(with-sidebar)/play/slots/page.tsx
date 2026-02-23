@@ -25,7 +25,7 @@ export default function Page(){
   const { chips, setChips, chipsFetched } = useChips();
   
   const [betAmt, setBetAmt] = useState<number | null>(null);
-  const [extendSidebar, setExtendSidebar] = useState(true);
+  const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
   const [slotsSpinning, setSlotSpinning] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Place your bet to start a new game!");
   
