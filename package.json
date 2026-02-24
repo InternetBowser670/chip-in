@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.31.6",
+    "@clerk/nextjs": "^6.38.2",
     "@clerk/themes": "^2.4.50",
     "@gsap/react": "^2.1.2",
     "@lottiefiles/dotlottie-react": "^0.17.5",

@@ -46,8 +46,6 @@ export default function Page(){
       body: JSON.stringify({ betAmt, slots: 3}),
     });
 
-    if (res) {console.log('Fetched res')};
-
     await sleep(4500)
 
     let json;
@@ -57,6 +55,8 @@ export default function Page(){
     } catch {
       json = { outcomes: ["err"], message: "Invalid or empty response" };
     }
+
+    console.log(json);
 
     const outcomes = json.outcomes;
 
