@@ -184,7 +184,7 @@ export default function Home() {
                 Win instantly.
               </h1>
               <p className="max-w-md text-lg text-muted-foreground">
-                Fast, provably fair games with real payouts and zero friction.
+                Fast, provably fair games that you can enjoy for free.
               </p>
               <SignedOut>
                 <SignUpButton>
