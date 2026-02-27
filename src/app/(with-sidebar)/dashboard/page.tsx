@@ -18,6 +18,7 @@ import { useLiveUsers } from "@/components/providers";
 import Ping from "@/components/ui/global/ping";
 import { FaUser } from "react-icons/fa";
 import { BannerAd } from "@/components/ui/global/ads";
+import { UserLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
 
 export default function Page() {
   const router = useRouter();
@@ -103,7 +104,7 @@ export default function Page() {
                   </Button>
                 </CardFooter>
               </Card>
-              <Card className="p-4 mx-2">
+              <Card className="flex flex-col justify-between h-full p-4 mx-2">
                 <div className="flex justify-center">
                   <GiPerspectiveDiceSixFacesSix size="70" />
                 </div>
@@ -127,6 +128,7 @@ export default function Page() {
             <div className="flex items-center gap-4">
               <MostPlayedGamesChart />
               <MostProfitableGamesChart />
+              <UserLeaderboardPlacementChart />
               <BannerAd />
               <BannerAd />
               <BannerAd />
