@@ -7,6 +7,9 @@ import {
   GiPerspectiveDiceSixFacesSix,
   GiUnlitBomb,
 } from "react-icons/gi";
+import {
+  PiJoystickLight
+} from "react-icons/pi"
 import OpenAdminDash from "@/components/ui/admin/open-admin-dash";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,7 +25,7 @@ import { BannerAd } from "@/components/ui/global/ads";
 export default function Page() {
   const router = useRouter();
 
-  const { mines, blackjack, coinflip } = useLiveUsers();
+  const { mines, blackjack, coinflip, slots } = useLiveUsers();
 
   return (
     <>
@@ -97,6 +100,30 @@ export default function Page() {
                 <CardFooter>
                   <Button
                     onClick={() => router.push("/play/mines")}
+                    className="w-full"
+                  >
+                    Play now!
+                  </Button>
+                </CardFooter>
+              </Card>
+              <Card className="p-4 mx-2">
+                <div className="flex justify-center">
+                  <PiJoystickLight size="70"/>
+                </div>
+                <CardContent>
+                  <CardTitle className="text-4xl font-extrabold tracking-tight text-center scroll-m-20 text-balance">
+                    Slots
+                  </CardTitle>
+                  <div className="flex items-center justify-center w-full gap-2">
+                    <Ping />
+                    <FaUser />
+                    <p>Live users:</p>
+                    {slots}
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    onClick={() => router.push("/play/slots")}
                     className="w-full"
                   >
                     Play now!

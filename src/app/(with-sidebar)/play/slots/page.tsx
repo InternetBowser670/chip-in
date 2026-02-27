@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useChips } from "@/components/providers";
 import { PiPokerChip } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
@@ -14,20 +14,94 @@ import {
 import { BannerAd } from "@/components/ui/global/ads";
 import { Field } from "@/components/ui/field";
 import clsx from "clsx";
+import { DotLottie } from "@lottiefiles/dotlottie-web";
+import { sleep } from "@/lib/sleep";
+import confetti from "canvas-confetti";
 
 export default function Page(){
+  const slot1Ref = useRef<HTMLCanvasElement | null>(null);
+  const slot2Ref = useRef<HTMLCanvasElement | null>(null);
+  const slot3Ref = useRef<HTMLCanvasElement | null>(null);
+  const dotLottieRef = useRef<DotLottie | null>(null);
+  
   const { chips, setChips, chipsFetched } = useChips();
   
   const [betAmt, setBetAmt] = useState<number | null>(null);
-  const [extendSidebar, setExtendSidebar] = useState(true);
-  const [slotsSpinning, setSlotSpinning] = useState<boolean>(false);
+  const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
+  const [slotsSpinning, setSlotsSpinning] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Place your bet to start a new game!");
   
   async function handleSpin() {
-    console.log("K ur spinning");
-    setSlotSpinning(true);
+    if (betAmt == null || betAmt <= 0 || !Number.isInteger(betAmt)) {
+      return alert("Invalid bet amount");
+    }
+    
+    if (slotsSpinning) return;
+    
+    setSlotsSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
+
+    const reelCount = 3; 
+
+    const res = await fetch("/api/games/slots", {
+      method: "POST",
+      body: JSON.stringify({ betAmt, reels: reelCount }),
+    });
+
+    let json;
+    try {
+      json = await res.json();
+    } catch {
+      json = { outcomes: ["err"], message: "Invalid or empty response" };
+    }
+
+    console.log("slots response", json);
+
+    const outcomes = json.outcomes || 'err';
+
+    if (json.updatedChips !== undefined) {
+      setChips(json.updatedChips);
+    }
+
+    //This is temporary- until i add animations
+    setMessage(outcomes);
+    setSlotsSpinning(false);
+    
+    if (outcomes != 'er') {
+      let isWin = outcomes.every((n:number) => n === outcomes[0]);
+    if (isWin) {
+      
+      //Confetti
+      const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            const randomInRange = (min: number, max: number) =>
+              Math.random() * (max - min) + min;
+            const interval = window.setInterval(() => {
+              const timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) {
+                return clearInterval(interval);
+              }
+              const particleCount = 50 * (timeLeft / duration);
+              confetti({
+                ...defaults,
+                particleCount,
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+              });
+              confetti({
+                ...defaults,
+                particleCount,
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+              });
+            }, 250);
+      setMessage('You win!'+ outcomes)
+    } else {
+      setMessage('You lose, spin again?' + outcomes);
+    }
+    } else {
+      setMessage('err');
+    }
   }
   
   return (
@@ -122,7 +196,13 @@ export default function Page(){
           transition={{ duration: 0.35, ease: "easeInOut" }}
           className={`flex-1 py-4 overflow-hidden ${!extendSidebar && "p-4"}`}
         >
-            <h1>This is where the slots will be</h1>
+          <div className="flex items-center justify-center">
+          <div className="flex h-[calc(100%-64px)] my-32 justify-center items-center pt-2 border-2 rounded-lg">
+            <canvas ref={slot1Ref} width="180" height="300" />
+            <canvas ref={slot2Ref} width="180" height="300" />
+            <canvas ref={slot3Ref} width="180" height="300" />
+          </div>
+          </div>
         </motion.div>
       </div>
     </div>
