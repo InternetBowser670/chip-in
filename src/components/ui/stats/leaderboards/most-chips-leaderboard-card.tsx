@@ -74,9 +74,9 @@ export default function MostChipsLeaderboardCard() {
       <div className="flex items-center justify-center">
         <h2 className="text-2xl font-bold text-center">Most Chips</h2>
       </div>
-      <div className="flex flex-col items-start gap-2 p-2 overflow-y-auto">
-        {userCounts && userCounts.length > 0 ? (
-          userCounts.map((u, i) => (
+      {userCounts && userCounts.length > 0 ? (
+        <div className="flex flex-col items-start gap-2 p-2 overflow-y-auto">
+          {userCounts.map((u, i) => (
             <UserCard
               key={u.userId}
               index={i}
@@ -84,11 +84,11 @@ export default function MostChipsLeaderboardCard() {
               chips={u.chipCount}
               imageUrl={u.imageUrl}
             />
-          ))
-        ) : (
-          <div className="text-center">Loading...</div>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center">Loading...</div>
+      )}
     </Card>
   );
 }
