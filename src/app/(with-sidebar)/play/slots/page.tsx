@@ -67,9 +67,12 @@ export default function Page(){
     //This is temporary- until i add animations
     setMessage(outcomes);
     setSlotsSpinning(false);
-
-    let isWin = outcomes.every((n:number) => n === outcomes[0]);
+    
+    if (outcomes != 'er') {
+      let isWin = outcomes.every((n:number) => n === outcomes[0]);
     if (isWin) {
+      
+      //Confetti
       const duration = 5 * 1000;
             const animationEnd = Date.now() + duration;
             const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -92,6 +95,12 @@ export default function Page(){
                 origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
               });
             }, 250);
+      setMessage('You win!'+ outcomes)
+    } else {
+      setMessage('You lose, spin again?' + outcomes);
+    }
+    } else {
+      setMessage('err');
     }
   }
   
