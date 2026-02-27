@@ -199,7 +199,7 @@ export function UserLeaderboardPlacementChart() {
       </div>
 
       <CardFooter className="flex items-center justify-center">
-        <Button onClick={() => router.push("/leaderboards")}>
+        <Button onClick={() => router.push("/leaderboard")}>
           View Full Leaderboard <IoArrowForwardOutline />
         </Button>
       </CardFooter>
