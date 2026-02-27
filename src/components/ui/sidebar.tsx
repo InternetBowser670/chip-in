@@ -98,6 +98,17 @@ export default function Sidebar() {
               >
                 <p>Mines</p>
               </Button>
+              <Button
+                variant={"ghost"}
+                onClick={() => {
+                  router.push("/play/slots");
+                }}
+                className={clsx("flex items-center justify-start gap-2 text-start",
+                  { "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4": usePathname() === "/play/slots" }
+                )}
+              >
+                <p>Slots</p>
+              </Button>
             </div>
             <Separator />
             <div className="flex flex-col w-full gap-2 mx-2 my-2 text-left">
