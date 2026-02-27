@@ -19,7 +19,7 @@ function oneInN(seed: string, n: number) {
 export async function POST(req: Request) {
   const { betAmt, reels } = await req.json();
 
-  let itemsPerReel = 7;
+  let itemsPerReel = 5;
   
   //Prepraration for variable reels
   const reelsCount = Number(reels);
