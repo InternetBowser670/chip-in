@@ -27,7 +27,7 @@ export default function Page(){
   
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
-  const [slotsSpinning, setSlotSpinning] = useState<boolean>(false);
+  const [slotsSpinning, setSlotsSpinning] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Place your bet to start a new game!");
   
   async function handleSpin() {
@@ -37,28 +37,27 @@ export default function Page(){
     
     if (slotsSpinning) return;
     
-    setSlotSpinning(true);
+    setSlotsSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
 
+    const reelCount = 3; 
+
     const res = await fetch("/api/games/slots", {
       method: "POST",
-      body: JSON.stringify({ betAmt, slots: 3}),
+      body: JSON.stringify({ betAmt, reels: reelCount }),
     });
 
-    await sleep(4500)
-
     let json;
-
     try {
       json = await res.json();
     } catch {
       json = { outcomes: ["err"], message: "Invalid or empty response" };
     }
 
-    console.log(json);
+    console.log("slots response", json);
 
-    const outcomes = json.outcomes;
+    const outcomes = json.outcomes || 'err';
 
     if (json.updatedChips !== undefined) {
       setChips(json.updatedChips);
@@ -66,6 +65,7 @@ export default function Page(){
 
     //This is temporary- until i add animations
     setMessage(outcomes);
+    setSlotsSpinning(false);
   }
   
   return (

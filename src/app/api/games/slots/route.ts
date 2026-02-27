@@ -8,16 +8,31 @@ function sha256(value: string) {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
 
-function oneInThree(seed: string) {
+function oneInN(seed: string, n: number) {
   const hash = sha256(seed);
-  //Generates random number 1-3 inclusive
-  return Math.floor(parseInt(hash.slice(0,2), 16) / 86) + 1;
+  //Generates random number 0-255
+  const x = parseInt(hash.slice(0, 2), 16);
+  //Generates random number 0-n inclusive 
+  return Math.floor((x * n) / 256) + 1;
 }
 
 export async function POST(req: Request) {
-  console.log('POST succeded')
+  const { betAmt, reels } = await req.json();
+
+  let itemsPerReel = 7;
   
-    const { betAmt, slots } = await req.json();
+  //Prepraration for variable reels
+  const reelsCount = Number(reels);
+  if (
+    Number.isNaN(reelsCount) ||
+    !Number.isInteger(reelsCount) ||
+    reelsCount <= 0
+  ) {
+    return NextResponse.json(
+      { message: "Invalid reels count" },
+      { status: 400 },
+    );
+  }
 
   if (betAmt <= 0 || !Number.isInteger(betAmt)) {
     return NextResponse.json(
@@ -53,24 +68,21 @@ export async function POST(req: Request) {
     );
   }
 
-  const serverSeed = crypto.randomBytes(32).toString("hex");
-  const serverSeedHash = sha256(serverSeed);
+  let serverSeed;
+  let serverSeedHash;
   
-  //For each outcome, 1 & 2 = bomb, 3 = 7
-  //And no, im not putting 'bomb' or '7' in the acutal outcomes variable for animation purposes
-  const outcomes = [];
-  for (const slot of slots) {
-    outcomes.push(oneInThree(serverSeed));
-  };
-  let isWin = true;
-  for (const slot of slots) {
-    if (slot != 2) {
-        isWin = false;
-        break;
-    }
+  const outcomes: number[] = [];
+  for (let i = 0; i < reelsCount; i++) {
+    //Server seed & Hash NEED to be regenerated every time or else you will always win
+    serverSeed = crypto.randomBytes(32).toString("hex");
+    serverSeedHash = sha256(serverSeed);
+    outcomes.push(oneInN(serverSeed, itemsPerReel));
   }
 
-  const netChange = isWin ? betAmt : -betAmt;
+  let isWin = outcomes.every((n) => n === outcomes[0]);
+
+  //Below calc should guarentee 98% payout
+  const netChange = isWin ? Math.floor(betAmt * reelsCount * itemsPerReel * 0.98) : -betAmt;
   const updatedChips = currentChips + netChange;
   const now = Date.now();
   const gameId = crypto.randomUUID();
@@ -78,7 +90,7 @@ export async function POST(req: Request) {
   
   const historyDoc: GeneralHistory = {
     userId: clerkUser.id,
-    type: "coinflip",
+    type: "slots",
     betAmt,
     startCount: currentChips,
     endCount: updatedChips,
@@ -104,11 +116,12 @@ export async function POST(req: Request) {
     ),
   ]);
 
-  return NextResponse.json({
-    outcomes,
-    updatedChips,
-    serverSeedHash,
-    serverSeed,
-    status: 200,
-  });
+  return NextResponse.json(
+    {
+      outcomes,
+      updatedChips,
+      serverSeed,
+    },
+    { status: 200 },
+  );
 }
