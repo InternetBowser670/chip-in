@@ -17,19 +17,28 @@ import clsx from "clsx";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { sleep } from "@/lib/sleep";
 import confetti from "canvas-confetti";
+import Image from "next/image";
 
 export default function Page(){
-  const slot1Ref = useRef<HTMLCanvasElement | null>(null);
-  const slot2Ref = useRef<HTMLCanvasElement | null>(null);
-  const slot3Ref = useRef<HTMLCanvasElement | null>(null);
-  const dotLottieRef = useRef<DotLottie | null>(null);
+  const items = [
+    '/slots/seven.png',
+    '/slots/whitebar.png',
+    '/slots/gem.png',
+    '/slots/clover.png',
+    '/slots/bell.png',
+  ]
   
+  const [slot1Img, setSlot1Img] = useState<string>('');
+  const [slot2Img, setSlot2Img] = useState<string>('');
+  const [slot3Img, setSlot3Img] = useState<string>('');
+
   const { chips, setChips, chipsFetched } = useChips();
   
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
   const [slotsSpinning, setSlotsSpinning] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Place your bet to start a new game!");
+  const [outcomesRef, setOutcomesRef] = useState<number[]>([1,1,1])
   
   async function handleSpin() {
     if (betAmt == null || betAmt <= 0 || !Number.isInteger(betAmt)) {
@@ -56,19 +65,16 @@ export default function Page(){
       json = { outcomes: ["err"], message: "Invalid or empty response" };
     }
 
-    console.log("slots response", json);
-
     const outcomes = json.outcomes || 'err';
+    setOutcomesRef(json.outcomes);
 
     if (json.updatedChips !== undefined) {
       setChips(json.updatedChips);
     }
-
-    //This is temporary- until i add animations
-    setMessage(outcomes);
+    
     setSlotsSpinning(false);
     
-    if (outcomes != 'er') {
+    if (outcomes != 'err') {
       let isWin = outcomes.every((n:number) => n === outcomes[0]);
     if (isWin) {
       
@@ -95,9 +101,9 @@ export default function Page(){
                 origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
               });
             }, 250);
-      setMessage('You win!'+ outcomes)
+      setMessage('You win!')
     } else {
-      setMessage('You lose, spin again?' + outcomes);
+      setMessage('You lose, spin again?');
     }
     } else {
       setMessage('err');
@@ -198,11 +204,12 @@ export default function Page(){
         >
           <div className="flex items-center justify-center">
           <div className="flex h-[calc(100%-64px)] my-32 justify-center items-center pt-2 border-2 rounded-lg">
-            <canvas ref={slot1Ref} width="180" height="300" />
-            <canvas ref={slot2Ref} width="180" height="300" />
-            <canvas ref={slot3Ref} width="180" height="300" />
+            <Image src={items[outcomesRef[0]-1]} width={200} height={300} alt={'Slot 1'}/>
+            <Image src={items[outcomesRef[1]-1]} width={200} height={300} alt={'Slot 2'}/>
+            <Image src={items[outcomesRef[2]-1]} width={200} height={300} alt={'Slot 3'}/>
           </div>
           </div>
+          <a href="https://www.vecteezy.com/free-vector/slot-machine" target="_blank"className="text-grey-50 italic">Slot Machine Vectors made by Vecteezy</a>
         </motion.div>
       </div>
     </div>
