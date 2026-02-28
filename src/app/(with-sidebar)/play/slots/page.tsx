@@ -18,19 +18,20 @@ import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { sleep } from "@/lib/sleep";
 import confetti from "canvas-confetti";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 export default function Page(){
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  const currentTheme = resolvedTheme || theme;
+
   const items = [
     '/slots/seven.png',
-    '/slots/whitebar.png',
+    //Change bar between black and whte depending on theme
+    currentTheme === 'dark' ? '/slots/whitebar.png' : '/slots/blackbar.png',
     '/slots/gem.png',
     '/slots/clover.png',
     '/slots/bell.png',
-  ]
-  
-  const [slot1Img, setSlot1Img] = useState<string>('');
-  const [slot2Img, setSlot2Img] = useState<string>('');
-  const [slot3Img, setSlot3Img] = useState<string>('');
+  ];
 
   const { chips, setChips, chipsFetched } = useChips();
   
@@ -235,9 +236,9 @@ export default function Page(){
           className={`flex-1 py-4 overflow-hidden ${!extendSidebar && "p-4"}`}
         >
           <div className="flex items-center justify-center">
-          <div className="flex h-[calc(100%-64px)] my-32 justify-center items-center pt-2 border-2 rounded-lg">
+          <div className="flex h-[calc(100%-64px)] my-32 justify-center items-center border-2 rounded-lg">
             <Image src={items[outcomesRef[0]-1]} width={200} height={300} alt={'Slot 1'}/>
-            <Image src={items[outcomesRef[1]-1]} width={200} height={300} alt={'Slot 2'}/>
+            <Image src={items[outcomesRef[1]-1]} width={200} height={300} alt={'Slot 2'} className="border-x-2"/>
             <Image src={items[outcomesRef[2]-1]} width={200} height={300} alt={'Slot 3'}/>
           </div>
           </div>
