@@ -7,7 +7,7 @@ import ModeToggle from "@/components/ui/theme-switcher";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import ClaimChips from "@/components/ui/global/claim-chips";
+import EarnChipsModal from "./global/earn-chips-modal";
 import ChipCount from "@/components/ui/global/chip-count";
 import UserOptions from "./user-options";
 import { useRouter } from "next/navigation";
@@ -36,8 +36,8 @@ export default function Sidebar() {
                 />
                 <p className="flex items-center text-lg!">ChipIn</p>
               </Link>
-              <ClaimChips />
               <ChipCount />
+              <EarnChipsModal />
               <ButtonGroup>
                 <Button
                   onClick={() => redirect("/dashboard")}

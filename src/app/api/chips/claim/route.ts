@@ -6,28 +6,34 @@ import { ChipInUser, GeneralHistory } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-function calculateChips(day: number): number {
-  return Math.floor(
-    (Math.ceil(10 * Math.cbrt(day) * Math.pow(day, 1 / 10)) / 10) * 1000
-  );
-}
+const rewards = [
+  { value: 3000, weight: 45 },
+  { value: 5000, weight: 20 },
+  { value: 10000, weight: 15 },
+  { value: 15000, weight: 10 },
+  { value: 20000, weight: 4 },
+  { value: 30000, weight: 3 },
+  { value: 40000, weight: 2 },
+  { value: 50000, weight: 1 },
+];
 
-function calculateStreak(claims: Record<string, number>, timezone: string): number {
-  const claimDates = Object.keys(claims).sort();
-  if (claimDates.length === 0) return 0;
-  let streak = 1;
-  let currentDate = DateTime.fromFormat(claimDates[claimDates.length - 1], "yyyy-MM-dd", { zone: timezone });
-  for (let i = claimDates.length - 2; i >= 0; i--) {
-    currentDate = currentDate.minus({ days: 1 });
-    if (claimDates[i] === currentDate.toFormat("yyyy-MM-dd")) streak++;
-    else break;
+function getWeightedReward() {
+  const totalWeight = rewards.reduce((sum, r) => sum + r.weight, 0);
+  const rand = Math.random() * totalWeight;
+  let cumulative = 0;
+
+  for (const reward of rewards) {
+    cumulative += reward.weight;
+    if (rand < cumulative) return reward.value;
   }
-  return streak + 1;
+
+  return 3000;
 }
 
 export async function POST() {
   const clerkUser = await currentUser();
-  if (!clerkUser) return NextResponse.json({ message: "Sign in required" }, { status: 401 });
+  if (!clerkUser)
+    return NextResponse.json({ message: "Sign in required" }, { status: 401 });
 
   const { mainDb } = await connectToDatabases(false);
   const users = mainDb.collection<ChipInUser>("users");
@@ -35,54 +41,53 @@ export async function POST() {
 
   const userDoc = await users.findOne(
     { id: clerkUser.id },
-    { projection: { timezone: 1, chipClaims: 1, totalChips: 1 } }
+    { projection: { timezone: 1, chipClaims: 1, totalChips: 1 } },
   );
 
-  if (!userDoc) return NextResponse.json({ message: "User not found" }, { status: 404 });
+  if (!userDoc)
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
 
   const timezone = userDoc.timezone || "UTC";
   const today = DateTime.now().setZone(timezone).toFormat("yyyy-MM-dd");
   const chipClaims = userDoc.chipClaims || {};
 
-  if (chipClaims[today]) return NextResponse.json({ message: "Already claimed" }, { status: 400 });
+  if (chipClaims[today])
+    return NextResponse.json({ message: "Already claimed" }, { status: 400 });
 
-  const claimDates = Object.keys(chipClaims).sort();
-  const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat("yyyy-MM-dd");
-  
-  let streak = calculateStreak(chipClaims, timezone);
-  if (claimDates.length > 0 && claimDates[claimDates.length - 1] !== yesterday) {
-    streak = 1;
-  }
+  const reward = getWeightedReward();
 
-  const chips = calculateChips(streak);
   const startCount = userDoc.totalChips || 0;
-  const endCount = startCount + chips;
+  const endCount = startCount + reward;
 
   const historyDoc: GeneralHistory = {
     userId: clerkUser.id,
-    type: "daily-claim",
+    type: "daily-spin",
     betAmt: 0,
     startCount,
     endCount,
-    change: chips,
+    change: reward,
     date: Date.now(),
     actor: "user",
     version: "genHistory_v1",
   };
-  
+
   await Promise.all([
     historyColl.insertOne(historyDoc),
     users.updateOne(
       { id: clerkUser.id },
       {
-        $set: { 
-          [`chipClaims.${today}`]: chips,
+        $set: {
+          [`chipClaims.${today}`]: reward,
           totalChips: endCount,
         },
-        $inc: { historyCount: 1 }
-      }
-    )
+        $inc: { historyCount: 1 },
+      },
+    ),
   ]);
 
-  return NextResponse.json({ message: "Success", claimed: chips, total: endCount });
+  return NextResponse.json({
+    message: "Success",
+    reward,
+    total: endCount,
+  });
 }
