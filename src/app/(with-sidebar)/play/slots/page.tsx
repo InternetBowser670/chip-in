@@ -36,7 +36,7 @@ export default function Page(){
   
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
-  const [slotsSpinning, setSlotsSpinning] = useState<boolean>(false);
+  const [anySlotsSpinning, setAnySlotsSpinning] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Place your bet to start a new game!");
   const [outcomesRef, setOutcomesRef] = useState<number[]>([1,1,1])
   
@@ -45,9 +45,9 @@ export default function Page(){
       return alert("Invalid bet amount");
     }
     
-    if (slotsSpinning) return;
+    if (anySlotsSpinning) return;
     
-    setSlotsSpinning(true);
+    setAnySlotsSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
 
@@ -66,13 +66,45 @@ export default function Page(){
     }
 
     const outcomes = json.outcomes || 'err';
+    
+    //Slots is an array containing objects representing all slots
+    const slots = [];
+    for (let i=0;i< outcomes.length; i++) {
+      slots.push({itemNum:outcomesRef[i], spinning: true})
+    }
+
+    //Actual anim loop
+    // This for loop is not intended to be done forever, 
+    // rather until it is broken. While would not work here because it cannot accept a state
+    for(let spini=0;spini<Infinity;spini++) { 
+      setOutcomesRef([slots[0].itemNum,slots[1].itemNum,slots[2].itemNum]);
+      await sleep(75);
+      
+      for (let i=0;i< slots.length; i++){ //Update slots item values
+        let slot = slots[i];
+        if (slot.spinning) {
+          if (slot.itemNum == json.outcomes[i] && Math.random() > 0.7 && spini > 10) { 
+              slot.spinning = false;
+          } else { //+1 the value as normal
+            slot.itemNum = slot.itemNum +1;
+            if (slot.itemNum > 5) {
+              slot.itemNum = 1;
+            }
+          }
+        }
+      }
+      
+      if (!slots.some(obj => obj.spinning)) {
+        setAnySlotsSpinning(false);
+        break;
+      }   
+    }
+    
     setOutcomesRef(json.outcomes);
 
     if (json.updatedChips !== undefined) {
       setChips(json.updatedChips);
     }
-    
-    setSlotsSpinning(false);
     
     if (outcomes != 'err') {
       let isWin = outcomes.every((n:number) => n === outcomes[0]);
@@ -178,12 +210,12 @@ export default function Page(){
               <Button
                 variant={"default"}
                 className={clsx(
-                slotsSpinning
+                anySlotsSpinning
                 ? "grayscale cursor-not-allowed"
                 : "cursor-pointer",
                 )}
                 onClick={() =>
-                !slotsSpinning &&
+                !anySlotsSpinning &&
                 handleSpin()
                 }
               >
