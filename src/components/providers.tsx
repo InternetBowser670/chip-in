@@ -211,6 +211,7 @@ export function useLiveUsers() {
     coinflip: 0,
     mines: 0,
     blackjack: 0,
+    slots: 0,
     chat: 0,
   });
   const [ping, setPing] = useState(0);

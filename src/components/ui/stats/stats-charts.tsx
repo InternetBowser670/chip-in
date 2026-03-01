@@ -24,6 +24,7 @@ export function MostPlayedGamesChart() {
       { game: "Coinflip", value: 0 },
       { game: "Blackjack", value: 0 },
       { game: "Mines", value: 0 },
+      { game: "Slots", value: 0 },
     ],
   );
 
@@ -33,9 +34,10 @@ export function MostPlayedGamesChart() {
       const json = await res.json();
 
       setChartData([
-        { game: "Coinflip", value: json.user.coinFlipCount ?? 0 },
-        { game: "Blackjack", value: json.user.blackjackCount ?? 0 },
-        { game: "Mines", value: json.user.minesCount ?? 0 },
+        { game: "Coinflip", value: json.user.coinFlipCount },
+        { game: "Blackjack", value: json.user.blackjackCount },
+        { game: "Mines", value: json.user.minesCount },
+        { game: "Slots", value: json.user.slotsCount },
       ]);
     }
     fetchData();
@@ -75,6 +77,7 @@ export function MostProfitableGamesChart() {
       { game: "Coinflip", value: 0 },
       { game: "Blackjack", value: 0 },
       { game: "Mines", value: 0 },
+      { game: "Slots", value: 0 },
     ],
   );
 
@@ -84,9 +87,10 @@ export function MostProfitableGamesChart() {
       const json = await res.json();
 
       setChartData([
-        { game: "Coinflip", value: json.user.coinFlipProfit ?? 0 },
-        { game: "Blackjack", value: json.user.blackjackProfit ?? 0 },
-        { game: "Mines", value: json.user.minesProfit ?? 0 },
+        { game: "Coinflip", value: json.user.coinFlipProfit },
+        { game: "Blackjack", value: json.user.blackjackProfit },
+        { game: "Mines", value: json.user.minesProfit },
+        { game: "Slots", value: json.user.slotsProfit },
       ]);
     }
     fetchData();
