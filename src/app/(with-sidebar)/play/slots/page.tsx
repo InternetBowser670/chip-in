@@ -33,7 +33,7 @@ export default function Page() {
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
   const [anySlotsSpinning, setAnySlotsSpinning] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("Place your bet to start a new game!");
+  const [message, setMessage] = useState<string>("Place your bet!");
   const [outcomesRef, setOutcomesRef] = useState<number[]>([1, 1, 1]);
   const [slotsRef, setSlotsRef] = useState<Slot[]>([
     { itemNum: 1, spinning: false },
