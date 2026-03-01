@@ -79,7 +79,7 @@ export default function Page() {
         if (slot.spinning) {
           if (
             slot.itemNum === json.outcomes[i] &&
-            Math.random() > 0.8 &&
+            (Math.random() > 0.8 || spini > 200) &&
             spini > 10
           ) {
             slot.spinning = false;
