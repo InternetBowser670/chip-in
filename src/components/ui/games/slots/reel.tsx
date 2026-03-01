@@ -39,7 +39,7 @@ export default function Reel({ slotRef, speed }: ReelProps) {
         if (spinning) {
             controls.start({
                 y: [0, 200],
-                transition: { ease: 'linear', duration: speed, repeat: Infinity },
+                transition: { ease: 'linear', duration: speed-0.01, repeat: Infinity },
             });
         } else {
             controls.stop();
