@@ -24,9 +24,11 @@ export async function GET() {
           minesCount: 1,
           blackjackCount: 1,
           coinFlipCount: 1,
+          slotsCount: 1,
           minesProfit: 1,
           blackjackProfit: 1,
           coinFlipProfit: 1,
+          slotsProfit: 1,
         },
       }
     );
