@@ -39,6 +39,10 @@ export interface UserHistory {
       nonce: number;
     };
   };
+  slotsData?: {
+    gameId: string;
+    outcomes: number[];
+  };
 }
 
 export interface GeneralHistory {
@@ -72,6 +76,10 @@ export interface GeneralHistory {
       nonce: number;
     };
   };
+  slotsData?: {
+    gameId: string;
+    outcomes: number[];
+  };
   promoCodeData?: {
     code: string;
     reward: number;
@@ -101,6 +109,7 @@ export interface ChipInUser extends User {
   _id: ObjectId;
   totalChips: number;
   timezone: string;
+  slotsCount: number;
   minesCount: number;
   blackjackCount: number;
   coinFlipCount: number;
@@ -112,6 +121,7 @@ export interface ChipInUser extends User {
   coinFlipProfit: number;
   blackjackProfit: number;
   minesProfit: number;
+  slotsProfit: number;
 }
 
 export interface PlayingCardProps {
