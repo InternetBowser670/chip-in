@@ -226,6 +226,8 @@ export default function Page() {
             <br />
             <h2 className="text-2xl font-bold text-center">{message}</h2>
             <BannerAd className="flex justify-center mt-2" />
+            <br/>
+            <a href="https://www.vecteezy.com/free-vector/slot-machine" target="_blank"className="text-gray-500 italic">Slot Machine Vectors made by Vecteezy</a>
           </div>
         </motion.div>
         <motion.div
@@ -237,11 +239,12 @@ export default function Page() {
           <div className="flex items-center justify-center">
           <div className="flex h-100% my-32 justify-center items-center border-2 rounded-lg">
             <Reel slotRef={slotsRef[0]}/>
+            <div className="border-x-2">
             <Reel slotRef={slotsRef[1]}/>
+            </div>
             <Reel slotRef={slotsRef[2]}/>
           </div>
           </div>
-          <a href="https://www.vecteezy.com/free-vector/slot-machine" target="_blank"className="text-grey-50 italic">Slot Machine Vectors made by Vecteezy</a>
         </motion.div>
       </div>
     </div>
