@@ -10,9 +10,10 @@ interface SlotRef {
 
 interface ReelProps {
     slotRef: SlotRef;
+    speed: number;
 }
 
-export default function Reel({ slotRef }: ReelProps) {
+export default function Reel({ slotRef, speed }: ReelProps) {
     const { itemNum, spinning } = slotRef;
     const width = 200;
 
@@ -38,11 +39,11 @@ export default function Reel({ slotRef }: ReelProps) {
         if (spinning) {
             controls.start({
                 y: [0, 200],
-                transition: { ease: 'linear', duration: 0.1, repeat: Infinity },
+                transition: { ease: 'linear', duration: speed, repeat: Infinity },
             });
         } else {
             controls.stop();
-            controls.set({ y: 0 });
+            controls.set({ y: 200 });
         }
     }, [spinning, controls]);
 

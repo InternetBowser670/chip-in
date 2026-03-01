@@ -29,6 +29,7 @@ interface Slot {
 export default function Page() {
   const { chips, setChips, chipsFetched } = useChips();
 
+  const [speed, setSpeed] = useState<number>(0.1);
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
   const [anySlotsSpinning, setAnySlotsSpinning] = useState<boolean>(false);
@@ -47,6 +48,7 @@ export default function Page() {
     
     if (anySlotsSpinning) return;
     
+    setSpeed(0.1);
     setAnySlotsSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
@@ -74,12 +76,14 @@ export default function Page() {
 
     //actual anim loop
     for (let spini = 0; spini < Infinity; spini++) {
+      setSlotsRef(slots.map((s) => ({ ...s })));
+      
       for (let i = 0; i < slots.length; i++) {
         const slot = slots[i];
         if (slot.spinning) {
           if (
             slot.itemNum === json.outcomes[i] &&
-            (Math.random() > 0.8 || spini > 200) &&
+            (Math.random() < 0.7 || spini > 200) &&
             spini > 10
           ) {
             slot.spinning = false;
@@ -92,12 +96,11 @@ export default function Page() {
         }
       }
 
-      setSlotsRef(slots.map((s) => ({ ...s })));
-
-      await sleep(100);
+      await sleep(speed*1000);
 
       if (!slots.some((obj) => obj.spinning)) {
         setAnySlotsSpinning(false);
+        setSlotsRef(slots.map((s) => ({ ...s })));
         break;
       }
     }
@@ -238,11 +241,11 @@ export default function Page() {
         >
           <div className="flex items-center justify-center">
           <div className="flex h-100% my-32 justify-center items-center border-2 rounded-lg">
-            <Reel slotRef={slotsRef[0]}/>
+            <Reel slotRef={slotsRef[0]} speed={speed}/>
             <div className="border-x-2">
-            <Reel slotRef={slotsRef[1]}/>
+            <Reel slotRef={slotsRef[1]} speed={speed}/>
             </div>
-            <Reel slotRef={slotsRef[2]}/>
+            <Reel slotRef={slotsRef[2]} speed={speed}/>
           </div>
           </div>
         </motion.div>
