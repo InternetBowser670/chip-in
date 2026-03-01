@@ -19,27 +19,26 @@ import { sleep } from "@/lib/sleep";
 import confetti from "canvas-confetti";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import Reel from "@/components/ui/games/slots/reel"
 
-export default function Page(){
-  const { theme, resolvedTheme, setTheme } = useTheme();
-  const currentTheme = resolvedTheme || theme;
+interface Slot {
+  itemNum: number;
+  spinning: boolean;
+}
 
-  const items = [
-    '/slots/seven.png',
-    //Change bar between black and whte depending on theme
-    currentTheme === 'dark' ? '/slots/whitebar.png' : '/slots/blackbar.png',
-    '/slots/gem.png',
-    '/slots/clover.png',
-    '/slots/bell.png',
-  ];
-
+export default function Page() {
   const { chips, setChips, chipsFetched } = useChips();
-  
+
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
   const [anySlotsSpinning, setAnySlotsSpinning] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("Place your bet to start a new game!");
-  const [outcomesRef, setOutcomesRef] = useState<number[]>([1,1,1])
+  const [outcomesRef, setOutcomesRef] = useState<number[]>([1, 1, 1]);
+  const [slotsRef, setSlotsRef] = useState<Slot[]>([
+    { itemNum: 1, spinning: false },
+    { itemNum: 1, spinning: false },
+    { itemNum: 1, spinning: false },
+  ]);
   
   async function handleSpin() {
     if (betAmt == null || betAmt <= 0 || !Number.isInteger(betAmt)) {
@@ -67,41 +66,41 @@ export default function Page(){
     }
 
     const outcomes = json.outcomes || 'err';
-    
-    //Slots is an array containing objects representing all slots
-    const slots = [];
-    for (let i=0;i< outcomes.length; i++) {
-      slots.push({itemNum:outcomesRef[i], spinning: true})
-    }
 
-    //Actual anim loop
-    // This for loop is not intended to be done forever, 
-    // rather until it is broken. While would not work here because it cannot accept a state
-    for(let spini=0;spini<Infinity;spini++) { 
-      setOutcomesRef([slots[0].itemNum,slots[1].itemNum,slots[2].itemNum]);
-      await sleep(75);
-      
-      for (let i=0;i< slots.length; i++){ //Update slots item values
-        let slot = slots[i];
+    let slots: Slot[] = outcomes.map((_:any, i:number) => ({
+      itemNum: slotsRef[i].itemNum,
+      spinning: true,
+    }));
+
+    //actual anim loop
+    for (let spini = 0; spini < Infinity; spini++) {
+      for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i];
         if (slot.spinning) {
-          if (slot.itemNum == json.outcomes[i] && Math.random() > 0.7 && spini > 10) { 
-              slot.spinning = false;
-          } else { //+1 the value as normal
-            slot.itemNum = slot.itemNum +1;
+          if (
+            slot.itemNum === json.outcomes[i] &&
+            Math.random() > 0.8 &&
+            spini > 10
+          ) {
+            slot.spinning = false;
+          } else {
+            slot.itemNum += 1;
             if (slot.itemNum > 5) {
               slot.itemNum = 1;
             }
           }
         }
       }
-      
-      if (!slots.some(obj => obj.spinning)) {
+
+      setSlotsRef(slots.map((s) => ({ ...s })));
+
+      await sleep(100);
+
+      if (!slots.some((obj) => obj.spinning)) {
         setAnySlotsSpinning(false);
         break;
-      }   
+      }
     }
-    
-    setOutcomesRef(json.outcomes);
 
     if (json.updatedChips !== undefined) {
       setChips(json.updatedChips);
@@ -236,10 +235,10 @@ export default function Page(){
           className={`flex-1 py-4 overflow-hidden ${!extendSidebar && "p-4"}`}
         >
           <div className="flex items-center justify-center">
-          <div className="flex h-[calc(100%-64px)] my-32 justify-center items-center border-2 rounded-lg">
-            <Image src={items[outcomesRef[0]-1]} width={200} height={300} alt={'Slot 1'}/>
-            <Image src={items[outcomesRef[1]-1]} width={200} height={300} alt={'Slot 2'} className="border-x-2"/>
-            <Image src={items[outcomesRef[2]-1]} width={200} height={300} alt={'Slot 3'}/>
+          <div className="flex h-100% my-32 justify-center items-center border-2 rounded-lg">
+            <Reel slotRef={slotsRef[0]}/>
+            <Reel slotRef={slotsRef[1]}/>
+            <Reel slotRef={slotsRef[2]}/>
           </div>
           </div>
           <a href="https://www.vecteezy.com/free-vector/slot-machine" target="_blank"className="text-grey-50 italic">Slot Machine Vectors made by Vecteezy</a>
