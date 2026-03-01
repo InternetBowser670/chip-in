@@ -82,7 +82,7 @@ export async function POST(req: Request) {
   let isWin = outcomes.every((n) => n === outcomes[0]);
 
   //Below calc should guarentee 98% payout
-  const netChange = isWin ? Math.floor(betAmt * reelsCount * itemsPerReel * 0.98) : -betAmt;
+  const netChange = isWin ? Math.floor(betAmt * (reelsCount-1) * itemsPerReel * 0.98) : -betAmt;
   const updatedChips = currentChips + netChange;
   const now = Date.now();
   const gameId = crypto.randomUUID();
