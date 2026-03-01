@@ -103,7 +103,7 @@ export default function ClaimChips() {
     if (!status) return "Loading...";
     if (claimed) return "Claimed!";
     if (status.canClaim && status.amount)
-      return `Claim ${status.amount.toLocaleString()} `;
+      return `Claim ${status.amount.toLocaleString()} daily chips`;
     if (!status.canClaim && status.nextAvailable) {
       return `Come back tomorrow.`;
     }
