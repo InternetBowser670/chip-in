@@ -131,6 +131,7 @@ async function connectCounts(
           coinflip: data.coinflipCount ?? 0,
           mines: data.minesCount ?? 0,
           blackjack: data.blackjackCount ?? 0,
+          slots: data.slotsCount ?? 0,
           chat: data.chatCount ?? 0,
         };
         countListeners.forEach((l) => l(newCounts));
