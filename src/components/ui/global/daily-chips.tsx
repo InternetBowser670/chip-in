@@ -33,6 +33,8 @@ export default function DailySpin() {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeIndex, setPrizeIndex] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
+  const [pendingTotal, setPendingTotal] = useState<number | null>(null);
+
   const { setChips } = useChips();
 
   useEffect(() => {
@@ -78,7 +80,8 @@ export default function DailySpin() {
 
       setPrizeIndex(index);
 
-      setChips(data.total);
+      setPendingTotal(data.total);
+
     } catch {
       setIsLocked(false);
       setMustSpin(false);
@@ -87,6 +90,12 @@ export default function DailySpin() {
 
   const handleStopSpinning = () => {
     setMustSpin(false);
+
+    if (pendingTotal !== null) {
+      setChips(pendingTotal);
+      setPendingTotal(null);
+    }
+
     setIsLocked(false);
   };
 
