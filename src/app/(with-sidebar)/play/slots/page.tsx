@@ -51,7 +51,7 @@ export default function Page() {
     
     if (anySlotsSpinning) return;
     
-    setSpeed(0.14);
+    setSpeed(0.15);
     setAnySlotsSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
@@ -78,7 +78,8 @@ export default function Page() {
     }));
 
     //actual anim loop
-    for (let spini = 0; spini < Infinity; spini++) {
+    const MAX_ITERATIONS = 500; // Safety limit to prevent infinite loops
+    for (let spini = 0; spini < MAX_ITERATIONS; spini++) {
       setSlotsRef(slots.map((s) => ({ ...s })));
       
       for (let i = 0; i < slots.length; i++) {
