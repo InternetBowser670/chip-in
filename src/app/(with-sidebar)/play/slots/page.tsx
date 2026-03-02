@@ -40,6 +40,9 @@ export default function Page() {
     { itemNum: 1, spinning: false },
     { itemNum: 1, spinning: false },
   ]);
+
+  const maxSpins = 100;
+  const minSpins = 5;
   
   async function handleSpin() {
     if (betAmt == null || betAmt <= 0 || !Number.isInteger(betAmt)) {
@@ -48,7 +51,7 @@ export default function Page() {
     
     if (anySlotsSpinning) return;
     
-    setSpeed(0.1);
+    setSpeed(0.14);
     setAnySlotsSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
@@ -83,8 +86,8 @@ export default function Page() {
         if (slot.spinning) {
           if (
             slot.itemNum === json.outcomes[i] &&
-            (Math.random() > 0.7 || spini > 200) &&
-            spini > 10
+            (Math.random() > 0.7 || spini > maxSpins) &&
+            spini > minSpins
           ) {
             slot.spinning = false;
           } else {
