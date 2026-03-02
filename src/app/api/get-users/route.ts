@@ -1,7 +1,7 @@
 import { connectToDatabases } from "@/lib/mongodb";
 
 export async function POST() {
-  const useProdDB = false;
+  const useProdDB = true;
   const { mainDb } = await connectToDatabases(useProdDB);
 
   const usersCollection = await mainDb.collection("users");

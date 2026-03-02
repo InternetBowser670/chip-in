@@ -54,16 +54,14 @@ export default function MostChipsLeaderboardCard() {
       const res = await fetch("/api/get-users", { method: "POST" });
       const data = await res.json();
       setUserCounts(
-        data.users
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((u: any) => ({
-            userId: u.id,
-            username: u.username,
-            chipCount: +(u.totalChips || 0),
-            imageUrl: u.image_url,
-          }))
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .sort((a: any, b: any) => b.chipCount - a.chipCount),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data.users.map((u: any) => ({
+          userId: u.id,
+          username: u.username,
+          chipCount: u.totalChips,
+          imageUrl: u.image_url,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        })).sort((a: any, b: any) => b.chipCount - a.chipCount)
       );
     }
     fetchData();
