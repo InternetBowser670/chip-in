@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { motion, useAnimation } from "motion/react";
 import { useTheme } from "next-themes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { sleep } from "@/lib/sleep";
 
 interface SlotRef {
     itemNum: number;
@@ -20,6 +21,7 @@ export default function Reel({ slotRef, speed }: ReelProps) {
     const { theme, resolvedTheme } = useTheme();
     const currentTheme = resolvedTheme || theme;
 
+    
     const items = [
         '/slots/seven.png',
         //Change bar between black and white depending on theme
@@ -28,41 +30,50 @@ export default function Reel({ slotRef, speed }: ReelProps) {
         '/slots/clover.png',
         '/slots/bell.png',
     ];
-
-    // ensure index is within bounds
+    
     const index = Math.min(Math.max(itemNum - 1, 0), items.length - 1);
     const bottomIndex = index === 0 ? items.length - 1 : index - 1;
+    
+    const [item1Num, setItem1Num] = useState<number>(index);
+    const [item2Num, setItem2Num] = useState<number>(bottomIndex);
 
-    const controls = useAnimation();
-
+    const controls1 = useAnimation();
+    const controls2 = useAnimation();
+    
     useEffect(() => {
         if (spinning) {
-            controls.start({
-                y: [0, 200],
-                transition: { ease: 'linear', duration: speed-0.01, repeat: Infinity },
-            });
-        } else {
-            controls.stop();
-            controls.set({ y: 200 });
+        controls2.start({
+            y: [0, 200],
+            transition: {duration: speed, ease: 'linear', }
+        });
+        controls1.start({
+            y: [0, 200],
+            transition: {duration: speed, ease: 'linear', }
+        });
+        setItem2Num(index);
+        setItem1Num(bottomIndex);
         }
-    }, [spinning, controls]);
+
+    }, [spinning, speed, sleep, controls1, controls2, index, bottomIndex]);
 
     return (
         <div className="relative w-50 h-50 overflow-hidden">
-            <motion.div initial={{ y: 0 }} animate={controls}>
+            <motion.div initial={{ y: 0 }} animate={controls1}>
                 <Image
-                    src={items[index]}
+                    src={items[item1Num]}
+                    width={width}
+                    height={width}
+                    alt="Slot"
+                    className="absolute top-4 left-0 "
+                />
+            </motion.div>
+            <motion.div initial={{ y: 0 }} animate={controls2}>
+                <Image
+                    src={items[item2Num]}
                     width={width}
                     height={width}
                     alt="Slot"
                     className="absolute top-4 left-0 -translate-y-[200px]"
-                />
-                <Image
-                    src={items[bottomIndex]}
-                    width={width}
-                    height={width}
-                    alt="Slot"
-                    className="absolute top-[216px] left-0 -translate-y-[200px]"
                 />
             </motion.div>
         </div>
