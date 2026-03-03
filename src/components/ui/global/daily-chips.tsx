@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../button";
 import { useChips } from "@/components/providers";
 import dynamic from "next/dynamic";
@@ -33,7 +33,8 @@ export default function DailySpin() {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeIndex, setPrizeIndex] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
-  const [pendingTotal, setPendingTotal] = useState<number | null>(null);
+
+  const pendingTotalRef = useRef<number | null>(null);
 
   const { setChips } = useChips();
 
@@ -46,7 +47,7 @@ export default function DailySpin() {
     };
 
     fetchStatus();
-  }, [setChips]);
+  }, []);
 
   const handleSpin = async () => {
     if (!status?.canClaim || isLocked) return;
@@ -77,7 +78,11 @@ export default function DailySpin() {
 
       setPrizeIndex(index);
 
-      setPendingTotal(data.total);
+      pendingTotalRef.current = data.total;
+
+      setStatus((prev) =>
+        prev ? { ...prev, canClaim: false } : prev
+      );
 
     } catch {
       setIsLocked(false);
@@ -88,9 +93,9 @@ export default function DailySpin() {
   const handleStopSpinning = () => {
     setMustSpin(false);
 
-    if (pendingTotal !== null) {
-      setChips(pendingTotal);
-      setPendingTotal(null);
+    if (pendingTotalRef.current !== null) {
+      setChips(pendingTotalRef.current);
+      pendingTotalRef.current = null;
     }
 
     setIsLocked(false);
