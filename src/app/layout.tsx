@@ -8,7 +8,7 @@ import { Analytics } from "@vercel/analytics/next";
 import TimezoneSetter from "@/components/ui/timezone-setter";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/providers";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
 import { Popunder, SocialBar } from "@/components/ui/global/ads";
 
 export const metadata: Metadata = {
@@ -62,6 +62,13 @@ export default function RootLayout({
             gtag('config', 'G-3GKZ3LXBM9');
           `}
           </Script>
+          <Script
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+            strategy="afterInteractive"
+            async
+            data-ad-client="ca-pub-7456236988733866"
+            data-ad-frequency-hint="30s"
+          />
           <Popunder />
         </head>
         <body
