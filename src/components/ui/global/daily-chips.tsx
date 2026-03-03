@@ -43,9 +43,6 @@ export default function DailySpin() {
       if (!res.ok) return;
       const data = await res.json();
       setStatus(data);
-      if (data.total !== undefined) {
-        setChips(data.total);
-      }
     };
 
     fetchStatus();
