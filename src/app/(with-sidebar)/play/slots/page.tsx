@@ -114,8 +114,20 @@ export default function Page() {
     }
     
     if (outcomes != 'err') {
-      let isWin = outcomes.every((n:number) => n === outcomes[0]);
-    if (isWin) {
+      //UPDATE THIS IF ADDING VARIABLE REELS
+      let isJackpot = false;
+      let isWin = false;
+      const [a, b, c] = outcomes;
+
+      if (a === b && b === c) {
+        isJackpot = true;
+      } else if (a === b || a === c || b === c) {
+        isWin = true;
+      } else {
+        isWin = false;
+      }
+    
+      if (isJackpot) {
       
       //Confetti
       const duration = 5 * 1000;
@@ -140,7 +152,9 @@ export default function Page() {
                 origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
               });
             }, 250);
-      setMessage('You win!')
+      setMessage('Jackpot!')
+    } else if (isWin){
+      setMessage('Two of a kind!')
     } else {
       setMessage('You lose, spin again?');
     }
