@@ -62,12 +62,11 @@ export default function RootLayout({
             gtag('config', 'G-3GKZ3LXBM9');
           `}
           </Script>
-          <Script
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-            strategy="afterInteractive"
+          <script
             async
             data-ad-client="ca-pub-7456236988733866"
             data-ad-frequency-hint="30s"
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
           />
           <Popunder />
         </head>
