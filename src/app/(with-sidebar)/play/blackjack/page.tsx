@@ -68,7 +68,7 @@ export default function BlackjackPage() {
         setGameActive(true);
         setMessage("Resumed game");
       } else {
-        setMessage("Place your bet to start a new game");
+        setMessage("Place your bet to start a new game!");
       }
 
       setLoading(false);

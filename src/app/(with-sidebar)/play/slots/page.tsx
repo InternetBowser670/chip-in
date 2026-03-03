@@ -33,13 +33,16 @@ export default function Page() {
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
   const [anySlotsSpinning, setAnySlotsSpinning] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("Place your bet to start a new game!");
+  const [message, setMessage] = useState<string>("Place your bet!");
   const [outcomesRef, setOutcomesRef] = useState<number[]>([1, 1, 1]);
   const [slotsRef, setSlotsRef] = useState<Slot[]>([
     { itemNum: 1, spinning: false },
     { itemNum: 1, spinning: false },
     { itemNum: 1, spinning: false },
   ]);
+
+  const maxSpins = 100;
+  const minSpins = 5;
   
   async function handleSpin() {
     if (betAmt == null || betAmt <= 0 || !Number.isInteger(betAmt)) {
@@ -48,7 +51,7 @@ export default function Page() {
     
     if (anySlotsSpinning) return;
     
-    setSpeed(0.1);
+    setSpeed(0.15);
     setAnySlotsSpinning(true);
     setExtendSidebar(false);
     setMessage("Spinning... ");
@@ -75,7 +78,8 @@ export default function Page() {
     }));
 
     //actual anim loop
-    for (let spini = 0; spini < Infinity; spini++) {
+    const MAX_ITERATIONS = 500; // Safety limit to prevent infinite loops
+    for (let spini = 0; spini < MAX_ITERATIONS; spini++) {
       setSlotsRef(slots.map((s) => ({ ...s })));
       
       for (let i = 0; i < slots.length; i++) {
@@ -83,8 +87,8 @@ export default function Page() {
         if (slot.spinning) {
           if (
             slot.itemNum === json.outcomes[i] &&
-            (Math.random() > 0.7 || spini > 200) &&
-            spini > 10
+            (Math.random() > 0.7 || spini > maxSpins) &&
+            spini > minSpins
           ) {
             slot.spinning = false;
           } else {
@@ -110,8 +114,20 @@ export default function Page() {
     }
     
     if (outcomes != 'err') {
-      let isWin = outcomes.every((n:number) => n === outcomes[0]);
-    if (isWin) {
+      //UPDATE THIS IF ADDING VARIABLE REELS
+      let isJackpot = false;
+      let isWin = false;
+      const [a, b, c] = outcomes;
+
+      if (a === b && b === c) {
+        isJackpot = true;
+      } else if (a === b || a === c || b === c) {
+        isWin = true;
+      } else {
+        isWin = false;
+      }
+    
+      if (isJackpot) {
       
       //Confetti
       const duration = 5 * 1000;
@@ -136,7 +152,9 @@ export default function Page() {
                 origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
               });
             }, 250);
-      setMessage('You win!')
+      setMessage('Jackpot!')
+    } else if (isWin){
+      setMessage('Two of a kind!')
     } else {
       setMessage('You lose, spin again?');
     }

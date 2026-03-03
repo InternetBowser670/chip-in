@@ -12,7 +12,7 @@ function oneInN(seed: string, n: number) {
   const hash = sha256(seed);
   //Generates random number 0-255
   const x = parseInt(hash.slice(0, 2), 16);
-  //Generates random number 0-n inclusive 
+  //Generates random number 1-n inclusive 
   return Math.floor((x * n) / 256) + 1;
 }
 
@@ -33,6 +33,14 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+
+  //Return calc- very complex. Multipliers for 3 reels, 5 items per reel are 
+  //Jackpot around 7x
+  //Noraml win around 1.4x
+  const winReturn = 
+  (0.98 * (itemsPerReel ** (reels - 1))) /
+  (reels * (itemsPerReel - 1) + itemsPerReel);
+  const jackpotReturn = itemsPerReel * winReturn;
 
   if (betAmt <= 0 || !Number.isInteger(betAmt)) {
     return NextResponse.json(
@@ -79,10 +87,24 @@ export async function POST(req: Request) {
     outcomes.push(oneInN(serverSeed, itemsPerReel));
   }
 
-  let isWin = outcomes.every((n) => n === outcomes[0]);
+  //UPDATE THIS IF ADDING VARIABLE REELS
+  let isJackpot = false;
+  let isWin = false;
+  const [a, b, c] = outcomes;
 
-  //Below calc should guarentee 98% payout
-  const netChange = isWin ? Math.floor(betAmt * (reelsCount-1) * itemsPerReel * 0.98) : -betAmt;
+  if (a === b && b === c) {
+    isJackpot = true;
+  } else if (a === b || a === c || b === c) {
+    isWin = true;
+  } else {
+    isWin = false;
+  };
+
+  //iccl if its a nested ternary operator
+  const netChange = isJackpot? 
+  Math.floor(betAmt * jackpotReturn) : 
+  isWin? Math.floor(betAmt * winReturn):
+  -betAmt;
   const updatedChips = currentChips + netChange;
   const now = Date.now();
   const gameId = crypto.randomUUID();
