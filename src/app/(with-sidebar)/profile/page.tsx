@@ -7,13 +7,17 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 import { Button } from "@/components/ui/button";
 import { sleep } from "@/lib/sleep";
+import clsx from "clsx";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData>();
   const [history, setHistory] = useState<GeneralHistory[]>([]);
   const [message, setMessage] = useState<string>("")
+  const [bio, setBio] = useState<string>("Loading bio...")
 
   const chartContainerRef = useRef(null);
+
+  const bioMaxLen = 200
 
   useEffect(() => {
     if (!chartContainerRef.current || history.length === 0) return;
@@ -61,10 +65,10 @@ export default function ProfilePage() {
     }
   }, [history]);
 
-  async function updateBio() {
+  async function updateBio(bioContents: string) {
     const res = await fetch("/api/profile/update", {
       method: "POST",
-      body: JSON.stringify({ section:"bio", value:"This is my bio!" }),
+      body: JSON.stringify({ section:"bio", value: bioContents }),
     });
 
     const resData = await res.json();
@@ -85,6 +89,7 @@ export default function ProfilePage() {
       const profileData = await profileRes.json();
       const historyData = await historyRes.json();
 
+      setBio(profileData.user.bio)
       setProfile(profileData.user);
       setHistory(historyData.history);
     }
@@ -109,10 +114,20 @@ export default function ProfilePage() {
               <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
             </div>
             <div>
-              <h1 className="border-2 rounded-lg p-2">{profile.bio}</h1>
+              <input 
+                className="border-2 rounded-lg p-2" 
+                type="text" 
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                maxLength={bioMaxLen}
+              />
+              <span className={clsx("text-sm text-gray-500 ml-1", 
+                bio.length==bioMaxLen && "text-red-500")}>
+                {bio.length+'/'+bioMaxLen}
+              </span>
               <br></br>
               
-              <h1 className="mb-4 ml-2 text-xl font-bold">Chip History</h1>
+              <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
               <div className="h-50" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">
                 <p>User Id: {profile.id}</p> |
@@ -125,7 +140,7 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 mt-2">
-            <Button onClick={() => updateBio()} className="text-xl font-bold w-100">Update Profile</Button>
+            <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-100">Update Profile</Button>
             <h1 className="text-gray-500 italic">{message}</h1>
             </div>
           </>
