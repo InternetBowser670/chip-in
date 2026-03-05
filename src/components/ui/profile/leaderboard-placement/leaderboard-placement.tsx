@@ -36,7 +36,7 @@ export default function LeaderboardPlacement({userId}:{userId:string}){
   }, [userId]);
 
   return(
-    <h1>{placement}</h1>
+    <h1>{"#"+placement}</h1>
   )
 
 }

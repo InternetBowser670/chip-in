@@ -85,28 +85,21 @@ export default function ProfilesPage() {
         ) : (
           <>
             <div className="flex items-center">
-              {(
-                <img
-                  src={profile?.image_url ? profile.image_url : ""}
-                  alt="User Logo"
-                  className="w-16 h-16 rounded-full"
-                />
-              )}
-              <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
-              <LeaderboardPlacement userId={userId}/>
+              <img
+                src={profile?.image_url ? profile.image_url : ""}
+                alt="User Logo"
+                className="w-16 h-16 rounded-full"
+              />
+              <div className="absolute translate-x-16 -translate-y-3">
+              <h1 className="ml-2 text-4xl font-bold">{profile.username}</h1>
+              <p className="absolute text-gray-500 translate-x-2">{profile.id}</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-gray-500">
-                <p>User Id: {profile.id}</p> |
-                <p>
-                  Badges:{" "}
-                  {profile.badges
-                    ? profile.badges.map((val) => val.name).join(",")
-                    : "None"}
-                </p>
-            </div>
-            <div>
-            <h1 className="border-2 w-fit rounded-lg p-2 min-w-15">{profile.bio}</h1>
             
+            <div>
+              {profile.bio &&
+              <h1 className="border-2 w-fit rounded-lg p-2 min-w-15">{profile.bio}</h1>
+              }
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
               <div className="h-50" ref={chartContainerRef} />
             </div>
