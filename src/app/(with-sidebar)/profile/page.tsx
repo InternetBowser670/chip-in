@@ -5,11 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
+import { Button } from "@/components/ui/button";
+import { sleep } from "@/lib/sleep";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData>();
   const [history, setHistory] = useState<GeneralHistory[]>([]);
-  const [message, setMessage] = useState<string>("Update your profile")
+  const [message, setMessage] = useState<string>("")
 
   const chartContainerRef = useRef(null);
 
@@ -68,6 +70,9 @@ export default function ProfilePage() {
     const resData = await res.json();
     
     setMessage(resData.message)
+
+    await sleep(5000);
+    setMessage("");
   };
   
   useEffect(() => {
@@ -96,16 +101,17 @@ export default function ProfilePage() {
         ) : (
           <>
             <div className="flex items-center mb-4">
-              {profile?.has_image && (
                 <img
                   src={profile?.image_url ? profile.image_url : ""}
                   alt="User Logo"
                   className="w-16 h-16 rounded-full"
                 />
-              )}
               <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
             </div>
             <div>
+              <h1 className="border-2 rounded-lg p-2">{profile.bio}</h1>
+              <br></br>
+              
               <h1 className="mb-4 ml-2 text-xl font-bold">Chip History</h1>
               <div className="h-50" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">
@@ -118,8 +124,10 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
-            <button onClick={() => updateBio()}>Hi</button>
-            <h1>{message}</h1>
+            <div className="flex flex-col items-center justify-center gap-2 mt-2">
+            <Button onClick={() => updateBio()} className="text-xl font-bold w-100">Update Profile</Button>
+            <h1 className="text-gray-500 italic">{message}</h1>
+            </div>
           </>
         )}
       </Card>

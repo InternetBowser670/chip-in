@@ -95,7 +95,6 @@ export default function ProfilesPage() {
               <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
             </div>
             <div>
-              <h1>{profile.bio}</h1>
               <h1 className="mb-4 ml-2 text-xl font-bold">Chip History</h1>
               <div className="h-50" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">

@@ -9,12 +9,12 @@ export async function POST(req: NextRequest) {
     const { mainDb } = await connectToDatabases(false);
 
     const clerkUser = await currentUser();
-    if (!clerkUser) return NextResponse.json({ status: 400 });
+    if (!clerkUser) return NextResponse.json({message: "Error: Could not find user"}, { status: 400 });
     
     await mainDb.collection("users").updateOne(
         { id: clerkUser.id },
         {$set: { [section]: value }}
     );
   
-    return NextResponse.json({message: "Profile Updated Successfully"}, {status: 200});
+    return NextResponse.json({message: "Profile Updated Successfully!"}, {status: 200});
 }
