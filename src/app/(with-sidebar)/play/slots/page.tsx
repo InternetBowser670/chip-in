@@ -29,7 +29,7 @@ interface Slot {
 export default function Page() {
   const { chips, setChips, chipsFetched } = useChips();
 
-  const [speed, setSpeed] = useState<number>(0.1);
+  const [speed, setSpeed] = useState<number>(0.15);
   const [betAmt, setBetAmt] = useState<number | null>(null);
   const [extendSidebar, setExtendSidebar] = useState<boolean>(true);
   const [anySlotsSpinning, setAnySlotsSpinning] = useState<boolean>(false);

@@ -19,6 +19,7 @@ function oneInN(seed: string, n: number) {
 export async function POST(req: Request) {
   const { betAmt, reels } = await req.json();
 
+
   let itemsPerReel = 5;
   
   //Prepraration for variable reels
@@ -102,8 +103,8 @@ export async function POST(req: Request) {
 
   //iccl if its a nested ternary operator
   const netChange = isJackpot? 
-  Math.floor(betAmt * jackpotReturn) : 
-  isWin? Math.floor(betAmt * winReturn):
+  Math.floor(betAmt * jackpotReturn)-betAmt: 
+  isWin? Math.floor(betAmt * winReturn)-betAmt:
   -betAmt;
   const updatedChips = currentChips + netChange;
   const now = Date.now();

@@ -19,11 +19,13 @@ export async function POST() {
           badges: 1,
           last_active_at: 1,
           minesCount: 1,
+          slotsCount: 1,
           blackjackCount: 1,
           coinFlipCount: 1,
           minesProfit: 1,
           blackjackProfit: 1,
           coinFlipProfit: 1,
+          slotsProfit: 1,
         },
       },
     ])

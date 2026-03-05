@@ -181,6 +181,7 @@ export default function AdminPage() {
       { field: "coinFlipCount", headerName: "Coinflips" },
       { field: "blackjackCount", headerName: "Blackjack Plays" },
       { field: "minesCount", headerName: "Mines Plays" },
+      { field: "slotsCount", headerName: "Slots Plays" }
     ];
 
     return (
