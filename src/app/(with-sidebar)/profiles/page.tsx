@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
+import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement/leaderboard-placement";
 
 export default function ProfilesPage() {
   const [profile, setProfile] = useState<ProfileData>();
@@ -68,7 +69,6 @@ export default function ProfilesPage() {
 
       const userData = await res.json();
 
-      console.log(userData.user.slotsCount)
       setProfile(userData.user);
       //setHistory(historyData.history);
     }
@@ -84,7 +84,7 @@ export default function ProfilesPage() {
           </>
         ) : (
           <>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center">
               {(
                 <img
                   src={profile?.image_url ? profile.image_url : ""}
@@ -93,13 +93,9 @@ export default function ProfilesPage() {
                 />
               )}
               <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
+              <LeaderboardPlacement userId={userId}/>
             </div>
-            <div>
-            <h1 className="border-2 w-fit rounded-lg p-2">{profile.bio}</h1>
-            
-              <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <div className="h-50" ref={chartContainerRef} />
-              <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-2 text-gray-500">
                 <p>User Id: {profile.id}</p> |
                 <p>
                   Badges:{" "}
@@ -107,7 +103,12 @@ export default function ProfilesPage() {
                     ? profile.badges.map((val) => val.name).join(",")
                     : "None"}
                 </p>
-              </div>
+            </div>
+            <div>
+            <h1 className="border-2 w-fit rounded-lg p-2 min-w-15">{profile.bio}</h1>
+            
+              <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
+              <div className="h-50" ref={chartContainerRef} />
             </div>
           </>
         )}

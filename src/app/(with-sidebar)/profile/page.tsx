@@ -105,7 +105,7 @@ export default function ProfilePage() {
           </>
         ) : (
           <>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center">
                 <img
                   src={profile?.image_url ? profile.image_url : ""}
                   alt="User Logo"
@@ -113,9 +113,18 @@ export default function ProfilePage() {
                 />
               <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
             </div>
+            <div className="flex items-center gap-2 text-gray-500">
+                <p>User Id: {profile.id}</p> |
+                <p>
+                  Badges:{" "}
+                  {profile.badges
+                    ? profile.badges.map((val) => val.name).join(",")
+                    : "None"}
+                </p>
+              </div>
             <div>
               <input 
-                className="border-2 rounded-lg p-2" 
+                className="border-2 rounded-lg p-2 field-sizing-content" 
                 type="text" 
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -129,15 +138,6 @@ export default function ProfilePage() {
               
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
               <div className="h-50" ref={chartContainerRef} />
-              <div className="flex items-center gap-2 mt-2">
-                <p>User Id: {profile.id}</p> |
-                <p>
-                  Badges:{" "}
-                  {profile.badges
-                    ? profile.badges.map((val) => val.name).join(",")
-                    : "None"}
-                </p>
-              </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-2 mt-2">
             <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-100">Update Profile</Button>
