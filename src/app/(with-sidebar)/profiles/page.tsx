@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 
 export default function ProfilesPage() {
-  const [profile, setProfile] = useState<any>();
+  const [profile, setProfile] = useState<ProfileData>();
   const [history, setHistory] = useState<GeneralHistory[]>([]);
 
   const chartContainerRef = useRef(null);
@@ -66,10 +66,10 @@ export default function ProfilesPage() {
         body: JSON.stringify({ userId }),
       });
 
-      const userData = res.json();
+      const userData = await res.json();
 
-      console.log(userData);
-      setProfile(userData);
+      console.log(userData.user.slotsCount)
+      setProfile(userData.user);
       //setHistory(historyData.history);
     }
     fetchData();
@@ -85,7 +85,7 @@ export default function ProfilesPage() {
         ) : (
           <>
             <div className="flex items-center mb-4">
-              {profile?.has_image && (
+              {(
                 <img
                   src={profile?.image_url ? profile.image_url : ""}
                   alt="User Logo"
@@ -95,6 +95,7 @@ export default function ProfilesPage() {
               <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
             </div>
             <div>
+              <h1>{profile.bio}</h1>
               <h1 className="mb-4 ml-2 text-xl font-bold">Chip History</h1>
               <div className="h-50" ref={chartContainerRef} />
               <div className="flex items-center gap-2 mt-2">

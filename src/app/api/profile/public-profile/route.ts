@@ -27,6 +27,7 @@ export async function POST(req: Request) {
           blackjackProfit: 1,
           coinFlipProfit: 1,
           slotsProfit: 1,
+          bio: 1,
         },
       }
     );

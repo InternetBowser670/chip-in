@@ -29,6 +29,7 @@ export async function GET() {
           blackjackProfit: 1,
           coinFlipProfit: 1,
           slotsProfit: 1,
+          bio: 1,
         },
       }
     );

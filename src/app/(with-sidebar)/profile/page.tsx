@@ -9,6 +9,7 @@ import { createChart, CandlestickSeries } from "lightweight-charts";
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData>();
   const [history, setHistory] = useState<GeneralHistory[]>([]);
+  const [message, setMessage] = useState<string>("Update your profile")
 
   const chartContainerRef = useRef(null);
 
@@ -58,6 +59,17 @@ export default function ProfilePage() {
     }
   }, [history]);
 
+  async function updateBio() {
+    const res = await fetch("/api/profile/update", {
+      method: "POST",
+      body: JSON.stringify({ section:"bio", value:"This is my bio!" }),
+    });
+
+    const resData = await res.json();
+    
+    setMessage(resData.message)
+  };
+  
   useEffect(() => {
     async function fetchData() {
       const [profileRes, historyRes] = await Promise.all([
@@ -106,6 +118,8 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
+            <button onClick={() => updateBio()}>Hi</button>
+            <h1>{message}</h1>
           </>
         )}
       </Card>
