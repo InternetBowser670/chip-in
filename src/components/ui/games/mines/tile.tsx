@@ -26,7 +26,12 @@ export default function   MinesTile({
           ? value === "mine"
             ? (resolvedTheme == "light" ? "#fb3740" : "#fb2c36")
             : (resolvedTheme == "light" ? "#05df72" : "#00c951")
-          : (resolvedTheme == "light" ? "#f2fafd" : "#171925")
+          : (resolvedTheme == "light" ? "#f2fafd" : "#171925"),
+          boxShadow: flipped
+          ? value === "mine"
+            ? (resolvedTheme == "light" ? "0px 0px 100px -25px #fb3740" : "0px 0px 200px -38px #fb2c36")
+            : (resolvedTheme == "light" ? "0px 0px 100px -25px #05df72" : "0px 0px 200px -38px #00C951")
+          : ("")
       }}
       // hex codes come from tailwind
 
