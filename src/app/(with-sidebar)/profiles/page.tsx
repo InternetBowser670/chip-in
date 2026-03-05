@@ -9,6 +9,7 @@ import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement/
 export default function ProfilesPage() {
   const [profile, setProfile] = useState<ProfileData>();
   const [history, setHistory] = useState<GeneralHistory[]>([]);
+  const [placement, setPlacement] = useState<number | null>(null);
 
   const chartContainerRef = useRef(null);
 
@@ -62,18 +63,52 @@ export default function ProfilesPage() {
   
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("/api/profile/public-profile", {
+      const [profileRes, historyRes] = await Promise.all([
+        fetch("/api/profile/public-profile", {
         method: "POST",
-        body: JSON.stringify({ userId }),
-      });
+        body: JSON.stringify({ userId }),}),
+        fetch("/api/profile/public-profile/history", {
+          method: "POST",
+          body: JSON.stringify({ userId }),}),
+      ])
+      
+      const profileData = await profileRes.json();
+      const historyData = await historyRes.json();
 
-      const userData = await res.json();
-
-      setProfile(userData.user);
-      //setHistory(historyData.history);
+      setProfile(profileData.user);
+      setHistory(historyData.history);
     }
     fetchData();
   }, []);
+
+  //Leaderboard
+  useEffect(() => {
+    async function fetchLeaderboard() {
+      const res = await fetch("/api/get-users", { method: "POST" });
+      const data = await res.json();
+
+      const users = data.users
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((u: any) => ({
+          userId: u.id,
+          chipCount: Number(u.totalChips) || 0,
+        }))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .sort((a: any, b: any) => b.chipCount - a.chipCount);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const index = users.findIndex((u: any) => u.userId === userId);
+
+      if (index !== -1) {
+        setPlacement(index + 1);
+      }
+    }
+
+    if (userId) {
+      fetchLeaderboard();
+    }
+  }, [userId]);
+
 
   return (
     <div className="flex items-center justify-center h-full">
@@ -98,10 +133,13 @@ export default function ProfilesPage() {
             
             <div>
               {profile.bio &&
-              <h1 className="border-2 w-fit rounded-lg p-2 min-w-15">{profile.bio}</h1>
+              <h1 className="border-2 w-fit rounded-lg p-2 min-w-15 mb-4">{profile.bio}</h1>
               }
+              <hr></hr>
+              <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <div className="h-50" ref={chartContainerRef} />
+              <div className="h-50 mb-4" ref={chartContainerRef} />
+              <hr></hr>
             </div>
           </>
         )}

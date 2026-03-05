@@ -106,39 +106,37 @@ export default function ProfilePage() {
         ) : (
           <>
             <div className="flex items-center">
-                <img
-                  src={profile?.image_url ? profile.image_url : ""}
-                  alt="User Logo"
-                  className="w-16 h-16 rounded-full"
-                />
-              <h1 className="ml-2 text-2xl font-bold">{profile.username}</h1>
-            </div>
-            <div className="flex items-center gap-2 text-gray-500">
-                <p>User Id: {profile.id}</p> |
-                <p>
-                  Badges:{" "}
-                  {profile.badges
-                    ? profile.badges.map((val) => val.name).join(",")
-                    : "None"}
-                </p>
+              <img
+                src={profile?.image_url ? profile.image_url : ""}
+                alt="User Logo"
+                className="w-16 h-16 rounded-full"
+              />
+              <div className="absolute translate-x-16 -translate-y-3">
+              <h1 className="ml-2 text-4xl font-bold">{profile.username}</h1>
+              <p className="absolute text-gray-500 translate-x-2">{profile.id}</p>
               </div>
+            </div>
+
             <div>
               <input 
-                className="border-2 rounded-lg p-2 field-sizing-content" 
+                className="border-2 rounded-lg p-2 field-sizing-content mb-4" 
                 type="text" 
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 maxLength={bioMaxLen}
+                placeholder={"Hi, My name is "+profile.username+"!"}
               />
               <span className={clsx("text-sm text-gray-500 ml-1", 
                 bio.length==bioMaxLen && "text-red-500")}>
                 {bio.length+'/'+bioMaxLen}
               </span>
-              <br></br>
-              
+              <hr></hr>
+              <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <div className="h-50" ref={chartContainerRef} />
+              <div className="h-50 mb-4" ref={chartContainerRef} />
+              <hr></hr>
             </div>
+            
             <div className="flex flex-col items-center justify-center gap-2 mt-2">
             <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-100">Update Profile</Button>
             <h1 className="text-gray-500 italic">{message}</h1>
