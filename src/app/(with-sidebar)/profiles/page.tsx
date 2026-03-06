@@ -135,7 +135,7 @@ export default function ProfilesPage() {
             <div>
               {profile.bio &&
               <div className="border-2 w-fit rounded-lg p-2 min-w-20">
-              <h1>{profile.bio}</h1>
+              <h1 className="break-all">{profile.bio}</h1>
               </div>
               }
               <hr className="my-4"></hr>
