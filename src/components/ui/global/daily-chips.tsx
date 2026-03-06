@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 
 const Wheel = dynamic(
   () => import("react-custom-roulette").then((mod) => mod.Wheel),
-  { ssr: false }
+  { ssr: false },
 );
 
 type StatusResponse = {
@@ -30,8 +30,10 @@ const rewards = [3000, 5000, 10000, 15000, 20000, 30000, 40000, 50000];
 
 export default function DailySpin() {
   const [status, setStatus] = useState<StatusResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const [mustSpin, setMustSpin] = useState(false);
-  const [prizeIndex, setPrizeIndex] = useState(0);
+  const [prizeIndex, setPrizeIndex] = useState<number>(0);
   const [isLocked, setIsLocked] = useState(false);
 
   const pendingTotalRef = useRef<number | null>(null);
@@ -40,20 +42,24 @@ export default function DailySpin() {
 
   useEffect(() => {
     const fetchStatus = async () => {
-      const res = await fetch("/api/chips/status");
-      if (!res.ok) return;
-      const data = await res.json();
-      setStatus(data);
+      try {
+        const res = await fetch("/api/chips/status");
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setStatus(data);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchStatus();
   }, []);
 
   const handleSpin = async () => {
-    if (!status?.canClaim || isLocked) return;
+    if (!status?.canClaim || isLocked || loading) return;
 
     setIsLocked(true);
-    setMustSpin(true);
 
     try {
       const res = await fetch("/api/chips/claim", {
@@ -62,31 +68,27 @@ export default function DailySpin() {
 
       if (!res.ok) {
         setIsLocked(false);
-        setMustSpin(false);
         return;
       }
 
       const data = await res.json();
       const reward = data.reward;
 
-      const index = rewards.findIndex((r) => r === reward);
-      if (index === -1) {
+      const index = rewards.indexOf(reward);
+
+      if (index < 0) {
         setIsLocked(false);
-        setMustSpin(false);
         return;
       }
 
-      setPrizeIndex(index);
-
       pendingTotalRef.current = data.total;
 
-      setStatus((prev) =>
-        prev ? { ...prev, canClaim: false } : prev
-      );
+      setPrizeIndex(index);
+      setMustSpin(true);
 
+      setStatus((prev) => (prev ? { ...prev, canClaim: false } : prev));
     } catch {
       setIsLocked(false);
-      setMustSpin(false);
     }
   };
 
@@ -114,14 +116,16 @@ export default function DailySpin() {
 
       <Button
         onClick={handleSpin}
-        disabled={!status?.canClaim || isLocked}
+        disabled={loading || !status?.canClaim || isLocked}
         className="w-full"
       >
-        {isLocked
-          ? "Spinning..."
-          : status?.canClaim
-          ? "Spin for Daily Chips"
-          : "Come back tomorrow"}
+        {loading
+          ? "Loading..."
+          : isLocked
+            ? "Spinning..."
+            : status?.canClaim
+              ? "Spin for Daily Chips"
+              : "Come back tomorrow"}
       </Button>
     </div>
   );
