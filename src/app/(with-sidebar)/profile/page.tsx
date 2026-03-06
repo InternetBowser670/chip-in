@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
-import { MostPlayedGamesChart, MostProfitableGamesChart } from "@/components/ui/stats/stats-charts";
+import { MostPlayedGamesChart, MostProfitableGamesChart, PublicLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
 import { Button } from "@/components/ui/button";
 import { sleep } from "@/lib/sleep";
 import clsx from "clsx";
@@ -139,12 +139,18 @@ export default function ProfilePage() {
               <div className="h-80 flex items-center gap-2">
                 <MostPlayedGamesChart userId={profile.id}/>
                 <MostProfitableGamesChart userId={profile.id}/>
+                <PublicLeaderboardPlacementChart profile={profile}/>
               </div>
             </div>
             <hr></hr>
             <div className="flex flex-col items-center justify-center gap-2 mt-2">
             <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-100">Update Profile</Button>
-            <h1 className="text-gray-500 italic">{message}</h1>
+            { message? (
+              <h1 className="text-gray-500 italic">{message}</h1>
+            ):(
+              <div className="h-6"></div>
+            )
+            } 
             </div>
           </>
         )}

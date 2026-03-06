@@ -5,7 +5,7 @@ import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement/leaderboard-placement";
-import { MostPlayedGamesChart, MostProfitableGamesChart } from "@/components/ui/stats/stats-charts";
+import { MostPlayedGamesChart, MostProfitableGamesChart, PublicLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
 
 export default function ProfilesPage() {
   const [profile, setProfile] = useState<ProfileData>();
@@ -146,6 +146,7 @@ export default function ProfilesPage() {
               <div className="h-80 flex items-center gap-2">
               <MostPlayedGamesChart userId={profile.id}/>
               <MostProfitableGamesChart userId={profile.id}/>
+              <PublicLeaderboardPlacementChart profile={profile}/>
               </div>
             </div>
           </>
