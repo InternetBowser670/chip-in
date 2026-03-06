@@ -35,6 +35,8 @@ export async function POST(req: Request) {
     );
   }
 
+
+  /*
   //Return calc- very complex. Multipliers for 3 reels, 5 items per reel are 
   //Jackpot around 7x
   //Noraml win around 1.4x
@@ -49,6 +51,10 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+  */
+
+  const winReturn = 2.45;
+  const jackpotReturn = 24.5;
 
   const { mainDb } = await connectToDatabases(false);
   const clerkUser = await currentUser();
