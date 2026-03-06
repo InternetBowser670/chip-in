@@ -153,8 +153,8 @@ export default function Page() {
           <div className="flex flex-col justify-center p-4 in-w-full bg-card border-foreground/30 rounded-lg m-4">
             <h2 className="pb-2 text-3xl font-bold">Statistics:</h2>
             <div className="flex items-center gap-4">
-              <MostPlayedGamesChart />
-              <MostProfitableGamesChart />
+              <MostPlayedGamesChart userId={""}/>
+              <MostProfitableGamesChart userId={""}/>
               <UserLeaderboardPlacementChart />
               <BannerAd />
               <BannerAd />

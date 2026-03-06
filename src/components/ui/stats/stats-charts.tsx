@@ -17,8 +17,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import { PiPokerChip } from "react-icons/pi";
 import { useChips } from "@/components/providers";
 import { IoArrowForwardOutline } from "react-icons/io5";
+import clsx from "clsx";
 
-export function MostPlayedGamesChart() {
+export function MostPlayedGamesChart({userId}:{userId:string}) {
+  
   const [chartData, setChartData] = useState<{ game: string; value: number }[]>(
     [
       { game: "Coinflip", value: 0 },
@@ -27,11 +29,20 @@ export function MostPlayedGamesChart() {
       { game: "Slots", value: 0 },
     ],
   );
-
+  
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("/api/profile");
+      let res;
+      if (userId) {
+        res = await fetch("/api/profile/public-profile", {
+          method: "POST",
+          body: JSON.stringify({ userId }),});
+      } else {
+        res = await fetch("/api/profile");
+      }
+      console.log(userId)
       const json = await res.json();
+      console.log(json);
 
       setChartData([
         { game: "Coinflip", value: json.user.coinFlipCount },
@@ -41,7 +52,7 @@ export function MostPlayedGamesChart() {
       ]);
     }
     fetchData();
-  }, []);
+  }, [userId]);
 
   const chartConfig = {
     value: {
@@ -52,7 +63,7 @@ export function MostPlayedGamesChart() {
 
   return (
     <Card className="h-full w-99">
-      <h2 className="ml-2 text-2xl font-bold">Your most played games:</h2>
+      <h2 className="ml-2 text-2xl font-bold">{clsx(!userId && "Your most played games:", userId && "Most played games:")}</h2>
       <ChartContainer config={chartConfig} className="min-h-5">
         <BarChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={false} />
@@ -71,7 +82,7 @@ export function MostPlayedGamesChart() {
   );
 }
 
-export function MostProfitableGamesChart() {
+export function MostProfitableGamesChart({userId}:{userId: string}) {
   const [chartData, setChartData] = useState<{ game: string; value: number }[]>(
     [
       { game: "Coinflip", value: 0 },
@@ -80,11 +91,20 @@ export function MostProfitableGamesChart() {
       { game: "Slots", value: 0 },
     ],
   );
-
+  
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("/api/profile");
+      let res;
+      if (userId) {
+        res = await fetch("/api/profile/public-profile", {
+          method: "POST",
+          body: JSON.stringify({ userId }),});
+      } else {
+        res = await fetch("/api/profile");
+      }
+      console.log(userId)
       const json = await res.json();
+      console.log(json);
 
       setChartData([
         { game: "Coinflip", value: json.user.coinFlipProfit },
@@ -94,7 +114,7 @@ export function MostProfitableGamesChart() {
       ]);
     }
     fetchData();
-  }, []);
+  }, [userId]);
 
   const chartConfig = {
     value: {
@@ -105,7 +125,7 @@ export function MostProfitableGamesChart() {
 
   return (
     <Card className="h-full w-99">
-      <h2 className="ml-2 text-2xl font-bold">Your most profitable games:</h2>
+      <h2 className="ml-2 text-2xl font-bold">{clsx(!userId && "Your most profitable games:", userId && "Most profitable games:")}</h2>
       <ChartContainer config={chartConfig} className="min-h-5">
         <BarChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={false} />

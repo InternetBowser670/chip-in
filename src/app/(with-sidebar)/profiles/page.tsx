@@ -5,6 +5,7 @@ import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement/leaderboard-placement";
+import { MostPlayedGamesChart, MostProfitableGamesChart } from "@/components/ui/stats/stats-charts";
 
 export default function ProfilesPage() {
   const [profile, setProfile] = useState<ProfileData>();
@@ -125,21 +126,27 @@ export default function ProfilesPage() {
                 alt="User Logo"
                 className="w-16 h-16 rounded-full"
               />
-              <div className="absolute translate-x-16 -translate-y-3">
+              <div>
               <h1 className="ml-2 text-4xl font-bold">{profile.username}</h1>
-              <p className="absolute text-gray-500 translate-x-2">{profile.id}</p>
+              <p className="text-gray-500 translate-x-2">{profile.id}</p>
               </div>
             </div>
             
             <div>
               {profile.bio &&
-              <h1 className="border-2 w-fit rounded-lg p-2 min-w-15 mb-4">{profile.bio}</h1>
+              <div className="border-2 w-fit rounded-lg p-2 min-w-20">
+              <h1>{profile.bio}</h1>
+              </div>
               }
-              <hr></hr>
+              <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <div className="h-50 mb-4" ref={chartContainerRef} />
-              <hr></hr>
+              <div className="h-50" ref={chartContainerRef} />
+              <hr className="my-4"></hr>
+              <div className="h-80 flex items-center gap-2">
+              <MostPlayedGamesChart userId={profile.id}/>
+              <MostProfitableGamesChart userId={profile.id}/>
+              </div>
             </div>
           </>
         )}

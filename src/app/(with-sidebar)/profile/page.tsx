@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
+import { MostPlayedGamesChart, MostProfitableGamesChart } from "@/components/ui/stats/stats-charts";
 import { Button } from "@/components/ui/button";
 import { sleep } from "@/lib/sleep";
 import clsx from "clsx";
@@ -111,15 +112,15 @@ export default function ProfilePage() {
                 alt="User Logo"
                 className="w-16 h-16 rounded-full"
               />
-              <div className="absolute translate-x-16 -translate-y-3">
+              <div>
               <h1 className="ml-2 text-4xl font-bold">{profile.username}</h1>
-              <p className="absolute text-gray-500 translate-x-2">{profile.id}</p>
+              <p className="text-gray-500 translate-x-2">{profile.id}</p>
               </div>
             </div>
 
             <div>
               <input 
-                className="border-2 rounded-lg p-2 field-sizing-content mb-4" 
+                className="border-2 rounded-lg p-2 field-sizing-content" 
                 type="text" 
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -130,13 +131,17 @@ export default function ProfilePage() {
                 bio.length==bioMaxLen && "text-red-500")}>
                 {bio.length+'/'+bioMaxLen}
               </span>
-              <hr></hr>
+              <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <div className="h-50 mb-4" ref={chartContainerRef} />
-              <hr></hr>
+              <div className="h-50" ref={chartContainerRef} />
+              <hr className="my-4"></hr>
+              <div className="h-80 flex items-center gap-2">
+                <MostPlayedGamesChart userId={profile.id}/>
+                <MostProfitableGamesChart userId={profile.id}/>
+              </div>
             </div>
-            
+            <hr></hr>
             <div className="flex flex-col items-center justify-center gap-2 mt-2">
             <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-100">Update Profile</Button>
             <h1 className="text-gray-500 italic">{message}</h1>
