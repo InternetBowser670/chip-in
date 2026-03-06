@@ -82,10 +82,13 @@ export default function ProfilePage() {
   };
 
   async function update(card:number, isPublic: boolean) {
-    const newValue = profile?.profilePublic;
-    if (newValue) {
-    newValue[card] = isPublic;
+    let newValue;
+    if (profile?.profilePublic) {
+      newValue = [...profile.profilePublic]; // Create a copy to avoid mutation
+    } else {
+      newValue = [false,false,false,false]
     }
+    newValue[card] = isPublic;
     
     const res = await fetch("/api/profile/update", {
       method: "POST",
@@ -93,7 +96,12 @@ export default function ProfilePage() {
     });
 
     const resData = await res.json();
-    console.log(resData);
+    
+    if (res.ok) {
+      const profileRes = await fetch("/api/profile");
+      const profileData = await profileRes.json();
+      setProfile(profileData.user);
+    }
   };
   
   useEffect(() => {
@@ -147,29 +155,41 @@ export default function ProfilePage() {
                 bio.length==bioMaxLen && "text-red-500")}>
                 {bio.length+'/'+bioMaxLen}
               </span>
+              <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-30 ml-5">Update Bio</Button>
+              { message? (
+                <h1 className="text-gray-500 italic">{message}</h1>
+              ):(
+                <div className="h-6"></div>
+              )
+              } 
               <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <button onClick={() => update(1, true)}>
-              <PublicSwitch value={false}/>
+              <button onClick={() => update(0, !profile.profilePublic[0])}>
+              <PublicSwitch value={profile.profilePublic? profile?.profilePublic[0]: false}/>
               </button>
               <div className="h-50" ref={chartContainerRef} />
               <hr className="my-4"></hr>
-              <div className="h-80 flex items-center gap-2">
-                <MostPlayedGamesChart userId={profile.id}/>
-                <MostProfitableGamesChart userId={profile.id}/>
-                <PublicLeaderboardPlacementChart profile={profile}/>
+              <div className="h-80 flex items-center gap-2 mb-4">
+                <div>
+                  <button onClick={() => update(1, !profile.profilePublic[1])}>
+                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[1]: false}/>
+                  </button>
+                  <MostPlayedGamesChart userId={profile.id}/>
+                </div>  
+                <div>
+                  <button onClick={() => update(2, !profile.profilePublic[2])}>
+                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[2]: false}/>
+                  </button>
+                  <MostProfitableGamesChart userId={profile.id}/>
+                </div> 
+                <div>
+                  <button onClick={() => update(3, !profile.profilePublic[3])}>
+                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[3]: false}/>
+                  </button>
+                  <PublicLeaderboardPlacementChart profile={profile}/>
+                </div> 
               </div>
-            </div>
-            <hr></hr>
-            <div className="flex flex-col items-center justify-center gap-2 mt-2">
-            <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-100">Update Profile</Button>
-            { message? (
-              <h1 className="text-gray-500 italic">{message}</h1>
-            ):(
-              <div className="h-6"></div>
-            )
-            } 
             </div>
           </>
         )}

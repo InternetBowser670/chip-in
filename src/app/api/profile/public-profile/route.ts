@@ -28,6 +28,7 @@ export async function POST(req: Request) {
           coinFlipProfit: 1,
           slotsProfit: 1,
           bio: 1,
+          profilePublic: 1,
         },
       }
     );

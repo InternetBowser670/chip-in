@@ -78,37 +78,10 @@ export default function ProfilesPage() {
 
       setProfile(profileData.user);
       setHistory(historyData.history);
+      console.log(profileData.user.profilePublic[0])
     }
     fetchData();
   }, []);
-
-  //Leaderboard
-  useEffect(() => {
-    async function fetchLeaderboard() {
-      const res = await fetch("/api/get-users", { method: "POST" });
-      const data = await res.json();
-
-      const users = data.users
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((u: any) => ({
-          userId: u.id,
-          chipCount: Number(u.totalChips) || 0,
-        }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .sort((a: any, b: any) => b.chipCount - a.chipCount);
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const index = users.findIndex((u: any) => u.userId === userId);
-
-      if (index !== -1) {
-        setPlacement(index + 1);
-      }
-    }
-
-    if (userId) {
-      fetchLeaderboard();
-    }
-  }, [userId]);
 
 
   return (
@@ -140,13 +113,30 @@ export default function ProfilesPage() {
               }
               <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
-              <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <div className="h-50" ref={chartContainerRef} />
+              {profile.profilePublic[0] && 
+              <>
+                <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
+                <div className="h-50" ref={chartContainerRef} />
+                <hr className="my-4"></hr>
+              </>
+              }
               <hr className="my-4"></hr>
               <div className="h-80 flex items-center gap-2">
-              <MostPlayedGamesChart userId={profile.id}/>
-              <MostProfitableGamesChart userId={profile.id}/>
-              <PublicLeaderboardPlacementChart profile={profile}/>
+              {profile.profilePublic[1] && 
+              <>
+                <MostPlayedGamesChart userId={profile.id}/>
+              </>
+              }
+              {profile.profilePublic[2] && 
+              <>
+                <MostProfitableGamesChart userId={profile.id}/>
+              </>
+              }
+              {profile.profilePublic[3] && 
+              <>
+                <PublicLeaderboardPlacementChart profile={profile}/>
+              </>
+              }
               </div>
             </div>
           </>

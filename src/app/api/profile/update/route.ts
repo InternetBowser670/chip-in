@@ -11,10 +11,23 @@ export async function POST(req: NextRequest) {
     const clerkUser = await currentUser();
     if (!clerkUser) return NextResponse.json({message: "Error: Could not find user"}, { status: 400 });
     
-    await mainDb.collection("users").updateOne(
-        { id: clerkUser.id },
-        {$set: { [section]: value }}
-    );
-  
-    return NextResponse.json({message: "Profile Updated Successfully!"}, {status: 200});
+    try {
+        const result = await mainDb.collection("users").updateOne(
+            { id: clerkUser.id },
+            { $set: { [section]: value } }
+        );
+
+        if (result.matchedCount === 0) {
+            return NextResponse.json({message: "Error: User not found in database"}, { status: 404 });
+        }
+
+        if (result.modifiedCount === 0) {
+            return NextResponse.json({message: "Error: No updates to make"}, { status: 400 });
+        }
+
+        return NextResponse.json({message: "Profile Updated Successfully!"}, {status: 200});
+    } catch (error) {
+        console.error("Update error:", error);
+        return NextResponse.json({message: "Error: Internal server error"}, { status: 500 });
+    }
 }
