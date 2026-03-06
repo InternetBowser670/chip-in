@@ -111,6 +111,7 @@ export interface ChipInUser extends User {
   timezone: string;
   badges?: Badge[];
   bio: string;
+  profilePublic: boolean[];
   activeBlackjack?: BlackjackGame;
   activeMinesGame?: MinesGame;
   slotsCount: number;
@@ -230,6 +231,7 @@ export interface ProfileData {
   last_active_at: number;
   history: (UserHistory | BlackjackHistory)[];
   bio: string;
+  profilePublic: boolean[];
 }
 
 export type Candle = {

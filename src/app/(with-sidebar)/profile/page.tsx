@@ -6,6 +6,7 @@ import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 import { MostPlayedGamesChart, MostProfitableGamesChart, PublicLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
+import PublicSwitch from "@/components/ui/profile/public-switch";
 import { Button } from "@/components/ui/button";
 import { sleep } from "@/lib/sleep";
 import clsx from "clsx";
@@ -79,6 +80,21 @@ export default function ProfilePage() {
     await sleep(5000);
     setMessage("");
   };
+
+  async function update(card:number, isPublic: boolean) {
+    const newValue = profile?.profilePublic;
+    if (newValue) {
+    newValue[card] = isPublic;
+    }
+    
+    const res = await fetch("/api/profile/update", {
+      method: "POST",
+      body: JSON.stringify({ section:"profilePublic", value: newValue }),
+    });
+
+    const resData = await res.json();
+    console.log(resData);
+  };
   
   useEffect(() => {
     async function fetchData() {
@@ -134,6 +150,9 @@ export default function ProfilePage() {
               <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
+              <button onClick={() => update(1, true)}>
+              <PublicSwitch value={false}/>
+              </button>
               <div className="h-50" ref={chartContainerRef} />
               <hr className="my-4"></hr>
               <div className="h-80 flex items-center gap-2">

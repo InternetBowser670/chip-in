@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
-import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement/leaderboard-placement";
+import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement";
 import { MostPlayedGamesChart, MostProfitableGamesChart, PublicLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
 
 export default function ProfilesPage() {
