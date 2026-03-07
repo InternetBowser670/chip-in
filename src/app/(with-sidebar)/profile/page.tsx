@@ -164,12 +164,15 @@ export default function ProfilePage() {
               } 
               <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
-              <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
-              <button onClick={() => update(0, !profile.profilePublic[0])}>
-              <PublicSwitch value={profile.profilePublic? profile?.profilePublic[0]: false}/>
-              </button>
+              <div className="flex items-center">
+                <h1 className="my-4 mx-2 text-xl font-bold">Chip History</h1>
+                <button onClick={() => update(0, !profile.profilePublic[0])}>
+                <PublicSwitch value={profile.profilePublic? profile?.profilePublic[0]: false}/>
+                </button>
+              </div>
               <div className="h-50" ref={chartContainerRef} />
               <hr className="my-4"></hr>
+              
               <div className="h-80 flex items-center gap-2 mb-4">
                 <div>
                   <button onClick={() => update(1, !profile.profilePublic[1])}>
