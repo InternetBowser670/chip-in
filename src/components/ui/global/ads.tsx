@@ -87,7 +87,7 @@ export function Popunder() {
 
   return (
     <Script
-      src="https://rustscrupulousstates.com/6b/a3/83/6ba3835d9e6cd0e9ae9f612febd8a2e0.js"
+      src="https://variationconfused.com/6b/a3/83/6ba3835d9e6cd0e9ae9f612febd8a2e0.js"
       strategy="afterInteractive"
     />
   );
