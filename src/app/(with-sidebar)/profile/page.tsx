@@ -6,21 +6,45 @@ import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 import { MostPlayedGamesChart, MostProfitableGamesChart, PublicLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
-import PublicSwitch from "@/components/ui/profile/public-switch";
+//import PublicSwitch from "@/components/ui/profile/public-switch";
 import { Button } from "@/components/ui/button";
 import { sleep } from "@/lib/sleep";
 import clsx from "clsx";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData>();
   const [history, setHistory] = useState<GeneralHistory[]>([]);
-  const [message, setMessage] = useState<string>("")
-  const [bio, setBio] = useState<string>("Loading bio...")
+  const [message, setMessage] = useState<string>("");
+  const [bio, setBio] = useState<string>("Loading bio...");
+  const [loading, setLoading] = useState<Array<Boolean>>([false, false, false, false]);
 
   const chartContainerRef = useRef(null);
 
   const bioMaxLen = 200
 
+  function PublicSwitch({card}:{card:number}){
+    const value = profile?.profilePublic? profile?.profilePublic[card]: false;
+    return (
+      <button 
+      onClick={() => updatePublicity(card, !profile?.profilePublic[card])}
+      >
+        <div className="border-2 rounded-lg p-1 w-25">
+            {value? 
+            <div className="flex justify-center items-center gap-2">
+              <BsEye/> 
+              <h1>Public</h1>
+            </div> : 
+            <div className="flex justify-center items-center gap-2 ">
+              <BsEyeSlash/>
+              <h1>Private</h1>
+            </div>
+            }
+           </div>
+      </button>
+    )
+  }
+  
   useEffect(() => {
     if (!chartContainerRef.current || history.length === 0) return;
 
@@ -166,8 +190,10 @@ export default function ProfilePage() {
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <div className="flex items-center">
                 <h1 className="my-4 mx-2 text-xl font-bold">Chip History:</h1>
-                <button onClick={() => updatePublicity(0, !profile.profilePublic[0])}>
-                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[0]: false}/>
+                <button 
+                onClick={() => updatePublicity(0, !profile.profilePublic[0])}
+                >
+                  <PublicSwitch card={0}/>
                 </button>
               </div>
               <div className="h-50" ref={chartContainerRef} />
@@ -179,7 +205,7 @@ export default function ProfilePage() {
                     onClick={() => updatePublicity(1, !profile.profilePublic[1])} 
                     className="translate-x-70 translate-y-15"
                   >
-                    <PublicSwitch value={profile.profilePublic? profile?.profilePublic[1]: false}/>
+                    <PublicSwitch card={1}/>
                   </button>
                   <MostPlayedGamesChart userId={profile.id}/>
                 </div>  
@@ -188,7 +214,7 @@ export default function ProfilePage() {
                     onClick={() => updatePublicity(2, !profile.profilePublic[2])} 
                     className="translate-x-72 translate-y-15"
                   >
-                    <PublicSwitch value={profile.profilePublic? profile?.profilePublic[2]: false}/>
+                    <PublicSwitch card={2}/>
                   </button>
                   <MostProfitableGamesChart userId={profile.id}/>
                 </div> 
@@ -197,7 +223,7 @@ export default function ProfilePage() {
                     onClick={() => updatePublicity(3, !profile.profilePublic[3])} 
                     className="translate-x-80 translate-y-13"
                   >
-                    <PublicSwitch value={profile.profilePublic? profile?.profilePublic[3]: false}/>
+                    <PublicSwitch card={3}/>
                   </button>
                   <PublicLeaderboardPlacementChart profile={profile}/>
                 </div> 
