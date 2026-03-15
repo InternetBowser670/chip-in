@@ -60,7 +60,7 @@ export default function ProfilesPage() {
     }
   }, [history]);
 
-  const userId = "user_3AEX6zPf9sNZI1wBilQHDsGNrGK";
+  const userId = "user_3ASVPs8smE0yPyQ8A0X5hRojjD2";
   
   useEffect(() => {
     async function fetchData() {
@@ -78,7 +78,6 @@ export default function ProfilesPage() {
 
       setProfile(profileData.user);
       setHistory(historyData.history);
-      console.log(profileData.user.profilePublic[0])
     }
     fetchData();
   }, []);
@@ -89,7 +88,10 @@ export default function ProfilesPage() {
       <Card color="blue" className="h-[80%] w-[80%] overflow-auto p-4">
         {!profile ? (
           <>
-            <h1 className="ml-2 text-2xl font-bold">Loading profile data...</h1>
+            <div>
+              <h1 className="ml-2 text-2xl font-bold">Loading profile data...</h1>
+              <p className="ml-2 texl-lg text-gray-500">If this takes a while, check to see that the user Id is correct</p>
+            </div>
           </>
         ) : (
           <>
@@ -113,7 +115,7 @@ export default function ProfilesPage() {
               }
               <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
-              {profile.profilePublic[0] && 
+              {profile.profilePublic && profile.profilePublic[0] && 
               <>
                 <h1 className="my-4 ml-2 text-xl font-bold">Chip History:</h1>
                 <div className="h-50" ref={chartContainerRef} />
@@ -121,17 +123,17 @@ export default function ProfilesPage() {
               }
               <hr className="my-4"></hr>
               <div className="h-80 flex items-center gap-2">
-              {profile.profilePublic[1] && 
+              {profile.profilePublic && profile.profilePublic[1] && 
               <>
                 <MostPlayedGamesChart userId={profile.id}/>
               </>
               }
-              {profile.profilePublic[2] && 
+              {profile.profilePublic && profile.profilePublic[2] && 
               <>
                 <MostProfitableGamesChart userId={profile.id}/>
               </>
               }
-              {profile.profilePublic[3] && 
+              {profile.profilePublic && profile.profilePublic[3] && 
               <>
                 <PublicLeaderboardPlacementChart profile={profile}/>
               </>

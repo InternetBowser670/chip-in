@@ -187,8 +187,8 @@ export default function ProfilePage() {
                 placeholder={"Hi, My name is "+profile.username+"!"}
               />
               <span className={clsx("text-sm text-gray-500 ml-1", 
-                bio.length==bioMaxLen && "text-red-500")}>
-                {bio.length+'/'+bioMaxLen}
+                bio?.length==bioMaxLen && "text-red-500")}>
+                {(bio? bio.length : "0") +'/'+bioMaxLen}
               </span>
               <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-30 ml-5">Update Bio</Button>
               { message? (
