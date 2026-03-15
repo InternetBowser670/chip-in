@@ -1,17 +1,18 @@
-import { motion } from "motion/react";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 export default function PublicSwitch({value}:{value:boolean}) {
   return (
-   <>
-    <div className="bg-gray-700 p-2 rounded-full">
-      Private Public
+   <div className="border-2 rounded-lg p-1 w-25">
+    {value? 
+    <div className="flex justify-center items-center gap-2">
+      <BsEye/> 
+      <h1>Public</h1>
+    </div> : 
+    <div className="flex justify-center items-center gap-2 ">
+      <BsEyeSlash/>
+      <h1>Private</h1>
     </div>
-    <motion.div
-      initial={{}}
-      animate={{textDecorationColor: "red-500"}}
-    >
-      Hi
-    </motion.div>
-   </>
+    }
+   </div>
   );
 }

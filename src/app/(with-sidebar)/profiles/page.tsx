@@ -115,9 +115,8 @@ export default function ProfilesPage() {
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               {profile.profilePublic[0] && 
               <>
-                <h1 className="my-4 ml-2 text-xl font-bold">Chip History</h1>
+                <h1 className="my-4 ml-2 text-xl font-bold">Chip History:</h1>
                 <div className="h-50" ref={chartContainerRef} />
-                <hr className="my-4"></hr>
               </>
               }
               <hr className="my-4"></hr>

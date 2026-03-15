@@ -186,7 +186,7 @@ export function UserLeaderboardPlacementChart() {
   return (
     <Card className="flex flex-col justify-between h-full p-4 w-99">
       <div>
-        <h2 className="text-2xl font-bold">Your Leaderboard Placement</h2>
+        <h2 className="text-2xl font-bold">Your Leaderboard Placement:</h2>
 
         {placement !== null ? (
           <p className="mb-2 text-sm text-muted-foreground">
@@ -270,9 +270,9 @@ export function PublicLeaderboardPlacementChart({profile}:{profile:ProfileData})
   const { chips } = useChips();
 
   return (
-    <Card className="flex flex-col justify-between h-full p-4 w-99">
+    <Card className="flex flex-col justify-between h-full p-4 w-110">
       <div>
-        <h2 className="text-2xl font-bold">Leaderboard Placement</h2>
+        <h2 className="text-2xl font-bold">Leaderboard Placement:</h2>
 
         {placement !== null ? (
           <p className="mb-2 text-sm text-muted-foreground">

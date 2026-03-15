@@ -81,7 +81,7 @@ export default function ProfilePage() {
     setMessage("");
   };
 
-  async function update(card:number, isPublic: boolean) {
+  async function updatePublicity(card:number, isPublic: boolean) {
     let newValue;
     if (profile?.profilePublic) {
       newValue = [...profile.profilePublic]; // Create a copy to avoid mutation
@@ -165,9 +165,9 @@ export default function ProfilePage() {
               <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <div className="flex items-center">
-                <h1 className="my-4 mx-2 text-xl font-bold">Chip History</h1>
-                <button onClick={() => update(0, !profile.profilePublic[0])}>
-                <PublicSwitch value={profile.profilePublic? profile?.profilePublic[0]: false}/>
+                <h1 className="my-4 mx-2 text-xl font-bold">Chip History:</h1>
+                <button onClick={() => updatePublicity(0, !profile.profilePublic[0])}>
+                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[0]: false}/>
                 </button>
               </div>
               <div className="h-50" ref={chartContainerRef} />
@@ -175,20 +175,29 @@ export default function ProfilePage() {
               
               <div className="h-80 flex items-center gap-2 mb-4">
                 <div>
-                  <button onClick={() => update(1, !profile.profilePublic[1])}>
-                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[1]: false}/>
+                  <button 
+                    onClick={() => updatePublicity(1, !profile.profilePublic[1])} 
+                    className="translate-x-70 translate-y-15"
+                  >
+                    <PublicSwitch value={profile.profilePublic? profile?.profilePublic[1]: false}/>
                   </button>
                   <MostPlayedGamesChart userId={profile.id}/>
                 </div>  
                 <div>
-                  <button onClick={() => update(2, !profile.profilePublic[2])}>
-                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[2]: false}/>
+                  <button 
+                    onClick={() => updatePublicity(2, !profile.profilePublic[2])} 
+                    className="translate-x-72 translate-y-15"
+                  >
+                    <PublicSwitch value={profile.profilePublic? profile?.profilePublic[2]: false}/>
                   </button>
                   <MostProfitableGamesChart userId={profile.id}/>
                 </div> 
                 <div>
-                  <button onClick={() => update(3, !profile.profilePublic[3])}>
-                  <PublicSwitch value={profile.profilePublic? profile?.profilePublic[3]: false}/>
+                  <button 
+                    onClick={() => updatePublicity(3, !profile.profilePublic[3])} 
+                    className="translate-x-80 translate-y-13"
+                  >
+                    <PublicSwitch value={profile.profilePublic? profile?.profilePublic[3]: false}/>
                   </button>
                   <PublicLeaderboardPlacementChart profile={profile}/>
                 </div> 
