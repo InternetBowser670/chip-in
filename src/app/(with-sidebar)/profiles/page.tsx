@@ -4,14 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Candle, GeneralHistory, ProfileData } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
-import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement";
 import { MostPlayedGamesChart, MostProfitableGamesChart, PublicLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 export default function ProfilesPage() {
   const [profile, setProfile] = useState<ProfileData>();
   const [history, setHistory] = useState<GeneralHistory[]>([]);
-  const [placement, setPlacement] = useState<number | null>(null);
 
   const chartContainerRef = useRef(null);
   const searchParams = useSearchParams();

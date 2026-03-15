@@ -4,17 +4,20 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../avatar";
 import { Card } from "../../card";
 import { PiPokerChip } from "react-icons/pi";
+import Link from "next/link";
 
 function UserCard({
   username,
   chips,
   imageUrl,
   index,
+  id,
 }: {
   username: string;
   chips: number;
   imageUrl: string;
   index: number;
+  id:string;
 }) {
   return (
     <div className="flex items-center w-full gap-4">
@@ -26,9 +29,12 @@ function UserCard({
             <AvatarFallback />
           </Avatar>
           <div className="relative flex-1 overflow-hidden">
-            <div className="whitespace-nowrap mask-[linear-gradient(to_right,black_80%,transparent_100%)]">
+            <Link 
+            href={"/profiles?id=" + id}
+            className="whitespace-nowrap mask-[linear-gradient(to_right,black_80%,transparent_100%)] hover:underline"
+            >
               {username}
-            </div>
+            </Link>
             <div className="whitespace-nowrap gap-2 flex items-center mask-[linear-gradient(to_right,black_80%,transparent_100%)]">
               <PiPokerChip />
               {new Intl.NumberFormat("en-US", {
@@ -81,6 +87,7 @@ export default function MostChipsLeaderboardCard() {
               username={u.username}
               chips={u.chipCount}
               imageUrl={u.imageUrl}
+              id={u.userId}
             />
           ))}
         </div>
