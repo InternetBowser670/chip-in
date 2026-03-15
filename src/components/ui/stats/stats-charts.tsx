@@ -41,9 +41,7 @@ export function MostPlayedGamesChart({userId}:{userId:string}) {
       } else {
         res = await fetch("/api/profile");
       }
-      console.log(userId)
       const json = await res.json();
-      console.log(json);
 
       setChartData([
         { game: "Coinflip", value: json.user.coinFlipCount },
@@ -103,9 +101,7 @@ export function MostProfitableGamesChart({userId}:{userId: string}) {
       } else {
         res = await fetch("/api/profile");
       }
-      console.log(userId)
       const json = await res.json();
-      console.log(json);
 
       setChartData([
         { game: "Coinflip", value: json.user.coinFlipProfit },

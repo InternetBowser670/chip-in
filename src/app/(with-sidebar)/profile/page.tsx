@@ -17,7 +17,6 @@ export default function ProfilePage() {
   const [history, setHistory] = useState<GeneralHistory[]>([]);
   const [message, setMessage] = useState<string>("");
   const [bio, setBio] = useState<string>("Loading bio...");
-  const [loading, setLoading] = useState<Array<Boolean>>([false, false, false, false]);
 
   const chartContainerRef = useRef(null);
 
@@ -25,22 +24,34 @@ export default function ProfilePage() {
 
   function PublicSwitch({card}:{card:number}){
     const value = profile?.profilePublic? profile?.profilePublic[card]: false;
+    const [loading, setLoading] = useState(false);
+    
+    const handleToggle = async () => {
+      setLoading(true);
+      await updatePublicity(card, !value);
+      setLoading(false);
+    };
+    
     return (
       <button 
-      onClick={() => updatePublicity(card, !profile?.profilePublic[card])}
+        onClick={handleToggle}
+        disabled={loading}
       >
         <div className="border-2 rounded-lg p-1 w-25">
-            {value? 
+          {loading ? (
+            <h1>Updating...</h1>
+          ) : value ? (
             <div className="flex justify-center items-center gap-2">
-              <BsEye/> 
+              <BsEye/>
               <h1>Public</h1>
-            </div> : 
-            <div className="flex justify-center items-center gap-2 ">
+            </div>
+          ) : (
+            <div className="flex justify-center items-center gap-2">
               <BsEyeSlash/>
               <h1>Private</h1>
             </div>
-            }
-           </div>
+          )}
+        </div>
       </button>
     )
   }
@@ -146,7 +157,7 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex items-center justify-center h-full w-full">
       <Card color="blue" className="h-[80%] w-[80%] overflow-auto p-4">
         {!profile ? (
           <>
@@ -190,41 +201,28 @@ export default function ProfilePage() {
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <div className="flex items-center">
                 <h1 className="my-4 mx-2 text-xl font-bold">Chip History:</h1>
-                <button 
-                onClick={() => updatePublicity(0, !profile.profilePublic[0])}
-                >
-                  <PublicSwitch card={0}/>
-                </button>
+                <PublicSwitch card={0}/>
               </div>
               <div className="h-50" ref={chartContainerRef} />
               <hr className="my-4"></hr>
               
               <div className="h-80 flex items-center gap-2 mb-4">
                 <div>
-                  <button 
-                    onClick={() => updatePublicity(1, !profile.profilePublic[1])} 
-                    className="translate-x-70 translate-y-15"
-                  >
+                  <div className="translate-x-70 translate-y-15 w-25">
                     <PublicSwitch card={1}/>
-                  </button>
+                  </div>
                   <MostPlayedGamesChart userId={profile.id}/>
                 </div>  
                 <div>
-                  <button 
-                    onClick={() => updatePublicity(2, !profile.profilePublic[2])} 
-                    className="translate-x-72 translate-y-15"
-                  >
+                  <div className="translate-x-72 translate-y-15 w-25">
                     <PublicSwitch card={2}/>
-                  </button>
+                  </div>
                   <MostProfitableGamesChart userId={profile.id}/>
                 </div> 
                 <div>
-                  <button 
-                    onClick={() => updatePublicity(3, !profile.profilePublic[3])} 
-                    className="translate-x-80 translate-y-13"
-                  >
+                  <div className="translate-x-80 translate-y-13 w-25">
                     <PublicSwitch card={3}/>
-                  </button>
+                  </div>
                   <PublicLeaderboardPlacementChart profile={profile}/>
                 </div> 
               </div>
