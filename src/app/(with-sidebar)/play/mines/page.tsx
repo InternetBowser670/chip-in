@@ -18,6 +18,8 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { BannerAd } from "@/components/ui/global/ads";
+import { runAdBreak } from "@/lib/runAdBreak";
+import { useAdminStatus } from "@/lib/hooks/useAdminStatus";
 
 export default function MinesPage() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -33,6 +35,10 @@ export default function MinesPage() {
   const [multiplier, setMultiplier] = useState<number>(1);
   const [cashOutValue, setCashOutValue] = useState<number>(0);
   const [canCashOut, setCanCashOut] = useState<boolean>(false);
+  const [gamesUntilAd, setGamesUntilAd] = useState<number>(5);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const isAdmin = useAdminStatus();
 
   const containerRef = useRef(null);
 
@@ -69,6 +75,15 @@ export default function MinesPage() {
 
     return () => resizeObserver.disconnect();
   }, []);
+
+  function handleAdsAfterGame() {
+    if (gamesUntilAd <= 1) {
+      runAdBreak("mines");
+      setGamesUntilAd(5);
+    } else {
+      setGamesUntilAd((prev) => prev - 1);
+    }
+  }
 
   async function sendAction(action: MinesAction) {
     const res = await fetch("/api/games/mines", {
@@ -141,11 +156,13 @@ export default function MinesPage() {
           setGameActive(false);
           setCashOutValue(0);
           setChips(json.endCount);
+          handleAdsAfterGame();
         }
       } else if (action.type == "cashout") {
         setGameActive(false);
         setChips(json.endCount);
         setFlippedTiles(json.flippedTiles);
+        handleAdsAfterGame();
       }
       if (json.message) {
         setMessage(json.message);

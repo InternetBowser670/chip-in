@@ -267,6 +267,25 @@ export default function Home() {
                       </div>
                     </div>
                   </CardSwapCard>
+                  <CardSwapCard>
+                    <div className="flex flex-col object-cover w-full h-full overflow-hidden border border-foreground bg-background rounded-xl">
+                      <h3 className="w-full p-4 text-2xl font-bold text-center shrink ">
+                        Slots
+                      </h3>
+                      <hr className="border border-foreground" />
+                      <div className="flex-1 object-cover w-full max-h-full overflow-hidden grow">
+                        <img
+                          alt="Mines image"
+                          className="w-full h-full"
+                          src={
+                            resolvedTheme == "light"
+                              ? "/promos/slots-promo-light.png"
+                              : "/promos/slots-promo-dark.png"
+                          }
+                        />
+                      </div>
+                    </div>
+                  </CardSwapCard>
                 </CardSwap>
               )}
             </div>

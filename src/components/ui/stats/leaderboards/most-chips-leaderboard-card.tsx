@@ -58,7 +58,7 @@ export default function MostChipsLeaderboardCard() {
         data.users.map((u: any) => ({
           userId: u.id,
           username: u.username,
-          chipCount: u.totalChips,
+          chipCount: u.totalChips ?? 0,
           imageUrl: u.image_url,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         })).sort((a: any, b: any) => b.chipCount - a.chipCount)
