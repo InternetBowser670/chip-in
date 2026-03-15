@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 import LeaderboardPlacement from "@/components/ui/profile/leaderboard-placement";
 import { MostPlayedGamesChart, MostProfitableGamesChart, PublicLeaderboardPlacementChart } from "@/components/ui/stats/stats-charts";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 export default function ProfilesPage() {
   const [profile, setProfile] = useState<ProfileData>();
@@ -13,6 +14,12 @@ export default function ProfilesPage() {
   const [placement, setPlacement] = useState<number | null>(null);
 
   const chartContainerRef = useRef(null);
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+
+  //Handle id extraction from url
+  const params = new URLSearchParams(searchParams);
+  const userId = params.get('id');
 
   useEffect(() => {
     if (!chartContainerRef.current || history.length === 0) return;
@@ -59,8 +66,6 @@ export default function ProfilesPage() {
       console.warn(chartContainerRef.current, e);
     }
   }, [history]);
-
-  const userId = "user_3ASVPs8smE0yPyQ8A0X5hRojjD2";
   
   useEffect(() => {
     async function fetchData() {
