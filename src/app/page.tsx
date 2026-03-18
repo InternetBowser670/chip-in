@@ -15,6 +15,12 @@ import ScrollDown from "@/components/ui/global/scroll-indicator";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { RiExpandUpDownLine } from "react-icons/ri";
 import ModeToggle from "@/components/ui/theme-switcher";
 import Particles from "@/components/Particles";
 import CardSwap, { Card as CardSwapCard } from "@/components/CardSwap";
@@ -167,10 +173,26 @@ export default function Home() {
             </div>
             <Card className="absolute z-30 p-2 px-4 pointer-events-auto bottom-4 right-4">
               <span>
-                <Link className="underline" href={"https://internetbowser.com"}>
-                  InternetBowser
-                </Link>
-                , 2026
+                <Popover>
+                  <PopoverTrigger>
+                      <div className="flex justify-center items-center">
+                        <Link className="underline" href={"https://internetbowser.com"}>
+                          InternetBowser
+                        </Link> 
+                        <h1 className="ml-1">+1 more, 2026</h1>
+                        <RiExpandUpDownLine />
+                      </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="flex flex-col gap-4 mr-4 mb-4 w-80"> 
+                    <Link className="underline" href={"https://internetbowser.com"}>
+                      InternetBowser
+                    </Link>
+                    <hr />
+                    <Link className="underline" href={"https://github.com/ZYX-2727"}>
+                      ZYX_2727
+                    </Link>
+                  </PopoverContent>
+                </Popover>
               </span>
             </Card>
           </div>

@@ -13,7 +13,6 @@ export default function ProfilesPage() {
 
   const chartContainerRef = useRef(null);
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
 
   //Handle id extraction from url
   const params = new URLSearchParams(searchParams);
@@ -116,7 +115,7 @@ export default function ProfilesPage() {
               <h1 className="break-all">{profile.bio}</h1>
               </div>
               }
-              <hr className="my-4"></hr>
+              <hr className={profile.bio && "my-4"}></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               {profile.profilePublic && profile.profilePublic[0] && 
               <>

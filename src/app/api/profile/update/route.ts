@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
         }
 
         if (result.modifiedCount === 0) {
-            return NextResponse.json({message: "Error: No updates to make"}, { status: 400 });
+            return NextResponse.json({message: "Error: No updates detected"}, { status: 400 });
         }
 
-        return NextResponse.json({message: "Profile Updated Successfully!"}, {status: 200});
+        return NextResponse.json({message: "Updated Successfully!"}, {status: 200});
     } catch (error) {
         console.error("Update error:", error);
         return NextResponse.json({message: "Error: Internal server error"}, { status: 500 });

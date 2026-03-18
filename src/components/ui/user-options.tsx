@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { FaRegUser, FaUserAltSlash } from "react-icons/fa";
+import { FaUserAltSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import {
   Dialog,

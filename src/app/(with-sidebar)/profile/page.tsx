@@ -110,8 +110,13 @@ export default function ProfilePage() {
 
     const resData = await res.json();
     
+    if (res.ok) {
+      const profileRes = await fetch("/api/profile");
+      const profileData = await profileRes.json();
+      setProfile(profileData.user);
+    }
+    
     setMessage(resData.message)
-
     await sleep(5000);
     setMessage("");
   };
@@ -178,25 +183,35 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <input 
-                className="border-2 rounded-lg p-2 field-sizing-content" 
-                type="text" 
+              <input
+                className="border-2 rounded-lg p-2 field-sizing-content"
+                type="text"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 maxLength={bioMaxLen}
-                placeholder={"Hi, My name is "+profile.username+"!"}
+                placeholder={"Hi, my name is "+profile.username+"!"}
               />
-              <span className={clsx("text-sm text-gray-500 ml-1", 
-                bio?.length==bioMaxLen && "text-red-500")}>
+              <span className={clsx("text-sm text-gray-500 ml-2", 
+              bio?.length==bioMaxLen && "text-red-500")}>
                 {(bio? bio.length : "0") +'/'+bioMaxLen}
               </span>
-              <Button onClick={() => updateBio(bio)} className="text-xl font-bold w-30 ml-5">Update Bio</Button>
-              { message? (
-                <h1 className="text-gray-500 italic">{message}</h1>
-              ):(
-                <div className="h-6"></div>
-              )
-              } 
+              <br/>
+              <Button 
+              onClick={() => updateBio(bio)} 
+              disabled={bio == profile.bio}
+              className={clsx("text-xl font-bold w-30 ml-4 -translate-y-10 translate-x-74", 
+              bio == profile.bio && "grayscale cursor-not-allowed")} 
+              >
+                Update Bio
+              </Button>
+              <div className="inline-block">
+                { message? (
+                  <h1 className="text-gray-500 italic">{message}</h1>
+                  ):(
+                  <div className="h-6"></div>
+                  )
+                } 
+              </div>
               <hr className="my-4"></hr>
               <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
               <div className="flex items-center">
