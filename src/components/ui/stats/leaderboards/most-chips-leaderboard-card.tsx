@@ -31,7 +31,7 @@ function UserCard({
           <div className="relative flex-1 overflow-hidden">
             <Link 
             href={"/profiles?id=" + id}
-            className="whitespace-nowrap mask-[linear-gradient(to_right,black_80%,transparent_100%)] hover:underline"
+            className="whitespace-nowrap mask-[linear-gradient(to_right,black_95%,transparent_100%)] hover:underline"
             >
               {username}
             </Link>

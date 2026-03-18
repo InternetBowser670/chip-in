@@ -213,7 +213,7 @@ export default function ProfilePage() {
                 } 
               </div>
               <hr className="my-4"></hr>
-              <h1 className="my-4 ml-2 text-xl font-bold">{"Total chips: "+profile.totalChips}</h1>
+              <h1 className="my-4 ml-2 text-xl font-bold">{clsx("Total chips: ", profile.totalChips? profile.totalChips : "0")}</h1>
               <div className="flex items-center">
                 <h1 className="my-4 mx-2 text-xl font-bold">Chip History:</h1>
                 <PublicSwitch card={0}/>
