@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { FaRegUser, FaUserAltSlash } from "react-icons/fa";
+import { FaUserAltSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -30,7 +30,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { useChips } from "../providers";
 import { SignOutButton } from "@clerk/nextjs";
-import { FaUserGear } from "react-icons/fa6";
+import { FaUserGear, FaUserPen } from "react-icons/fa6";
 
 export default function UserOptions() {
   const { user } = useUser();
@@ -119,8 +119,8 @@ export default function UserOptions() {
                 variant={"ghost"}
                 className="justify-start w-full gap-4"
               >
-                <FaRegUser />
-                Profile
+                <FaUserPen />
+                Edit Public Profile
               </Button>
               <Dialog>
                 <DialogTrigger className="w-full">

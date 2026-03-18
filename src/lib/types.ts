@@ -109,14 +109,16 @@ export interface ChipInUser extends User {
   _id: ObjectId;
   totalChips: number;
   timezone: string;
+  badges?: Badge[];
+  bio: string;
+  profilePublic: boolean[];
+  activeBlackjack?: BlackjackGame;
+  activeMinesGame?: MinesGame;
   slotsCount: number;
   minesCount: number;
   blackjackCount: number;
   coinFlipCount: number;
   historyCount: number;
-  activeBlackjack?: BlackjackGame;
-  activeMinesGame?: MinesGame;
-  badges?: Badge[];
   chipClaims: Record<string, number>;
   coinFlipProfit: number;
   blackjackProfit: number;
@@ -228,6 +230,8 @@ export interface ProfileData {
   badges: Badge[];
   last_active_at: number;
   history: (UserHistory | BlackjackHistory)[];
+  bio: string;
+  profilePublic: boolean[];
 }
 
 export type Candle = {
