@@ -117,7 +117,9 @@ export default function ProfilesPage() {
               </div>
               }
               <hr className={profile.bio && "my-4"}></hr>
-              <h1 className="my-4 ml-2 text-xl font-bold">{clsx("Total chips: ", profile.totalChips? profile.totalChips : "0")}</h1>
+              <h1 className="my-4 ml-2 text-xl font-bold">
+                {clsx("Total chips: ", profile.totalChips? profile.totalChips.toFixed(2) : "0")}
+              </h1>
               {profile.profilePublic && profile.profilePublic[0] && 
               <>
                 <h1 className="my-4 ml-2 text-xl font-bold">Chip History:</h1>
